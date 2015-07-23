@@ -1,0 +1,30 @@
+{
+  "name": "telebot",
+  "version": "0.0.1",
+  "description": "Easy way to write Telegram bots.",
+  "main": "index.js",
+  "dependencies": {
+    "request": "^2.58.0",
+    "mime-db": "^1.15.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kosmodrey/telebot.git"
+  },
+  "keywords": [
+    "bot",
+    "api",
+    "wrapper",
+    "telegram",
+    "telegram api",
+    "telegram bot",
+    "telegram bot api"
+  ],
+  "author": "Kosmodrey <kosmodrey@yandex.ru>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kosmodrey/telebot/issues"
+  },
+  "homepage": "https://github.com/kosmodrey/telebot"
+}
