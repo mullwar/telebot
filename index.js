@@ -24,6 +24,8 @@ var TeleBot = function(cfg) {
   self.token = cfg.token;
   self.id = self.token.split(':')[0];
   self.api = 'https://api.telegram.org/bot' + self.token;
+  self.limit = Number(cfg.limit) || 100;
+  self.timeout = Number(cfg.timeout) || 60;
   self.pool = true;
   self.loopFn = null;
   self.looping = false;
@@ -136,7 +138,7 @@ TeleBot.prototype = {
   getUpdate: function() {
     var self = this;
     return self.request('/getUpdates', {
-      offset: self.updateId, limit: 100, timeout: 60
+      offset: self.updateId, limit: self.limit, timeout: self.timeout
     }).then(function(body) {
       var data = body.result;
       if (!data.length) return Promise.resolve();
