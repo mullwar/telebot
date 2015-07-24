@@ -24,7 +24,7 @@ npm install
 
 Import `telebot` module and create a new bot object:
 
-```
+```js
 var TeleBot = require('telebot');
 
 var bot = new TeleBot({
@@ -36,7 +36,7 @@ var bot = new TeleBot({
 
 To start getting updates, use ```bot.connect()``` and ```bot.disconnect()``` to stop.
 
-```
+```js
 bot.on('text', function(msg) {
   var id = msg.from.id;
   var firstName = msg.from.first_name;
@@ -56,7 +56,7 @@ Use ```bot.on(<event>, <function>)``` to handle all possible events.
 
 To catch a command with arguments, just add a slash:
 
-```
+```js
 bot.on('/hello', function(msg) {
   var first = this.cmd[1] || 'Anonymous';
   var last = this.cmd[2] || '';
@@ -66,7 +66,7 @@ bot.on('/hello', function(msg) {
 
 Also, you can catch multiple events:
 
-```
+```js
 bot.on(['/start', '/help'], function(msg) {
   return bot.sendMessage(this.user, 'Bam!');
 });
