@@ -6,7 +6,7 @@ Easy way to write Telegram bots.
 
 ## Installation
 
-Download and install via npm package manager:
+Download and install via [npm](https://www.npmjs.com/package/telebot) package manager:
 
 ```
 npm install telebot
@@ -122,7 +122,7 @@ A simple method for testing your bot's auth token.
 
 Use this method to send text messages.
 
-##### `forwardMessage(<id\>, <fromId>, <messageId>)`
+##### `forwardMessage(<id>, <fromId>, <messageId>)`
 
 Use this method to forward messages of any kind.
 
