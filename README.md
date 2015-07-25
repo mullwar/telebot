@@ -110,6 +110,14 @@ Invokes the event handlers.
 
 Creates `ReplyKeyboardMarkup` keyboard `markup` object
 
+##### `connect()`
+
+Start pulling updates.
+
+##### `disconnect()`
+
+Stop pulling updates.
+
 ### Bot Actions:
 
 TeleBot use standard [Telegram Bot API](https://core.telegram.org/bots/api#available-methods) method names.
