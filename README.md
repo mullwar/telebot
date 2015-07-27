@@ -28,7 +28,10 @@ Import `telebot` module and create a new bot object:
 var TeleBot = require('telebot');
 
 var bot = new TeleBot({
-  token: '-PASTEYOURTELEGRAMBOTAPITOKENHERE-'
+  token: '-PASTEYOURTELEGRAMBOTAPITOKENHERE-',
+  sleep: 1000, // How often check updates (in ms)
+  timeout: 0, // Update pulling timeout (0 - short polling)
+  limit: 100, // Limits the number of updates to be retrieved
 });
 ```
 
@@ -39,14 +42,15 @@ To start getting updates, use ```bot.connect()``` and ```bot.disconnect()``` to 
 ```js
 bot.on('text', function(msg) {
   var id = msg.from.id;
+  var mId = msg.message_id;
   var firstName = msg.from.first_name;
-  return bot.sendMessage(id, 'Welcome, ' + firstName + '!');
+  return bot.sendMessage(id, 'Welcome, ' + firstName + '!', { reply: mId });
 });
 
 bot.connect();
 ```
 
-This code will send a "welcome" to every users `text` type message.
+This code will send a "welcome" to every users `text` type message as reply.
 
 ***[See more code examples!](/examples)***
 
