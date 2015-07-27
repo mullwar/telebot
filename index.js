@@ -205,9 +205,9 @@ TeleBot.prototype = {
     var self = this;
     if (typeof types == 'string') types = [types];
     for (var type of types) {
-      var event = this.eventList[type];
+      var event = self.eventList[type];
       if (!event) {
-        this.eventList[type] = { fired: null, list: [] };
+        self.eventList[type] = { fired: null, list: [] };
       } else if (event.fired) {
         var fired = event.fired;
         var out = fn.call(fired.self, fired.data, fired.details);
@@ -217,7 +217,7 @@ TeleBot.prototype = {
             self.event('error', { error: error, data: fired.data });
         });
       }
-      event = this.eventList[type].list;
+      event = self.eventList[type].list;
       if (event.indexOf(fn) !== -1) return;
       event.push(fn);
     }
