@@ -22,7 +22,8 @@ module.exports = function(bot) {
   // Load config data
   var cfg = bot.cfg.flood || {};
   var interval = Number(cfg.interval) || 1;
-  var text = cfg.message || 'Too many messages from you. Please, try later...';
+  var text = cfg.message === undefined ?
+    'Too many messages from you. Please, try later...' : cfg.message;
   // Create message modifier
   bot.mod('message', function(msg) {
     var id = msg.from.id, user = userList[id];
