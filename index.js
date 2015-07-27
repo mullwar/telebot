@@ -165,6 +165,7 @@ TeleBot.prototype = {
             for (var type of TYPES) {
               // Check for Telegram API documented types
               if (!(type in msg)) continue;
+              me.type = type;
               // Send type event
               self.event(['*', type], msg, me);
               // Check for command
