@@ -64,7 +64,7 @@ To catch a command with arguments, just add a slash:
 bot.on('/hello', function(msg) {
   var first = this.cmd[1] || 'Anonymous';
   var last = this.cmd[2] || '';
-  return bot.sendMessage(this.user, 'Hello, ' + first + ' ' + last + '!');
+  return bot.sendMessage(msg.from.id, 'Hello, ' + first + ' ' + last + '!');
 });
 ```
 
@@ -72,7 +72,7 @@ Also, you can catch multiple events:
 
 ```js
 bot.on(['/start', '/help'], function(msg) {
-  return bot.sendMessage(this.user, 'Bam!');
+  return bot.sendMessage(msg.from.id, 'Bam!');
 });
 ```
 
