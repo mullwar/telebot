@@ -26,12 +26,10 @@ module.exports = function(bot) {
   // Create message modifier
   bot.mod('message', function(msg) {
     var id = msg.from.id, user = userList[id];
-    console.log(msg.date);
     var now = new Date(msg.date);
     if (user) {
       var diff = now - user.lastTime;
       user.lastTime = now;
-      console.log(diff);
       if (diff <= interval) {
         if (!user.flood) {
           if (text) bot.sendMessage(id, text);
