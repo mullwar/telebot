@@ -32,6 +32,7 @@ var TeleBot = function(cfg) {
   self.sleep = Number(cfg.sleep) || 1000;
   self.updateId = 0;
   self.eventList = {};
+  self.modList = {};
 };
 
 TeleBot.prototype = {
@@ -137,31 +138,44 @@ TeleBot.prototype = {
 /* Fetch updates */
   getUpdate: function() {
     var self = this;
+    // Request an update
     return self.request('/getUpdates', {
       offset: self.updateId, limit: self.limit, timeout: self.timeout
     }).then(function(body) {
+      // Check for update
       var data = body.result;
       if (!data.length) return Promise.resolve();
-      self.event('update', data);
-      for (var update of data) {
-        self.updateId = update['update_id'] + 1;
-        var msg = update['message'];
-        for (var type of TYPES) {
-          if (!(type in msg)) continue;
-          var me = {
-            chat: msg.chat.id,
-            user: msg.from.id,
-          };
-          self.event(type, msg, me);
-          if (type == 'text') {
-            var match = RE.cmd.exec(msg.text);
-            if (match) {
-              me.cmd = msg.text.split(' ');
-              self.event('/' + match[1], msg, me);
+      return new Promise(function(resolve, reject) {
+        self.event('update', data).then(function(output) {
+          var me = extend({}, output);
+          // Run update processors
+          data = self.modRun('update', data, me);
+          // Store event promises
+          var promisList = [];
+          // Check every message in update
+          for (var update of data) {
+            // Set update ID
+            var nextId = ++update['update_id'];
+            if (self.updateId < nextId) self.updateId = nextId;
+            // Run message processors
+            var msg = self.modRun('message', update['message'] || {}, me);
+            for (var type of TYPES) {
+              // Check for Telegram API documented types
+              if (!(type in msg)) continue;
+              // Send type event
+              self.event(['*', type], msg, me);
+              // Check for command
+              if (type == 'text') {
+                var match = RE.cmd.exec(msg.text);
+                if (!match) continue;
+                // Command found
+                me.cmd = msg.text.split(' ');
+                self.event(['/*', '/' + match[1]], msg, me);
+              }
             }
           }
-        }
-      }
+        }).then(resolve).catch(reject);
+      });
     });
   },
   get: function(url, json) {
@@ -171,6 +185,17 @@ TeleBot.prototype = {
         return resolve(data);
       });
     });
+  },
+  mod: function(name, fn) {
+    if (!this.modList[name]) this.modList[name] = [];
+    if (this.modList[name].indexOf(fn) !== -1) return;
+    this.modList[name].push(fn);
+  },
+  modRun: function(name, data, props) {
+    var self = this, list = self.modList[name];
+    if (!list || !list.length) return data;
+    for (var fn of list) data = fn.call(self, data, props);
+    return data;
   },
 /* Events */
   on: function(types, fn) {
@@ -291,6 +316,21 @@ function getBlob(url) {
       return resolve({ buffer: buffer, type: re.headers['content-type'] });
     });
   });
+}
+
+function extend(me, input) {
+  for (var obj of input) {
+    for (var name in obj) {
+      var key = me[name], value = obj[name];
+      if (key !== undefined) {
+        if (!Array.isArray(key)) me[name] = [key];
+        me[name].push(value);
+        continue;
+      }
+      me[name] = value;
+    }
+  }
+  return me;
 }
 
 /* Exports */
