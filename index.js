@@ -25,7 +25,7 @@ var TeleBot = function(cfg) {
   self.id = self.token.split(':')[0];
   self.api = 'https://api.telegram.org/bot' + self.token;
   self.limit = Number(cfg.limit) || 100;
-  self.timeout = cfg.timeout >= 0 ? cfg.timeout : 60;
+  self.timeout = cfg.timeout >= 0 ? cfg.timeout : 0;
   self.pool = true;
   self.loopFn = null;
   self.looping = false;
