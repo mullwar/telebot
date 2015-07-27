@@ -94,6 +94,26 @@ bot.on(['/start', '/help'], function(msg) {
 
 *Read more about Telegram Bot API response types: https://core.telegram.org/bots/api#available-types*
 
+## Modifiers
+
+You can add modifier to process data, before passing to event handler.
+
+```
+bot.mod('message', function(msg) {
+  if (msg.text) {
+    msg.text = '📢 ' + msg.text;
+  }
+  return msg;
+});
+```
+
+This code adds emoji to every text message.
+
+### Standart names:
+
+- **message** - process every message
+- **update** - process update data (bunch of messages)
+
 ## Methods
 
 ### Bot functions:
@@ -105,6 +125,14 @@ Handles events.
 ##### `event(<event>, <data>)`
 
 Invokes the event handlers.
+
+##### `mod(<name>, <fn>)`
+
+Add data modifier.
+
+##### `runMod(<name>, <data>)`
+
+Run data modifiers.
 
 ##### `keyboard([<arrays>], <options:{resize, once, selective}>)`
 
