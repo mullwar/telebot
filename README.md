@@ -165,3 +165,7 @@ Use this method when you need to tell the user that something is happening on th
 ##### `getUserPhoto(<id>, <options:{offset, limit}>)`
 
 Use this method to get a list of profile pictures for a user.
+
+##### `setWebhook(<url>)`
+
+Use this method to specify a url and receive incoming updates via an outgoing webhook.
