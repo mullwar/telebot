@@ -51,14 +51,17 @@ TeleBot.prototype = {
   },
 /* Actions */
   getMe: function() {
+    this.event('getMe', arguments);
     return this.request('/getMe');
   },
   forwardMessage: function(id, fromId, messageId) {
+    this.event('forwardMessage', arguments);
     return this.request('/forwardMessage', {
       chat_id: id, from_chat_id: fromId, message_id: messageId
     });
   },
   getUserPhoto: function(id, opt) {
+    this.event('getUserPhoto', arguments);
     opt = opt || {};
     var form = { user_id: id };
     if (opt.offset) form['offset'] = opt.offset;
@@ -66,17 +69,20 @@ TeleBot.prototype = {
     return this.request('/getUserProfilePhotos', form);
   },
   sendAction: function(id, action) {
+    this.event('sendAction', arguments);
     return this.request('/sendChatAction', {
       chat_id: id, action: action
     });
   },
   sendMessage: function(id, text, opt) {
+    this.event('sendMessage', arguments);
     opt = opt || {};
     var form = props({ chat_id: id, text: text }, opt);
     if (opt.preview === false) form['disable_web_page_preview'] = true;
     return this.request('/sendMessage', form);
   },
   sendLocation: function(id, position, opt) {
+    this.event('sendLocation', arguments);
     opt = opt || {};
     var form = props({
       chat_id: id, latitude: position[0], longitude: position[1]
@@ -99,6 +105,7 @@ TeleBot.prototype = {
     return sendFile.call(this, 'video', id, video, opt);
   },
   setWebhook: function(url) {
+    this.event('setWebhook', arguments);
     return this.request('/setWebhook', { url: url });
   },
 /* Send request to server */
@@ -292,7 +299,9 @@ function sendFile(type, id, file, opt) {
   opt = opt || {};
   var self = this;
   var form = props({ chat_id: id }, opt);
-  var url = '/send' + type.charAt(0).toUpperCase() + type.slice(1);
+  var url = 'send' + type.charAt(0).toUpperCase() + type.slice(1);
+  self.event(url, [].slice.call(arguments).splice(0, 1));
+  url = '/' + url;
   if (typeof file == 'string' && RE.url.test(file)) {
     return getBlob(file).then(function(data) {
       if (!opt.name) {
