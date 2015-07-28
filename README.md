@@ -118,6 +118,12 @@ This code adds emoji to every text message.
 - **message** - process every message
 - **update** - process update data (bunch of messages)
 
+## Modules
+
+Use ```bot.use(require(<module_path>))``` to add a module.
+
+**[Check out modules folder!](/modules)**
+
 ## Methods
 
 ### Bot functions:
