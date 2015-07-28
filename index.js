@@ -153,8 +153,6 @@ TeleBot.prototype = {
           var me = extend({}, output);
           // Run update processors
           data = self.modRun('update', data, me);
-          // Store event promises
-          var promisList = [];
           // Check every message in update
           for (var update of data) {
             // Set update ID
