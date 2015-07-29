@@ -109,11 +109,12 @@ bot.on(['/start', '/help'], function(msg) {
 You can add modifier to process data, before passing to event handler.
 
 ```
-bot.mod('message', function(msg) {
+bot.mod('message', function(data) {
+  var msg = data.msg;
   if (msg.text) {
     msg.text = '📢 ' + msg.text;
   }
-  return msg;
+  return data;
 });
 ```
 
