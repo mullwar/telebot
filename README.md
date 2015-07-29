@@ -78,6 +78,7 @@ bot.on(['/start', '/help'], function(msg) {
 
 ### TeleBot events:
 
+- **/&#42;** – any command
 - **/\<cmd\>** – on command
 - **connect** – bot connected
 - **disconnect** – bot disconnected
@@ -85,8 +86,13 @@ bot.on(['/start', '/help'], function(msg) {
 - **tick** – on bot tick
 - **error** – an error occurred
 
+#### Action events:
+
+*getMe, forwardMessage, getUserPhoto, sendAction, sendMessage, sendLocation, sendPhoto, sendAudio, sendDocument, sendSticker, sendVideo, setWebhook*
+
 ### Telegram message events:
 
+- **&#42;** - any type of message
 - **text** – text message
 - **audio** – audio file
 - **document** – document file (any kind)
