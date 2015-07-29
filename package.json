@@ -1,11 +1,11 @@
 {
   "name": "telebot",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Easy way to write Telegram bots.",
   "main": "index.js",
   "dependencies": {
     "request": "^2.60.0",
-    "mime-db": "^1.15.0"
+    "mime-db": "^1.16.0"
   },
   "devDependencies": {},
   "repository": {
