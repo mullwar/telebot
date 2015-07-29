@@ -159,14 +159,18 @@ TeleBot.prototype = {
         self.event('update', data).then(function(output) {
           var me = extend({}, output);
           // Run update processors
-          data = self.modRun('update', data, me);
+          var temp = self.modRun('update', { data: data, me: me });
+          data = temp.data, me = temp.me;
           // Check every message in update
           for (var update of data) {
             // Set update ID
             var nextId = ++update['update_id'];
             if (self.updateId < nextId) self.updateId = nextId;
             // Run message processors
-            var msg = self.modRun('message', update['message'] || {}, me);
+            var temp = self.modRun('message', {
+              msg: update['message'] || {}, me: me
+            });
+            var msg = temp.msg, me = temp.me;
             for (var type of TYPES) {
               // Check for Telegram API documented types
               if (!(type in msg)) continue;
@@ -200,10 +204,10 @@ TeleBot.prototype = {
     if (this.modList[name].indexOf(fn) !== -1) return;
     this.modList[name].push(fn);
   },
-  modRun: function(name, data, props) {
+  modRun: function(name, data) {
     var self = this, list = self.modList[name];
     if (!list || !list.length) return data;
-    for (var fn of list) data = fn.call(self, data, props);
+    for (var fn of list) data = fn.call(self, data);
     return data;
   },
 /* Events */
