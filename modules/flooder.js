@@ -25,7 +25,8 @@ module.exports = function(bot) {
   var text = cfg.message === undefined ?
     'Too many messages from you. Please, try later...' : cfg.message;
   // Create message modifier
-  bot.mod('message', function(msg) {
+  bot.mod('message', function(data) {
+    var msg = data.msg;
     var id = msg.from.id, user = userList[id];
     var now = new Date(msg.date);
     if (user) {
@@ -36,13 +37,13 @@ module.exports = function(bot) {
           if (text) bot.sendMessage(id, text);
           user.flood = true;
         }
-        msg = {};
+        data.msg = {};
       } else {
         user.flood = false;
       }
     } else {
       userList[id] = { lastTime: now };
     }
-    return msg;
+    return data;
   });
 };
