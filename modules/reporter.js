@@ -1,16 +1,21 @@
 /*
   Reporter
-  Report events to user ID list
+  Report events to user list
 */
 
 module.exports = function(bot) {
   // Read config data
   var opt = bot.cfg.reporter;
   if (typeof opt !== 'object') return;
-  // Get event list
   var eventList = Object.keys(opt);
   // Create event handler
   bot.on(eventList, function(event, info) {
+    // Skip event with 'skipReport' option key
+    if (
+      Object.prototype.toString.call(event) == '[object Arguments]' &&
+      event[2].skipReport === true
+    ) return;
+    // Process event
     event = event || {};
     var type = info.type, to = opt[type].to;
     if (!to || !to.length) return;
@@ -27,11 +32,15 @@ module.exports = function(bot) {
           '👤 User: ' + data.from.id + ' (' + data.chat.id + ')\n' +
           '⚠ Error: ' + (error.message || error) + '\n' + stack +
           '⏰ Event: ' + type + '\n' +
-          '💾 Data: ' + jsonData
+          '💾 Data: ' + jsonData,
+          { skipReport: true }
         );
       } else {
         // Another type of event
-        bot.sendMessage(id, '⏰ Event: ' + type + '\n' +'💾 Data: ' + jsonData);
+        bot.sendMessage(
+          id, '⏰ Event: ' + type + '\n' +'💾 Data: ' + jsonData,
+          { skipReport: true }
+        );
       }
     }
   });
