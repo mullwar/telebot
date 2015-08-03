@@ -140,10 +140,10 @@ TeleBot.prototype = {
       });
     }, self.sleep);
   },
-  disconnect: function() {
+  disconnect: function(message) {
     this.looping = false;
-    console.log('[info] bot disconnected');
-    this.event('disconnect');
+    console.log('[info] bot disconnected' + (message ? ': ' + message : ''));
+    this.event('disconnect', message);
   },
 /* Fetch updates */
   getUpdate: function() {
