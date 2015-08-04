@@ -1,6 +1,6 @@
 /*
-  Ask
-  Get direct answers from users!
+  Name: Ask
+  Description: Get direct answers from users!
 */
 
 // Storage
@@ -10,6 +10,7 @@ module.exports = function(bot) {
   // On every text message
   bot.on('text', function(msg) {
     var id = msg.chat.id, ask = LIST[id];
+    // If no question, then it's a regular message
     if (!ask) return;
     // Delete user from list and send custom event
     delete LIST[id];

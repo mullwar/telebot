@@ -1,31 +1,42 @@
 /*
-  Reporter
-  Report events to user list
+  Name: Report
+  Description: Reports events (and their data) to user list.
+  Bot Options: {
+    report: {
+      // Event list
+      <event name>: [<id list>]
+    }
+  },
+  Action Options: {
+    skipReport: true // Skips report
+  }
 */
 
 module.exports = function(bot) {
-  // Read config data
-  var opt = bot.cfg.reporter;
+  // Read bot config data
+  var opt = bot.cfg.report;
   if (typeof opt !== 'object') return;
   var eventList = Object.keys(opt);
-  // Create event handler
+  // Create events handler
   bot.on(eventList, function(event, info) {
-    // Skip event with 'skipReport' option key
+    // Skip event with "skipReport: true" option key
     if (
       Object.prototype.toString.call(event) == '[object Arguments]' &&
-      event[2].skipReport === true
+      (Array.prototype.slice.call(event).slice(-1)[0]).skipReport === true
     ) return;
     // Process event
     event = event || {};
-    var type = info.type, to = opt[type].to;
+    var type = info.type, to = opt[type];
     if (!to || !to.length) return;
     if (typeof to == 'string') to = [to];
+    // Stringify object data
     var jsonData = JSON.stringify(event, function(key, value) {
       return value.value instanceof Buffer ? '[Buffer]' : value;
     });
+    // Send to every user in list
     for (var id of to) {
       if (type == 'error') {
-        // Event is an error
+        // Error event
         var data = event.data, error = event.error;
         var stack = error.stack ? '🚧 Stack:' + '\n' + error.stack + '\n' : '';
         bot.sendMessage(id,
@@ -38,7 +49,8 @@ module.exports = function(bot) {
       } else {
         // Another type of event
         bot.sendMessage(
-          id, '⏰ Event: ' + type + '\n' +'💾 Data: ' + jsonData,
+          id, '⏰ Event: ' + type + '\n' +
+          (jsonData && jsonData != '{}' ? '💾 Data: ' + jsonData : ''),
           { skipReport: true }
         );
       }
