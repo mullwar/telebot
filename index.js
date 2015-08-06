@@ -304,9 +304,13 @@ function sendFile(type, id, file, opt) {
   var self = this;
   var form = props({ chat_id: id }, opt);
   var url = 'send' + type.charAt(0).toUpperCase() + type.slice(1);
+  // Send bot action event
   self.event(url, [].slice.call(arguments).splice(0, 1));
+  // Add caption to photo
+  if (type == 'photo' && opt.caption) form.caption = opt.caption;
   url = '/' + url;
   if (typeof file == 'string' && RE.url.test(file)) {
+    // If url, get blob and send to user
     return getBlob(file).then(function(data) {
       if (!opt.name) {
         var match = RE.name.exec(file);
@@ -319,6 +323,7 @@ function sendFile(type, id, file, opt) {
       return self.request(url, null, form);
     });
   } else {
+    // String as 'file_id'
     form[type] = file;
     return self.request(url, null, form);
   }
