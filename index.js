@@ -286,13 +286,18 @@ TeleBot.prototype = {
 /* Functions */
 
 function props(form, opt) {
+  // Reply to message
   if (opt.reply) form['reply_to_message_id'] = opt.reply;
+  // Markup object
   if (opt.markup !== undefined) {
     if (opt.markup == 'hide' || opt.markup === false) {
+      // Hide keyboard
       form['reply_markup'] = JSON.stringify({ hide_keyboard: true });
     } else if (opt.markup == 'reply') {
+      // Fore reply
       form['reply_markup'] = JSON.stringify({ force_reply: true });
     } else {
+      // JSON keyboard
       form['reply_markup'] = opt.markup;
     }
   }
