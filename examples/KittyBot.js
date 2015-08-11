@@ -34,7 +34,7 @@ bot.on(['/start', '/help'], function(msg) {
 
 // On command "about"
 bot.on('/about', function(msg) {
-  var text = '😽 This bot created by using TeleBot library ' +
+  var text = '😽 This bot is powered by TeleBot library ' +
     'https://github.com/kosmodrey/telebot Go check the source code!';
   return bot.sendMessage(msg.chat.id, text);
 });
