@@ -107,9 +107,9 @@ TeleBot.prototype = {
   sendVideo: function(id, video, opt) {
     return sendFile.call(this, 'video', id, video, opt);
   },
-  setWebhook: function(url) {
+  setWebhook: function(url, certificate) {
     this.event('setWebhook', arguments);
-    return this.request('/setWebhook', { url: url });
+    return this.request('/setWebhook', { url: url, certificate: certificate });
   },
 /* Send request to server */
   request: function(url, form, data) {
