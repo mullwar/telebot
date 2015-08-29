@@ -6,7 +6,7 @@ var mime = require('mime-db');
 /* Globals */
 
 var TYPES = [
-  'text', 'audio', 'document', 'photo',
+  'text', 'audio', 'voice', 'document', 'photo',
   'sticker', 'video', 'contact', 'location'
 ];
 
@@ -94,6 +94,9 @@ TeleBot.prototype = {
   },
   sendAudio: function(id, audio, opt) {
     return sendFile.call(this, 'audio', id, audio, opt);
+  },
+  sendVoice: function(id, voice, opt) {
+    return sendFile.call(this, 'voice', id, voice, opt);
   },
   sendDocument: function(id, doc, opt) {
     return sendFile.call(this, 'document', id, doc, opt);
