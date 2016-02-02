@@ -291,8 +291,8 @@ TeleBot.prototype = {
 function props(form, opt) {
   // Reply to message
   if (opt.reply) form['reply_to_message_id'] = opt.reply;
-  // Markdown support for message (bold, italic, urls and preformatted text)
-  if (opt.parse_mode) form['parse_mode'] = opt.parse_mode;
+  // Markdown/HTML support for message (bold, italic, urls and preformatted text)
+  if (opt.parse) form['parse_mode'] = opt.parse;
   // Markup object
   if (opt.markup !== undefined) {
     if (opt.markup == 'hide' || opt.markup === false) {
