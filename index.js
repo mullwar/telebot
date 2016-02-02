@@ -24,6 +24,7 @@ var TeleBot = function(cfg) {
   self.token = cfg.token;
   self.id = self.token.split(':')[0];
   self.api = 'https://api.telegram.org/bot' + self.token;
+  self.fileLink = 'https://api.telegram.org/file/bot' + self.token + '/';
   self.limit = Number(cfg.limit) || 100;
   self.timeout = cfg.timeout >= 0 ? cfg.timeout : 0;
   self.pool = true;
@@ -53,6 +54,15 @@ TeleBot.prototype = {
   getMe: function() {
     this.event('getMe', arguments);
     return this.request('/getMe');
+  },
+  getFile: function(fileId) {
+    this.event('getFile', arguments);
+    var self = this;
+    return this.request('/getFile', { file_id: fileId }).then(function(file) {
+      var result = file.result;
+      result.fileLink = self.fileLink + result.file_path;
+      return result;
+    });
   },
   forwardMessage: function(id, fromId, messageId) {
     this.event('forwardMessage', arguments);
