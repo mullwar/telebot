@@ -6,13 +6,13 @@ Easy way to write Telegram bots.
 
 ## Installation
 
-Download and install via [npm](https://www.npmjs.com/package/telebot) package manager:
+Download and install via [npm](https://www.npmjs.com/package/telebot) package manager (stable):
 
 ```
 npm install telebot
 ```
 
-Or clone directly from git:
+Or clone fresh code directly from git:
 
 ```
 git clone https://github.com/kosmodrey/telebot.git
@@ -170,6 +170,10 @@ TeleBot use standard [Telegram Bot API](https://core.telegram.org/bots/api#avail
 ##### `getMe()`
 
 A simple method for testing your bot's auth token.
+
+##### `getFile(<fileId>)`
+
+Use this method to get basic info about a file and prepare it for downloading.
 
 ##### `sendMessage(<id>, <text>, <options:{reply, markup}>)`
 
