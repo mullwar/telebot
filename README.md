@@ -88,11 +88,12 @@ bot.on(['/start', '/help'], function(msg) {
 
 #### Action events:
 
-*getMe, forwardMessage, getUserPhoto, sendAction, sendMessage, sendLocation, sendPhoto, sendAudio, sendDocument, sendSticker, sendVideo, setWebhook*
+*getMe, answerQuery, getFile, forwardMessage, getUserPhoto, sendAction, sendMessage, sendLocation, sendPhoto, sendAudio, sendDocument, sendSticker, sendVideo, setWebhook*
 
 ### Telegram message events:
 
 - **&#42;** - any type of message
+- **query** – inline query
 - **text** – text message
 - **audio** – audio file
 - **document** – document file (any kind)
@@ -122,7 +123,7 @@ This code adds emoji to every text message.
 
 ### Standart names:
 
-- **message** - process every message
+- **message** - process every message (including `InlineQuery` and `ChosenInlineResult`)
 - **update** - process update data (bunch of messages)
 
 ## Modules
@@ -153,7 +154,11 @@ Run data modifiers.
 
 ##### `keyboard([<arrays>], <options:{resize, once, selective}>)`
 
-Creates `ReplyKeyboardMarkup` keyboard `markup` object
+Creates `ReplyKeyboardMarkup` keyboard `markup` object.
+
+##### `answerList(<queryId>)`
+
+Creates `answerInlineQuery` answer list object.
 
 ##### `connect()`
 
@@ -170,6 +175,10 @@ TeleBot use standard [Telegram Bot API](https://core.telegram.org/bots/api#avail
 ##### `getMe()`
 
 A simple method for testing your bot's auth token.
+
+##### `answerQuery(<answerList>)`
+
+Use this method to send `answerList` to an inline query.
 
 ##### `getFile(<fileId>)`
 
@@ -201,7 +210,7 @@ Use this method to send `.webp` stickers.
 
 ##### `sendVideo(<id>, <video:[id|url|stream]>, <options:{name, reply, markup}>)`
 
-Use this method to send video files, Telegram clients support `mp4` videos (other formats may be sent as `Document`). 
+Use this method to send video files, Telegram clients support `mp4` videos (other formats may be sent as `Document`).
 
 ##### `sendLocation(<id>, [<latitude>, <longitude>], <options:{reply, markup}>)`
 

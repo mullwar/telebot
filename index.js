@@ -7,7 +7,7 @@ var mime = require('mime-db');
 
 var TYPES = [
   'text', 'audio', 'voice', 'document', 'photo',
-  'sticker', 'video', 'contact', 'location'
+  'sticker', 'video', 'contact', 'location', 'query'
 ];
 
 var RE = {
@@ -36,6 +36,40 @@ var TeleBot = function(cfg) {
   self.modList = {};
 };
 
+/* Answer List */
+
+var answerList = function(queryId) {
+  this.id = queryId;
+  this.list = [];
+};
+
+answerList.prototype = {
+  results: function() {
+    return JSON.stringify(this.list);
+  },
+  add: function(type, set) {
+    set = set || {};
+    set.type = type;
+    this.list.push(set);
+    return set;
+  }
+};
+
+// Add answer methods
+(function() {
+  var methods = {
+    addArticle: 'article', addPhoto: 'photo', addVideo: 'video',
+    addGif: 'gif', addVideoGif: 'mpeg4_gif'
+  };
+  for (var prop in methods) {
+    answerList.prototype[prop] = (function(name) {
+      return function(set) {
+        return this.add(name, set);
+      };
+    })(methods[prop]);
+  }
+}());
+
 TeleBot.prototype = {
 /* Modules */
   use: function(fn) {
@@ -50,10 +84,18 @@ TeleBot.prototype = {
     if (opt.selective) markup['selective'] = opt.selective;
     return JSON.stringify(markup);
   },
+  /* Answer */
+  answerList: answerList,
 /* Actions */
   getMe: function() {
     this.event('getMe', arguments);
     return this.request('/getMe');
+  },
+  answerQuery: function(answers, opt) {
+    this.event('answerQuery', arguments);
+    return this.request('/answerInlineQuery', {
+      inline_query_id: answers.id, results: answers.results(),
+    });
   },
   getFile: function(fileId) {
     this.event('getFile', arguments);
@@ -181,7 +223,10 @@ TeleBot.prototype = {
             if (self.updateId < nextId) self.updateId = nextId;
             // Run message processors
             var temp = self.modRun('message', {
-              msg: update['message'] || {}, me: me
+              msg: update['message'] ||
+              update['inline_query'] ||
+              update['chosen_inline_result'] || {},
+              me: me
             });
             var msg = temp.msg, me = temp.me;
             for (var type of TYPES) {
@@ -236,7 +281,7 @@ TeleBot.prototype = {
         var out = fn.call(fired.self, fired.data, fired.details);
         if (out instanceof Promise) out.catch(function(error) {
           console.error('[error.event.fired]', error.stack || error);
-          if (type != 'error') 
+          if (type != 'error')
             self.event('error', { error: error, data: fired.data });
         });
       }
@@ -271,7 +316,7 @@ TeleBot.prototype = {
           }
           function errorHandler(error) {
             console.error('[error.event]', error.stack || error);
-            if (type != 'error') 
+            if (type != 'error')
               self.event('error', { error: error, data: data });
             return reject(error);
           }
@@ -299,6 +344,8 @@ TeleBot.prototype = {
 /* Functions */
 
 function props(form, opt) {
+  opt = opt || {};
+  form = form || {};
   // Reply to message
   if (opt.reply) form['reply_to_message_id'] = opt.reply;
   // Markdown/HTML support for message (bold, italic, urls and preformatted text)
