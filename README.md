@@ -167,7 +167,7 @@ Creates `answerInlineQuery` answer list object.
 
 Start pulling updates.
 
-##### `disconnect()`
+##### `disconnect(<message>)`
 
 Stop pulling updates.
 
