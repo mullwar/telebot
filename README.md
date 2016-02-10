@@ -32,6 +32,7 @@ var bot = new TeleBot({
   sleep: 1000, // How often check updates (in ms)
   timeout: 0, // Update pulling timeout (0 - short polling)
   limit: 100, // Limits the number of updates to be retrieved
+  retryTimeout: 5000 // Reconnecting timeout (in ms)
 });
 ```
 
@@ -82,6 +83,8 @@ bot.on(['/start', '/help'], function(msg) {
 - **/\<cmd\>** – on command
 - **connect** – bot connected
 - **disconnect** – bot disconnected
+- **reconnecting** – bot reconnecting
+- **reconnected** – bot successfully reconnected
 - **update** - on update
 - **tick** – on bot tick
 - **error** – an error occurred

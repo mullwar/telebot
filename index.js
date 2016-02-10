@@ -27,6 +27,8 @@ var TeleBot = function(cfg) {
   self.fileLink = 'https://api.telegram.org/file/bot' + self.token + '/';
   self.limit = Number(cfg.limit) || 100;
   self.timeout = cfg.timeout >= 0 ? cfg.timeout : 0;
+  self.retryTimeout = cfg.retryTimeout >= 0 ? cfg.retryTimeout : 5000;
+  self.retry = false;
   self.pool = true;
   self.loopFn = null;
   self.looping = false;
@@ -187,11 +189,30 @@ TeleBot.prototype = {
       if (!self.pool) return;
       self.pool = false;
       self.getUpdate().then(function() {
+        if (self.retry) {
+          var now = Date.now();
+          var diff = (now - self.retry) / 1000;
+          console.log('[info.update] reconnected after ' + diff + ' seconds');
+          self.event('reconnected', {
+            startTime: self.retry, endTime: now, diffTime: diff
+          });
+          self.retry = false;
+        }
         return self.event('tick');
       }).then(function() {
         self.pool = true;
       }).catch(function(error) {
+        if (self.retry === false) self.retry = Date.now();
         console.error('[error.update]', error.stack || error);
+        self.event('error', { error: error });
+        return Promise.reject();
+      }).catch(function() {
+        var seconds = self.retryTimeout / 1000;
+        console.log('[info.update] reconnecting in ' + seconds + ' seconds...');
+        self.event('reconnecting');
+        setTimeout(function() {
+          self.pool = true;
+        }, self.retryTimeout);
       });
     }, self.sleep);
   },
