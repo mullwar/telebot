@@ -4,7 +4,7 @@
   "description": "Easy way to write Telegram bots.",
   "main": "index.js",
   "engines": {
-    "node": ">= 0.12.0"
+    "node": ">= 4.3.0"
   },
   "dependencies": {
     "request": "^2.60.0",
