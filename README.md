@@ -25,9 +25,9 @@ npm install
 Import `telebot` module and create a new bot object:
 
 ```js
-var TeleBot = require('telebot');
+const TeleBot = require('telebot');
 
-var bot = new TeleBot({
+const bot = new TeleBot({
   token: '-PASTEYOURTELEGRAMBOTAPITOKENHERE-',
   sleep: 1000, // How often check updates (in ms)
   timeout: 0, // Update pulling timeout (0 - short polling)
@@ -41,10 +41,10 @@ var bot = new TeleBot({
 To start getting updates, use ```bot.connect()``` and ```bot.disconnect()``` to stop.
 
 ```js
-bot.on('text', function(msg) {
-  var id = msg.from.id;
-  var mId = msg.message_id;
-  var firstName = msg.from.first_name;
+bot.on('text', msg => {
+  let id = msg.from.id;
+  let mId = msg.message_id;
+  let firstName = msg.from.first_name;
   return bot.sendMessage(id, 'Welcome, ' + firstName + '!', { reply: mId });
 });
 
@@ -62,9 +62,9 @@ Use ```bot.on(<event>, <function>)``` to handle all possible events.
 To catch a command with arguments, just add a slash:
 
 ```js
-bot.on('/hello', function(msg) {
-  var first = this.cmd[1] || 'Anonymous';
-  var last = this.cmd[2] || '';
+bot.on('/hello', msg => {
+  let first = this.cmd[1] || 'Anonymous';
+  let last = this.cmd[2] || '';
   return bot.sendMessage(msg.from.id, 'Hello, ' + first + ' ' + last + '!');
 });
 ```
@@ -72,7 +72,7 @@ bot.on('/hello', function(msg) {
 Also, you can catch multiple events:
 
 ```js
-bot.on(['/start', '/help'], function(msg) {
+bot.on(['/start', '/help'], msg => {
   return bot.sendMessage(msg.from.id, 'Bam!');
 });
 ```
@@ -113,8 +113,8 @@ bot.on(['/start', '/help'], function(msg) {
 You can add modifier to process data, before passing to event handler.
 
 ```
-bot.mod('message', function(data) {
-  var msg = data.msg;
+bot.mod('message', data => {
+  let msg = data.msg;
   if (msg.text) {
     msg.text = '📢 ' + msg.text;
   }
