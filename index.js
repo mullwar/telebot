@@ -1,25 +1,32 @@
 'use strict';
 
-var request = require('request');
-var mime = require('mime-db');
+const
+  request = require('request'),
+  mime = require('mime-db');
 
 /* Globals */
 
-var TYPES = [
+const MESSAGE_TYPES = [
   'text', 'audio', 'voice', 'document', 'photo',
   'sticker', 'video', 'contact', 'location', 'query'
 ];
 
-var RE = {
+const ANSWER_METHODS = {
+  addArticle: 'article', addPhoto: 'photo', addVideo: 'video',
+  addGif: 'gif', addVideoGif: 'mpeg4_gif'
+};
+
+const REGEX = {
   cmd: /^\/([а-я\w\d]+)/,
   url: /^https?\:\/\/|www\./,
   name: /[^/\\&\?]+\.\w{3,4}(?=([\?&].*$|$))/
 };
 
+
 /* Telegram Bot */
 
-var TeleBot = function(cfg) {
-  var self = this;
+const TeleBot = function(cfg) {
+  const self = this;
   self.cfg = cfg;
   self.token = cfg.token;
   self.id = self.token.split(':')[0];
@@ -40,16 +47,16 @@ var TeleBot = function(cfg) {
 
 /* Answer List */
 
-var answerList = function(queryId) {
+const answerList = function(queryId) {
   this.id = queryId;
   this.list = [];
 };
 
 answerList.prototype = {
-  results: function() {
+  results() {
     return JSON.stringify(this.list);
   },
-  add: function(type, set) {
+  add(type, set) {
     set = set || {};
     set.type = type;
     this.list.push(set);
@@ -58,29 +65,25 @@ answerList.prototype = {
 };
 
 // Add answer methods
-(function() {
-  var methods = {
-    addArticle: 'article', addPhoto: 'photo', addVideo: 'video',
-    addGif: 'gif', addVideoGif: 'mpeg4_gif'
-  };
-  for (var prop in methods) {
-    answerList.prototype[prop] = (function(name) {
+{
+  for (let prop in ANSWER_METHODS) {
+    answerList.prototype[prop] = (name => {
       return function(set) {
         return this.add(name, set);
       };
-    })(methods[prop]);
+    })(ANSWER_METHODS[prop]);
   }
-}());
+}
 
 TeleBot.prototype = {
 /* Modules */
-  use: function(fn) {
+  use(fn) {
     return fn.call(this, this);
   },
 /* Keyboard */
-  keyboard: function(keys, opt) {
+  keyboard(keyboard, opt) {
     opt = opt || {};
-    var markup = { keyboard: keys };
+    const markup = { keyboard };
     if (opt.resize === true) markup['resize_keyboard'] = true;
     if (opt.once === true) markup['one_time_keyboard'] = true;
     if (opt.selective) markup['selective'] = opt.selective;
@@ -89,88 +92,86 @@ TeleBot.prototype = {
   /* Answer */
   answerList: answerList,
 /* Actions */
-  getMe: function() {
+  getMe() {
     this.event('getMe', arguments);
     return this.request('/getMe');
   },
-  answerQuery: function(answers, opt) {
+  answerQuery(answers, opt) {
     this.event('answerQuery', arguments);
     return this.request('/answerInlineQuery', {
       inline_query_id: answers.id, results: answers.results(),
     });
   },
-  getFile: function(fileId) {
+  getFile(fileId) {
     this.event('getFile', arguments);
-    var self = this;
+    const self = this;
     return this.request('/getFile', { file_id: fileId }).then(function(file) {
-      var result = file.result;
+      const result = file.result;
       result.fileLink = self.fileLink + result.file_path;
       return result;
     });
   },
-  forwardMessage: function(id, fromId, messageId) {
+  forwardMessage(id, fromId, messageId) {
     this.event('forwardMessage', arguments);
     return this.request('/forwardMessage', {
       chat_id: id, from_chat_id: fromId, message_id: messageId
     });
   },
-  getUserPhoto: function(id, opt) {
+  getUserPhoto(id, opt) {
     this.event('getUserPhoto', arguments);
     opt = opt || {};
-    var form = { user_id: id };
+    const form = { user_id: id };
     if (opt.offset) form['offset'] = opt.offset;
     if (opt.limit) form['limit'] = opt.limit;
     return this.request('/getUserProfilePhotos', form);
   },
-  sendAction: function(id, action) {
+  sendAction(id, action) {
     this.event('sendAction', arguments);
-    return this.request('/sendChatAction', {
-      chat_id: id, action: action
-    });
+    return this.request('/sendChatAction', { chat_id: id, action });
   },
-  sendMessage: function(id, text, opt) {
+  sendMessage(id, text, opt) {
     this.event('sendMessage', arguments);
     opt = opt || {};
-    var form = props({ chat_id: id, text: text }, opt);
+    const form = props({ chat_id: id, text }, opt);
     if (opt.preview === false) form['disable_web_page_preview'] = true;
     return this.request('/sendMessage', form);
   },
-  sendLocation: function(id, position, opt) {
+  sendLocation(id, position, opt) {
     this.event('sendLocation', arguments);
     opt = opt || {};
-    var form = props({
+    const form = props({
       chat_id: id, latitude: position[0], longitude: position[1]
     }, opt);
     return this.request('/sendLocation', form);
   },
-  sendPhoto: function(id, photo, opt) {
+  sendPhoto(id, photo, opt) {
     return sendFile.call(this, 'photo', id,  photo, opt);
   },
-  sendAudio: function(id, audio, opt) {
+  sendAudio(id, audio, opt) {
     return sendFile.call(this, 'audio', id, audio, opt);
   },
-  sendVoice: function(id, voice, opt) {
+  sendVoice(id, voice, opt) {
     return sendFile.call(this, 'voice', id, voice, opt);
   },
-  sendDocument: function(id, doc, opt) {
+  sendDocument(id, doc, opt) {
     return sendFile.call(this, 'document', id, doc, opt);
   },
-  sendSticker: function(id, sticker, opt) {
+  sendSticker(id, sticker, opt) {
     return sendFile.call(this, 'sticker', id, sticker, opt);
   },
-  sendVideo: function(id, video, opt) {
+  sendVideo(id, video, opt) {
     return sendFile.call(this, 'video', id, video, opt);
   },
-  setWebhook: function(url, certificate) {
+  setWebhook(url, certificate) {
     this.event('setWebhook', arguments);
-    return this.request('/setWebhook', { url: url, certificate: certificate });
+    return this.request('/setWebhook', { url, certificate });
   },
 /* Send request to server */
-  request: function(url, form, data) {
-    var self = this, options = { url: self.api + url, json: true };
+  request(url, form, data) {
+    const self = this, options = { url: self.api + url, json: true };
     if (form) { options.form = form; } else { options.formData = data; };
-    return new Promise(function(resolve, reject) {
-      request.post(options, function(error, response, body) {
+    return new Promise((resolve, reject) => {
+      request.post(options, (error, response, body) => {
         if (error || !body.ok || response.statusCode == 404) {
           return reject(error || body.description || body.error_code || 404);
         }
@@ -179,19 +180,19 @@ TeleBot.prototype = {
     });
   },
 /* Connection */
-  connect: function() {
-    var self = this;
+  connect() {
+    const self = this;
     self.looping = true;
     console.log('[info] bot started');
     self.event('connect');
-    self.loopFn = setInterval(function() {
+    self.loopFn = setInterval(x => {
       if (!self.looping) clearInterval(self.loopFn);
       if (!self.pool) return;
       self.pool = false;
-      self.getUpdate().then(function() {
+      self.getUpdate().then(x => {
         if (self.retry) {
-          var now = Date.now();
-          var diff = (now - self.retry) / 1000;
+          const now = Date.now();
+          const diff = (now - self.retry) / 1000;
           console.log('[info.update] reconnected after ' + diff + ' seconds');
           self.event('reconnected', {
             startTime: self.retry, endTime: now, diffTime: diff
@@ -199,31 +200,29 @@ TeleBot.prototype = {
           self.retry = false;
         }
         return self.event('tick');
-      }).then(function() {
+      }).then(x => {
         self.pool = true;
-      }).catch(function(error) {
+      }).catch(error => {
         if (self.retry === false) self.retry = Date.now();
         console.error('[error.update]', error.stack || error);
-        self.event('error', { error: error });
+        self.event('error', { error });
         return Promise.reject();
-      }).catch(function() {
-        var seconds = self.retryTimeout / 1000;
+      }).catch(x => {
+        const seconds = self.retryTimeout / 1000;
         console.log('[info.update] reconnecting in ' + seconds + ' seconds...');
         self.event('reconnecting');
-        setTimeout(function() {
-          self.pool = true;
-        }, self.retryTimeout);
+        setTimeout(x => (self.pool = true), self.retryTimeout);
       });
     }, self.sleep);
   },
-  disconnect: function(message) {
+  disconnect(message) {
     this.looping = false;
     console.log('[info] bot disconnected' + (message ? ': ' + message : ''));
     this.event('disconnect', message);
   },
 /* Fetch updates */
-  getUpdate: function() {
-    var self = this;
+  getUpdate() {
+    const self = this;
     // Request an update
     return self.request('/getUpdates', {
       offset: self.updateId, limit: self.limit, timeout: self.timeout
@@ -231,26 +230,25 @@ TeleBot.prototype = {
       // Check for update
       var data = body.result;
       if (!data.length) return Promise.resolve();
-      return new Promise(function(resolve, reject) {
-        self.event('update', data).then(function(output) {
+      return new Promise((resolve, reject) => {
+        self.event('update', data).then(output => {
           var me = extend({}, output);
           // Run update processors
-          var temp = self.modRun('update', { data: data, me: me });
+          var temp = self.modRun('update', { data, me });
           data = temp.data, me = temp.me;
           // Check every message in update
-          for (var update of data) {
+          for (let update of data) {
             // Set update ID
-            var nextId = ++update['update_id'];
+            let nextId = ++update['update_id'];
             if (self.updateId < nextId) self.updateId = nextId;
             // Run message processors
-            var temp = self.modRun('message', {
-              msg: update['message'] ||
-              update['inline_query'] ||
-              update['chosen_inline_result'] || {},
-              me: me
+            let temp = self.modRun('message', {
+              me, msg:
+                update['message'] || update['inline_query'] ||
+                update['chosen_inline_result'] || {}
             });
             var msg = temp.msg, me = temp.me;
-            for (var type of TYPES) {
+            for (let type of MESSAGE_TYPES) {
               // Check for Telegram API documented types
               if (!(type in msg)) continue;
               me.type = type;
@@ -258,7 +256,7 @@ TeleBot.prototype = {
               self.event(['*', type], msg, me);
               // Check for command
               if (type == 'text') {
-                var match = RE.cmd.exec(msg.text);
+                const match = REGEX.cmd.exec(msg.text);
                 if (!match) continue;
                 // Command found
                 me.cmd = msg.text.split(' ');
@@ -270,40 +268,40 @@ TeleBot.prototype = {
       });
     });
   },
-  get: function(url, json) {
-    return new Promise(function(resolve, reject) {
-      request.get({ url: url, json: !!json }, function(er, re, data) {
-        if (er || !data) return reject(er);
+  get(url, json) {
+    return new Promise((resolve, reject) => {
+      request.get({ url, json: !!json }, (error, response, data) => {
+        if (error || !data) return reject(response);
         return resolve(data);
       });
     });
   },
-  mod: function(name, fn) {
+  mod(name, fn) {
     if (!this.modList[name]) this.modList[name] = [];
     if (this.modList[name].indexOf(fn) !== -1) return;
     this.modList[name].push(fn);
   },
-  modRun: function(name, data) {
-    var self = this, list = self.modList[name];
+  modRun(name, data) {
+    const self = this, list = self.modList[name];
     if (!list || !list.length) return data;
-    for (var fn of list) data = fn.call(self, data);
+    for (let fn of list) data = fn.call(self, data);
     return data;
   },
 /* Events */
-  on: function(types, fn) {
-    var self = this;
+  on(types, fn) {
+    const self = this;
     if (typeof types == 'string') types = [types];
-    for (var type of types) {
-      var event = self.eventList[type];
+    for (let type of types) {
+      let event = self.eventList[type];
       if (!event) {
         self.eventList[type] = { fired: null, list: [] };
       } else if (event.fired) {
-        var fired = event.fired;
-        var out = fn.call(fired.self, fired.data, fired.details);
-        if (out instanceof Promise) out.catch(function(error) {
+        const fired = event.fired;
+        const out = fn.call(fired.self, fired.data, fired.details);
+        if (out instanceof Promise) out.catch(error => {
           console.error('[error.event.fired]', error.stack || error);
           if (type != 'error')
-            self.event('error', { error: error, data: fired.data });
+            self.event('error', { error, data: fired.data });
         });
       }
       event = self.eventList[type].list;
@@ -311,22 +309,21 @@ TeleBot.prototype = {
       event.push(fn);
     }
   },
-  event: function(types, data, me) {
-    var self = this;
-    var promises = [];
+  event(types, data, me) {
+    const self = this, promises = [];
     if (typeof types == 'string') types = [types];
-    for (var type of types) {
-      var event = this.eventList[type];
-      var details = { type: type, time: Date.now() }
-      var props = { self: me, data: data, details: details };
+    for (let type of types) {
+      let event = this.eventList[type];
+      const details = { type, time: Date.now() };
+      const props = { self: me, data, details };
       if (!event) {
         this.eventList[type] = { fired: props, list: [] };
         continue;
       }
       event.fired = props;
       event = event.list;
-      for (var fn of event) {
-        promises.push(new Promise(function(resolve, reject) {
+      for (let fn of event) {
+        promises.push(new Promise((resolve, reject) => {
           try {
             fn = fn.call(me, data, details);
             if (fn instanceof Promise)
@@ -338,7 +335,7 @@ TeleBot.prototype = {
           function errorHandler(error) {
             console.error('[error.event]', error.stack || error);
             if (type != 'error')
-              self.event('error', { error: error, data: data });
+              self.event('error', { error, data });
             return reject(error);
           }
         }));
@@ -346,17 +343,18 @@ TeleBot.prototype = {
     }
     return Promise.all(promises);
   },
-  clean: function(type) {
+  clean(type) {
     if (!this.eventList.hasOwnProperty(type)) return;
     this.eventList[type].fired = null;
   },
-  remove: function(type, fn) {
+  remove(type, fn) {
     if (!this.eventList.hasOwnProperty(type)) return;
-    var event = this.eventList[type].list, index = event.indexOf(fn);
+    const event = this.eventList[type].list;
+    const index = event.indexOf(fn);
     if (index === -1) return;
     event.splice(index, 1);
   },
-  destroy: function(type) {
+  destroy(type) {
     if (!this.eventList.hasOwnProperty(type)) return;
     delete this.eventList[type];
   }
@@ -389,19 +387,19 @@ function props(form, opt) {
 
 function sendFile(type, id, file, opt) {
   opt = opt || {};
-  var self = this;
-  var form = props({ chat_id: id }, opt);
-  var url = 'send' + type.charAt(0).toUpperCase() + type.slice(1);
+  const self = this;
+  const form = props({ chat_id: id }, opt);
+  let url = 'send' + type.charAt(0).toUpperCase() + type.slice(1);
   // Send bot action event
   self.event(url, [].slice.call(arguments).splice(0, 1));
   // Add caption to photo
   if (type == 'photo' && opt.caption) form.caption = opt.caption;
   url = '/' + url;
-  if (typeof file == 'string' && RE.url.test(file)) {
+  if (typeof file == 'string' && REGEX.url.test(file)) {
     // If url, get blob and send to user
-    return getBlob(file).then(function(data) {
+    return getBlob(file).then(data => {
       if (!opt.name) {
-        var match = RE.name.exec(file);
+        const match = REGEX.name.exec(file);
         opt.name = match ? match[0] : type + '.' + mime[data.type].extensions[0];
       }
       form[type] = {
@@ -418,18 +416,18 @@ function sendFile(type, id, file, opt) {
 }
 
 function getBlob(url) {
-  return new Promise(function(resolve, reject) {
-    request.get({ url: url, encoding: null }, function(er, re, buffer) {
-      if (er || !buffer) return reject(er);
-      return resolve({ buffer: buffer, type: re.headers['content-type'] });
+  return new Promise((resolve, reject) => {
+    request.get({ url, encoding: null }, (error, response, buffer) => {
+      if (error || !buffer) return reject(error);
+      return resolve({ buffer, type: response.headers['content-type'] });
     });
   });
 }
 
 function extend(me, input) {
-  for (var obj of input) {
-    for (var name in obj) {
-      var key = me[name], value = obj[name];
+  for (let obj of input) {
+    for (let name in obj) {
+      const key = me[name], value = obj[name];
       if (key !== undefined) {
         if (!Array.isArray(key)) me[name] = [key];
         me[name].push(value);
