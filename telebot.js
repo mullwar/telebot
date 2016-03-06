@@ -364,6 +364,8 @@ function props(form, opt) {
   if (opt.reply) form['reply_to_message_id'] = opt.reply;
   // Markdown/HTML support for message
   if (opt.parse) form['parse_mode'] = opt.parse;
+  // User notification
+  if (opt.notify !== undefined) form['disable_notification'] = !opt.notify;
   // Markup object
   if (opt.markup !== undefined) {
     if (opt.markup == 'hide' || opt.markup === false) {
