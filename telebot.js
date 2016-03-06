@@ -1,8 +1,10 @@
 'use strict';
 
 const
+  fs = require('fs'),
   nurl = require('url'),
   path = require('path'),
+  stream = require('stream'),
   request = require('request');
 
 /* Globals */
@@ -391,25 +393,41 @@ function sendFile(type, id, file, opt) {
   // Set file caption
   if (opt.caption) form.caption = opt.caption;
   url = '/' + url;
-  if (typeof file == 'string' && REGEX.url.test(file)) {
-    // If url, get blob and send to user
-    return getBlob(file).then(data => {
-      // Set file name
-      if (!opt.fileName) {
-        opt.fileName = path.basename(nurl.parse(file).pathname) || 'file';
-      }
-      // Data form
-      form[type] = {
-        value: data.buffer,
-        options: { filename: opt.fileName, contentType: data.type }
-      };
-      return this.request(url, null, form);
-    });
+  if (file instanceof stream.Stream) {
+    // File stream object
+    if (!opt.fileName)
+      opt.fileName = nurl.parse(path.basename(file.path)).pathname;
+    form[type] = {
+      value: file,
+      options: { filename: opt.fileName }
+    };
+  } else if (Buffer.isBuffer(file)) {
+    // File buffer
+    if (!opt.fileName) opt.fileName = 'blob_file';
+    form[type] = {
+      value: file,
+      options: { filename: opt.fileName }
+    };
+  } else if (REGEX.url.test(file)) {
+    // File url
+    if (!opt.fileName)
+      opt.fileName = path.basename(nurl.parse(file).pathname) || 'file';
+    form[type] = {
+      value: request.get(file),
+      options: { filename: opt.fileName }
+    };  
+  } else if (fs.existsSync(file)) {
+    // File location
+    if (!opt.fileName) opt.fileName = path.basename(file);
+    form[type] = {
+      value: fs.createReadStream(file),
+      options: { filename: opt.fileName }
+    };
   } else {
-    // String as 'file_id'
+    // File as 'file_id'
     form[type] = file;
-    return this.request(url, null, form);
   }
+  return this.request(url, null, form);
 }
 
 function getBlob(url) {
