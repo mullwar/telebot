@@ -141,7 +141,7 @@ class TeleBot {
     return new Promise((resolve, reject) => {
       request.post(options, (error, response, body) => {
         if (error || !body.ok || response.statusCode == 404) {
-          return reject(error || body.description || body.error_code || 404);
+          return reject(error || body || 404);
         }
         return resolve(body);
       });
@@ -275,7 +275,7 @@ class TeleBot {
     }
   }
   event(types, data, me) {
-    const promises = [];
+    const self = this, promises = [];
     if (typeof types == 'string') types = [types];
     for (let type of types) {
       let event = this.eventList[type];
@@ -300,7 +300,7 @@ class TeleBot {
           function errorHandler(error) {
             console.error('[error.event]', error.stack || error);
             if (type != 'error')
-              this.event('error', { error, data });
+              self.event('error', { error, data });
             return reject(error);
           }
         }));
@@ -365,7 +365,7 @@ function props(form, opt) {
   // Markdown/HTML support for message
   if (opt.parse) form['parse_mode'] = opt.parse;
   // User notification
-  if (opt.notify !== undefined) form['disable_notification'] = !opt.notify;
+  if (opt.notify === false) form['disable_notification'] = true;
   // Markup object
   if (opt.markup !== undefined) {
     if (opt.markup == 'hide' || opt.markup === false) {
@@ -388,8 +388,8 @@ function sendFile(type, id, file, opt) {
   let url = 'send' + type.charAt(0).toUpperCase() + type.slice(1);
   // Send bot action event
   this.event(url, [].slice.call(arguments).splice(0, 1));
-  // Add caption to photo
-  if (type == 'photo' && opt.caption) form.caption = opt.caption;
+  // Set file caption
+  if (opt.caption) form.caption = opt.caption;
   url = '/' + url;
   if (typeof file == 'string' && REGEX.url.test(file)) {
     // If url, get blob and send to user
