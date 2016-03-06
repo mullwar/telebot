@@ -1,8 +1,9 @@
 'use strict';
 
 const
-  request = require('request'),
-  mime = require('mime-db');
+  nurl = require('url'),
+  path = require('path'),
+  request = require('request');
 
 /* Globals */
 
@@ -18,8 +19,7 @@ const ANSWER_METHODS = {
 
 const REGEX = {
   cmd: /^\/([а-я\w\d]+)/,
-  url: /^https?\:\/\/|www\./,
-  name: /[^/\\&\?]+\.\w{3,4}(?=([\?&].*$|$))/
+  url: /^https?\:\/\/|www\./
 };
 
 /* Telegram Bot */
@@ -394,13 +394,14 @@ function sendFile(type, id, file, opt) {
   if (typeof file == 'string' && REGEX.url.test(file)) {
     // If url, get blob and send to user
     return getBlob(file).then(data => {
-      if (!opt.name) {
-        const match = REGEX.name.exec(file);
-        opt.name = match ? match[0] : type + '.' + mime[data.type].extensions[0];
+      // Set file name
+      if (!opt.fileName) {
+        opt.fileName = path.basename(nurl.parse(file).pathname) || 'file';
       }
+      // Data form
       form[type] = {
         value: data.buffer,
-        options: { filename: opt.name, contentType: data.type }
+        options: { filename: opt.fileName, contentType: data.type }
       };
       return this.request(url, null, form);
     });
