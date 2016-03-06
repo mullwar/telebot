@@ -73,10 +73,9 @@ class TeleBot {
   }
   getFile(fileId) {
     this.event('getFile', arguments);
-    const self = this;
-    return this.request('/getFile', { file_id: fileId }).then(function(file) {
+    return this.request('/getFile', { file_id: fileId }).then(file => {
       const result = file.result;
-      result.fileLink = self.fileLink + result.file_path;
+      result.fileLink = this.fileLink + result.file_path;
       return result;
     });
   }
@@ -137,7 +136,7 @@ class TeleBot {
   }
   /* Send request to server */
   request(url, form, data) {
-    const self = this, options = { url: self.api + url, json: true };
+    const options = { url: this.api + url, json: true };
     if (form) { options.form = form; } else { options.formData = data; };
     return new Promise((resolve, reject) => {
       request.post(options, (error, response, body) => {
@@ -150,39 +149,38 @@ class TeleBot {
   }
   /* Connection */
   connect() {
-    const self = this;
-    self.looping = true;
+    this.looping = true;
     console.log('[info] bot started');
-    self.event('connect');
-    self.loopFn = setInterval(x => {
-      if (!self.looping) clearInterval(self.loopFn);
-      if (!self.pool) return;
-      self.pool = false;
-      self.getUpdate().then(x => {
-        if (self.retry) {
+    this.event('connect');
+    this.loopFn = setInterval(x => {
+      if (!this.looping) clearInterval(this.loopFn);
+      if (!this.pool) return;
+      this.pool = false;
+      this.getUpdate().then(x => {
+        if (this.retry) {
           const now = Date.now();
-          const diff = (now - self.retry) / 1000;
+          const diff = (now - this.retry) / 1000;
           console.log('[info.update] reconnected after ' + diff + ' seconds');
-          self.event('reconnected', {
-            startTime: self.retry, endTime: now, diffTime: diff
+          this.event('reconnected', {
+            startTime: this.retry, endTime: now, diffTime: diff
           });
-          self.retry = false;
+          this.retry = false;
         }
-        return self.event('tick');
+        return this.event('tick');
       }).then(x => {
-        self.pool = true;
+        this.pool = true;
       }).catch(error => {
-        if (self.retry === false) self.retry = Date.now();
+        if (this.retry === false) this.retry = Date.now();
         console.error('[error.update]', error.stack || error);
-        self.event('error', { error });
+        this.event('error', { error });
         return Promise.reject();
       }).catch(x => {
-        const seconds = self.retryTimeout / 1000;
+        const seconds = this.retryTimeout / 1000;
         console.log('[info.update] reconnecting in ' + seconds + ' seconds...');
-        self.event('reconnecting');
-        setTimeout(x => (self.pool = true), self.retryTimeout);
+        this.event('reconnecting');
+        setTimeout(x => (this.pool = true), this.retryTimeout);
       });
-    }, self.sleep);
+    }, this.sleep);
   }
   disconnect(message) {
     this.looping = false;
@@ -191,27 +189,26 @@ class TeleBot {
   }
   /* Fetch updates */
   getUpdate() {
-    const self = this;
     // Request an update
-    return self.request('/getUpdates', {
-      offset: self.updateId, limit: self.limit, timeout: self.timeout
-    }).then(function(body) {
+    return this.request('/getUpdates', {
+      offset: this.updateId, limit: this.limit, timeout: this.timeout
+    }).then(body => {
       // Check for update
       var data = body.result;
       if (!data.length) return Promise.resolve();
       return new Promise((resolve, reject) => {
-        self.event('update', data).then(output => {
+        this.event('update', data).then(output => {
           var me = extend({}, output);
           // Run update processors
-          var temp = self.modRun('update', { data, me });
+          var temp = this.modRun('update', { data, me });
           data = temp.data, me = temp.me;
           // Check every message in update
           for (let update of data) {
             // Set update ID
             let nextId = ++update['update_id'];
-            if (self.updateId < nextId) self.updateId = nextId;
+            if (this.updateId < nextId) this.updateId = nextId;
             // Run message processors
-            let temp = self.modRun('message', {
+            let temp = this.modRun('message', {
               me, msg:
                 update['message'] || update['inline_query'] ||
                 update['chosen_inline_result'] || {}
@@ -222,14 +219,14 @@ class TeleBot {
               if (!(type in msg)) continue;
               me.type = type;
               // Send type event
-              self.event(['*', type], msg, me);
+              this.event(['*', type], msg, me);
               // Check for command
               if (type == 'text') {
                 const match = REGEX.cmd.exec(msg.text);
                 if (!match) continue;
                 // Command found
                 me.cmd = msg.text.split(' ');
-                self.event(['/*', '/' + match[1]], msg, me);
+                this.event(['/*', '/' + match[1]], msg, me);
               }
             }
           }
@@ -251,35 +248,34 @@ class TeleBot {
     this.modList[name].push(fn);
   }
   modRun(name, data) {
-    const self = this, list = self.modList[name];
+    const list = this.modList[name];
     if (!list || !list.length) return data;
-    for (let fn of list) data = fn.call(self, data);
+    for (let fn of list) data = fn.call(this, data);
     return data;
   }
   /* Events */
   on(types, fn) {
-    const self = this;
     if (typeof types == 'string') types = [types];
     for (let type of types) {
-      let event = self.eventList[type];
+      let event = this.eventList[type];
       if (!event) {
-        self.eventList[type] = { fired: null, list: [] };
+        this.eventList[type] = { fired: null, list: [] };
       } else if (event.fired) {
         const fired = event.fired;
         const out = fn.call(fired.self, fired.data, fired.details);
         if (out instanceof Promise) out.catch(error => {
           console.error('[error.event.fired]', error.stack || error);
           if (type != 'error')
-            self.event('error', { error, data: fired.data });
+            this.event('error', { error, data: fired.data });
         });
       }
-      event = self.eventList[type].list;
+      event = this.eventList[type].list;
       if (event.indexOf(fn) !== -1) return;
       event.push(fn);
     }
   }
   event(types, data, me) {
-    const self = this, promises = [];
+    const promises = [];
     if (typeof types == 'string') types = [types];
     for (let type of types) {
       let event = this.eventList[type];
@@ -304,7 +300,7 @@ class TeleBot {
           function errorHandler(error) {
             console.error('[error.event]', error.stack || error);
             if (type != 'error')
-              self.event('error', { error, data });
+              this.event('error', { error, data });
             return reject(error);
           }
         }));
@@ -386,11 +382,10 @@ function props(form, opt) {
 
 function sendFile(type, id, file, opt) {
   opt = opt || {};
-  const self = this;
   const form = props({ chat_id: id }, opt);
   let url = 'send' + type.charAt(0).toUpperCase() + type.slice(1);
   // Send bot action event
-  self.event(url, [].slice.call(arguments).splice(0, 1));
+  this.event(url, [].slice.call(arguments).splice(0, 1));
   // Add caption to photo
   if (type == 'photo' && opt.caption) form.caption = opt.caption;
   url = '/' + url;
@@ -405,12 +400,12 @@ function sendFile(type, id, file, opt) {
         value: data.buffer,
         options: { filename: opt.name, contentType: data.type }
       };
-      return self.request(url, null, form);
+      return this.request(url, null, form);
     });
   } else {
     // String as 'file_id'
     form[type] = file;
-    return self.request(url, null, form);
+    return this.request(url, null, form);
   }
 }
 
