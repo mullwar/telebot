@@ -100,14 +100,14 @@ class TeleBot {
   sendMessage(id, text, opt) {
     this.event('sendMessage', arguments);
     opt = opt || {};
-    const form = props({ chat_id: id, text }, opt);
+    const form = props.call(this, { chat_id: id, text }, opt);
     if (opt.preview === false) form['disable_web_page_preview'] = true;
     return this.request('/sendMessage', form);
   }
   sendLocation(id, position, opt) {
     this.event('sendLocation', arguments);
     opt = opt || {};
-    const form = props({
+    const form = props.call(this, {
       chat_id: id, latitude: position[0], longitude: position[1]
     }, opt);
     return this.request('/sendLocation', form);
@@ -377,12 +377,12 @@ function props(form, opt) {
       form['reply_markup'] = opt.markup;
     }
   }
-  return form;
+  return (this.modRun('property', { form, options: opt })).form;
 }
 
 function sendFile(type, id, file, opt) {
   opt = opt || {};
-  const form = props({ chat_id: id }, opt);
+  const form = props.call(this, { chat_id: id }, opt);
   let url = 'send' + type.charAt(0).toUpperCase() + type.slice(1);
   // Send bot action event
   this.event(url, [].slice.call(arguments).splice(0, 1));
