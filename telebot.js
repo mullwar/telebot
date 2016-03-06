@@ -362,7 +362,7 @@ function props(form, opt) {
   form = form || {};
   // Reply to message
   if (opt.reply) form['reply_to_message_id'] = opt.reply;
-  // Markdown/HTML support for message (bold, italic, urls and preformatted text)
+  // Markdown/HTML support for message
   if (opt.parse) form['parse_mode'] = opt.parse;
   // Markup object
   if (opt.markup !== undefined) {
