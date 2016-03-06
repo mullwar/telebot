@@ -22,65 +22,32 @@ const REGEX = {
   name: /[^/\\&\?]+\.\w{3,4}(?=([\?&].*$|$))/
 };
 
-
 /* Telegram Bot */
 
-const TeleBot = function(cfg) {
-  const self = this;
-  self.cfg = cfg;
-  self.token = cfg.token;
-  self.id = self.token.split(':')[0];
-  self.api = 'https://api.telegram.org/bot' + self.token;
-  self.fileLink = 'https://api.telegram.org/file/bot' + self.token + '/';
-  self.limit = Number(cfg.limit) || 100;
-  self.timeout = cfg.timeout >= 0 ? cfg.timeout : 0;
-  self.retryTimeout = cfg.retryTimeout >= 0 ? cfg.retryTimeout : 5000;
-  self.retry = false;
-  self.pool = true;
-  self.loopFn = null;
-  self.looping = false;
-  self.sleep = Number(cfg.sleep) || 1000;
-  self.updateId = 0;
-  self.eventList = {};
-  self.modList = {};
-};
-
-/* Answer List */
-
-const answerList = function(queryId) {
-  this.id = queryId;
-  this.list = [];
-};
-
-answerList.prototype = {
-  results() {
-    return JSON.stringify(this.list);
-  },
-  add(type, set) {
-    set = set || {};
-    set.type = type;
-    this.list.push(set);
-    return set;
+class TeleBot {
+  constructor(cfg) {
+    this.cfg = cfg;
+    this.token = cfg.token;
+    this.id = this.token.split(':')[0];
+    this.api = 'https://api.telegram.org/bot' + this.token;
+    this.fileLink = 'https://api.telegram.org/file/bot' + this.token + '/';
+    this.limit = Number(cfg.limit) || 100;
+    this.timeout = cfg.timeout >= 0 ? cfg.timeout : 0;
+    this.retryTimeout = cfg.retryTimeout >= 0 ? cfg.retryTimeout : 5000;
+    this.retry = false;
+    this.pool = true;
+    this.loopFn = null;
+    this.looping = false;
+    this.sleep = Number(cfg.sleep) || 1000;
+    this.updateId = 0;
+    this.eventList = {};
+    this.modList = {};
   }
-};
-
-// Add answer methods
-{
-  for (let prop in ANSWER_METHODS) {
-    answerList.prototype[prop] = (name => {
-      return function(set) {
-        return this.add(name, set);
-      };
-    })(ANSWER_METHODS[prop]);
-  }
-}
-
-TeleBot.prototype = {
-/* Modules */
+  /* Modules */
   use(fn) {
     return fn.call(this, this);
-  },
-/* Keyboard */
+  }
+  /* Keyboard */
   keyboard(keyboard, opt) {
     opt = opt || {};
     const markup = { keyboard };
@@ -88,20 +55,22 @@ TeleBot.prototype = {
     if (opt.once === true) markup['one_time_keyboard'] = true;
     if (opt.selective) markup['selective'] = opt.selective;
     return JSON.stringify(markup);
-  },
+  }
   /* Answer */
-  answerList: answerList,
-/* Actions */
+  answerList(id) {
+    return answerList(id);
+  }
+  /* Actions */
   getMe() {
     this.event('getMe', arguments);
     return this.request('/getMe');
-  },
+  }
   answerQuery(answers, opt) {
     this.event('answerQuery', arguments);
     return this.request('/answerInlineQuery', {
       inline_query_id: answers.id, results: answers.results(),
     });
-  },
+  }
   getFile(fileId) {
     this.event('getFile', arguments);
     const self = this;
@@ -110,13 +79,13 @@ TeleBot.prototype = {
       result.fileLink = self.fileLink + result.file_path;
       return result;
     });
-  },
+  }
   forwardMessage(id, fromId, messageId) {
     this.event('forwardMessage', arguments);
     return this.request('/forwardMessage', {
       chat_id: id, from_chat_id: fromId, message_id: messageId
     });
-  },
+  }
   getUserPhoto(id, opt) {
     this.event('getUserPhoto', arguments);
     opt = opt || {};
@@ -124,18 +93,18 @@ TeleBot.prototype = {
     if (opt.offset) form['offset'] = opt.offset;
     if (opt.limit) form['limit'] = opt.limit;
     return this.request('/getUserProfilePhotos', form);
-  },
+  }
   sendAction(id, action) {
     this.event('sendAction', arguments);
     return this.request('/sendChatAction', { chat_id: id, action });
-  },
+  }
   sendMessage(id, text, opt) {
     this.event('sendMessage', arguments);
     opt = opt || {};
     const form = props({ chat_id: id, text }, opt);
     if (opt.preview === false) form['disable_web_page_preview'] = true;
     return this.request('/sendMessage', form);
-  },
+  }
   sendLocation(id, position, opt) {
     this.event('sendLocation', arguments);
     opt = opt || {};
@@ -143,30 +112,30 @@ TeleBot.prototype = {
       chat_id: id, latitude: position[0], longitude: position[1]
     }, opt);
     return this.request('/sendLocation', form);
-  },
+  }
   sendPhoto(id, photo, opt) {
     return sendFile.call(this, 'photo', id,  photo, opt);
-  },
+  }
   sendAudio(id, audio, opt) {
     return sendFile.call(this, 'audio', id, audio, opt);
-  },
+  }
   sendVoice(id, voice, opt) {
     return sendFile.call(this, 'voice', id, voice, opt);
-  },
+  }
   sendDocument(id, doc, opt) {
     return sendFile.call(this, 'document', id, doc, opt);
-  },
+  }
   sendSticker(id, sticker, opt) {
     return sendFile.call(this, 'sticker', id, sticker, opt);
-  },
+  }
   sendVideo(id, video, opt) {
     return sendFile.call(this, 'video', id, video, opt);
-  },
+  }
   setWebhook(url, certificate) {
     this.event('setWebhook', arguments);
     return this.request('/setWebhook', { url, certificate });
-  },
-/* Send request to server */
+  }
+  /* Send request to server */
   request(url, form, data) {
     const self = this, options = { url: self.api + url, json: true };
     if (form) { options.form = form; } else { options.formData = data; };
@@ -178,8 +147,8 @@ TeleBot.prototype = {
         return resolve(body);
       });
     });
-  },
-/* Connection */
+  }
+  /* Connection */
   connect() {
     const self = this;
     self.looping = true;
@@ -214,13 +183,13 @@ TeleBot.prototype = {
         setTimeout(x => (self.pool = true), self.retryTimeout);
       });
     }, self.sleep);
-  },
+  }
   disconnect(message) {
     this.looping = false;
     console.log('[info] bot disconnected' + (message ? ': ' + message : ''));
     this.event('disconnect', message);
-  },
-/* Fetch updates */
+  }
+  /* Fetch updates */
   getUpdate() {
     const self = this;
     // Request an update
@@ -267,7 +236,7 @@ TeleBot.prototype = {
         }).then(resolve).catch(reject);
       });
     });
-  },
+  }
   get(url, json) {
     return new Promise((resolve, reject) => {
       request.get({ url, json: !!json }, (error, response, data) => {
@@ -275,19 +244,19 @@ TeleBot.prototype = {
         return resolve(data);
       });
     });
-  },
+  }
   mod(name, fn) {
     if (!this.modList[name]) this.modList[name] = [];
     if (this.modList[name].indexOf(fn) !== -1) return;
     this.modList[name].push(fn);
-  },
+  }
   modRun(name, data) {
     const self = this, list = self.modList[name];
     if (!list || !list.length) return data;
     for (let fn of list) data = fn.call(self, data);
     return data;
-  },
-/* Events */
+  }
+  /* Events */
   on(types, fn) {
     const self = this;
     if (typeof types == 'string') types = [types];
@@ -308,7 +277,7 @@ TeleBot.prototype = {
       if (event.indexOf(fn) !== -1) return;
       event.push(fn);
     }
-  },
+  }
   event(types, data, me) {
     const self = this, promises = [];
     if (typeof types == 'string') types = [types];
@@ -342,23 +311,53 @@ TeleBot.prototype = {
       }
     }
     return Promise.all(promises);
-  },
+  }
   clean(type) {
     if (!this.eventList.hasOwnProperty(type)) return;
     this.eventList[type].fired = null;
-  },
+  }
   remove(type, fn) {
     if (!this.eventList.hasOwnProperty(type)) return;
     const event = this.eventList[type].list;
     const index = event.indexOf(fn);
     if (index === -1) return;
     event.splice(index, 1);
-  },
+  }
   destroy(type) {
     if (!this.eventList.hasOwnProperty(type)) return;
     delete this.eventList[type];
   }
 };
+
+/* Answer List */
+
+function answerList(queryId) {
+  this.id = queryId;
+  this.list = [];
+};
+
+answerList.prototype = {
+  results() {
+    return JSON.stringify(this.list);
+  },
+  add(type, set) {
+    set = set || {};
+    set.type = type;
+    this.list.push(set);
+    return set;
+  }
+};
+
+// Add answer methods
+{
+  for (let prop in ANSWER_METHODS) {
+    answerList.prototype[prop] = (name => {
+      return function(set) {
+        return this.add(name, set);
+      };
+    })(ANSWER_METHODS[prop]);
+  }
+}
 
 /* Functions */
 
