@@ -60,7 +60,7 @@ class TeleBot {
   }
   /* Answer */
   answerList(id) {
-    return answerList(id);
+    return new AnswerList(id);
   }
   /* Actions */
   getMe() {
@@ -71,6 +71,8 @@ class TeleBot {
     this.event('answerQuery', arguments);
     return this.request('/answerInlineQuery', {
       inline_query_id: answers.id, results: answers.results(),
+      next_offset: answers.nextOffset, is_personal: answers.personal,
+      cache_time: answers.cacheTime
     });
   }
   getFile(fileId) {
@@ -329,12 +331,15 @@ class TeleBot {
 
 /* Answer List */
 
-function answerList(queryId) {
+function AnswerList(queryId) {
   this.id = queryId;
+  this.nextOffset = '';
+  this.cacheTime = 300;
+  this.personal = false;
   this.list = [];
 };
 
-answerList.prototype = {
+AnswerList.prototype = {
   results() {
     return JSON.stringify(this.list);
   },
@@ -349,7 +354,7 @@ answerList.prototype = {
 // Add answer methods
 {
   for (let prop in ANSWER_METHODS) {
-    answerList.prototype[prop] = (name => {
+    AnswerList.prototype[prop] = (name => {
       return function(set) {
         return this.add(name, set);
       };
