@@ -331,25 +331,24 @@ class TeleBot {
 
 /* Answer List */
 
-function AnswerList(queryId) {
-  this.id = queryId;
-  this.nextOffset = '';
-  this.cacheTime = 300;
-  this.personal = false;
-  this.list = [];
-};
-
-AnswerList.prototype = {
-  results() {
-    return JSON.stringify(this.list);
-  },
+class AnswerList {
+  constructor(queryId) {
+    this.id = queryId;
+    this.nextOffset = '';
+    this.cacheTime = 300;
+    this.personal = false;
+    this.list = [];
+  }
   add(type, set) {
     set = set || {};
     set.type = type;
     this.list.push(set);
     return set;
   }
-};
+  results() {
+    return JSON.stringify(this.list);
+  }
+}
 
 // Add answer methods
 {
