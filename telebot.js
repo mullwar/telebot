@@ -103,6 +103,14 @@ class TeleBot {
     if (opt.limit) form['limit'] = opt.limit;
     return this.request('/getUserProfilePhotos', form);
   }
+  kick(chat_id, user_id) {
+    this.event('kick', arguments);
+    return this.request('/kickChatMember', { chat_id, user_id });
+  }
+  unban(chat_id, user_id) {
+    this.event('unban', arguments);
+    return this.request('/unbanChatMember', { chat_id, user_id });
+  }
   sendAction(id, action) {
     this.event('sendAction', arguments);
     return this.request('/sendChatAction', { chat_id: id, action });
