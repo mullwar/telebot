@@ -119,7 +119,6 @@ class TeleBot {
     this.event('sendMessage', arguments);
     opt = opt || {};
     const form = props.call(this, { chat_id: id, text }, opt);
-    if (opt.preview === false) form['disable_web_page_preview'] = true;
     return this.request('/sendMessage', form);
   }
   sendLocation(id, position, opt) {
@@ -386,6 +385,8 @@ function props(form, opt) {
   if (opt.parse) form['parse_mode'] = opt.parse;
   // User notification
   if (opt.notify === false) form['disable_notification'] = true;
+  // Web preview
+  if (opt.preview === false) form['disable_web_page_preview'] = true;
   // Markup object
   if (opt.markup !== undefined) {
     if (opt.markup == 'hide' || opt.markup === false) {
