@@ -16,7 +16,13 @@ const MESSAGE_TYPES = [
 
 const ANSWER_METHODS = {
   addArticle: 'article', addPhoto: 'photo', addVideo: 'video',
-  addGif: 'gif', addVideoGif: 'mpeg4_gif'
+  addGif: 'gif', addVideoGif: 'mpeg4_gif', addSticker: 'sticker',
+  addVoice: 'voice', addFile: 'document', addLocation: 'location',
+  addVenue: 'venue',
+  // Cached methods
+  cachedPhoto: 'photo', cachedGif: 'gif', cachedVideoGif: 'mpeg4_gif',
+  cachedSticker: 'sticker', cachedFile: 'document', cachedVideo: 'video',
+  cachedVoice: 'voice', cachedAudio: 'audio'
 };
 
 const REGEX = {
