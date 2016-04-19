@@ -2,7 +2,7 @@
 
 Easy way to write Telegram bots.
 
-[![Dependency Status](https://david-dm.org/kosmodrey/telebot.svg)](https://david-dm.org/kosmodrey/telebot) ![Node.js Version](http://img.shields.io/node/v/telebot.svg)
+[![Build Status](https://travis-ci.org/kosmodrey/telebot.svg?branch=dev)](https://travis-ci.org/kosmodrey/telebot) [![Dependency Status](https://david-dm.org/kosmodrey/telebot.svg)](https://david-dm.org/kosmodrey/telebot) ![Node.js Version](http://img.shields.io/node/v/telebot.svg)
 
 ## Installation
 
