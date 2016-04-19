@@ -111,6 +111,22 @@ class TeleBot {
     this.event('unban', arguments);
     return this.request('/unbanChatMember', { chat_id, user_id });
   }
+  editMessage(obj, text, opt) {
+    this.event('editMessage', arguments);
+    const form = props.call(this, editObject(obj, { text }), opt);
+    return this.request('/editMessageText', form);
+  }
+  editCaption(obj, caption, opt) {
+    this.event('editCaption', arguments);
+    const form = props.call(this, editObject(obj, { caption }), opt);
+    return this.request('/editMessageCaption', form);
+  }
+  editMarkup(obj, reply_markup) {
+    this.event('editMarkup', arguments);
+    return this.request('/editMessageReplyMarkup',
+      editObject(obj, { reply_markup })
+    );
+  }
   sendAction(chat_id, action) {
     this.event('sendAction', arguments);
     return this.request('/sendChatAction', { chat_id, action });
@@ -375,6 +391,16 @@ class AnswerList {
 }
 
 /* Functions */
+
+function editObject(obj, form) {
+  if (obj.chat && obj.message) {
+    form.chat_id = obj.chat;
+    form.message = obj.message;
+  } else if (obj.inline) {
+    form.inline_message_id = obj.inline;
+  }
+  return form;
+}
 
 function props(form, opt) {
   opt = opt || {};
