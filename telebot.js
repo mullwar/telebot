@@ -81,24 +81,24 @@ class TeleBot {
       cache_time: answers.cacheTime
     });
   }
-  getFile(fileId) {
+  getFile(file_id) {
     this.event('getFile', arguments);
-    return this.request('/getFile', { file_id: fileId }).then(file => {
+    return this.request('/getFile', { file_id }).then(file => {
       const result = file.result;
       result.fileLink = this.fileLink + result.file_path;
       return result;
     });
   }
-  forwardMessage(id, fromId, messageId) {
+  forwardMessage(chat_id, from_chat_id, message_id) {
     this.event('forwardMessage', arguments);
     return this.request('/forwardMessage', {
-      chat_id: id, from_chat_id: fromId, message_id: messageId
+      chat_id, from_chat_id, message_id
     });
   }
-  getUserPhoto(id, opt) {
+  getUserPhoto(chat_id, opt) {
     this.event('getUserPhoto', arguments);
     opt = opt || {};
-    const form = { user_id: id };
+    const form = { user_id };
     if (opt.offset) form['offset'] = opt.offset;
     if (opt.limit) form['limit'] = opt.limit;
     return this.request('/getUserProfilePhotos', form);
@@ -111,21 +111,21 @@ class TeleBot {
     this.event('unban', arguments);
     return this.request('/unbanChatMember', { chat_id, user_id });
   }
-  sendAction(id, action) {
+  sendAction(chat_id, action) {
     this.event('sendAction', arguments);
-    return this.request('/sendChatAction', { chat_id: id, action });
+    return this.request('/sendChatAction', { chat_id, action });
   }
-  sendMessage(id, text, opt) {
+  sendMessage(chat_id, text, opt) {
     this.event('sendMessage', arguments);
     opt = opt || {};
-    const form = props.call(this, { chat_id: id, text }, opt);
+    const form = props.call(this, { chat_id, text }, opt);
     return this.request('/sendMessage', form);
   }
-  sendLocation(id, position, opt) {
+  sendLocation(chat_id, position, opt) {
     this.event('sendLocation', arguments);
     opt = opt || {};
     const form = props.call(this, {
-      chat_id: id, latitude: position[0], longitude: position[1]
+      chat_id, latitude: position[0], longitude: position[1]
     }, opt);
     return this.request('/sendLocation', form);
   }
