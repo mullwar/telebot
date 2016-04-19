@@ -9,7 +9,12 @@
   "dependencies": {
     "request": "^2.69.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "mocha": "^2.4.5"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha test/index.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/kosmodrey/telebot.git"
