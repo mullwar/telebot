@@ -1,3 +1,5 @@
-node_modules
-tests
-npm-debug.log
+node_modules/
+tests/
+test/
+*.log
+.travis.yml
