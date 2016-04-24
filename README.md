@@ -19,6 +19,33 @@ git clone https://github.com/kosmodrey/telebot.git
 cd telebot
 npm install
 ```
+## Usage
+
+Import `telebot` module and create a new bot object:
+
+```js
+const TeleBot = require('telebot');
+const bot = new TeleBot('-PASTEYOURTELEGRAMBOTAPITOKENHERE-');
+```
+
+*Replace `token` value to your [Telegram Bot API](https://core.telegram.org/bots#botfather) token key.*
+
+To start getting updates, use ```bot.connect()```.
+
+```js
+bot.on('text', msg => {
+  let fromId = msg.from.id;
+  let messageId = msg.message_id;
+  let firstName = msg.from.first_name;
+  return bot.sendMessage(fromId, `Welcome, ${ firstName }!`, { reply: messageId });
+});
+
+bot.connect();
+```
+
+This code will send a "welcome" to every users `text` type message as a reply.
+
+***[See more examples!](/examples)***
 
 ## Documentation
 
