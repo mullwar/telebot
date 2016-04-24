@@ -32,22 +32,42 @@ describe('TeleBot', x => {
     });
   });
 
-  describe('#sendPhoto', x => {
-    const list = {
+  const sendMethods = {
+    sendPhoto: {
       'url': 'https://telegram.org/img/t_logo.png',
-      'file system (stream)':
-        fs.createReadStream(`${__dirname}/data/image2.jpg`),
-      'file system (string)': `${__dirname}/data/image.jpg`,
-      'file_id': 'AgADBAADrKoxG3SIWwSUAxUZiXbM6oy1JRkABOazQnPYZNG4ThQCAAEC'
-    };
-    for (let name in list) {
-      it(`should send image form ${ name }`, done => {
-        bot.sendPhoto(USER, list[name]).then(re => {
-          assert(re.ok && Array.isArray(re.result.photo));
-        }).then(done).catch(done);
-      });
+      'file system': `${__dirname}/data/image.jpg`
+    },
+    sendAudio: {
+      'file system': `${__dirname}/data/audio.mp3`
+    },
+    sendDocument: {
+      'url': 'http://www.google.com/humans.txt',
+      'file system': `${__dirname}/data/file.txt`
+    },
+    sendSticker: {
+      'url': 'http://www.gstatic.com/webp/gallery/1.webp',
+      'file system': `${__dirname}/data/sticker.webp`
+    },
+    sendVideo: {
+      'file system': `${__dirname}/data/video.mp4`
+    },
+    sendVoice: {
+      'file system': `${__dirname}/data/voice.m4a`
     }
-  });
+  }
+
+  for (let method in sendMethods) {
+    let data = sendMethods[method];
+    describe(`#${ method }`, x => {
+      for (let name in data) {
+        it(`should send form ${ name }`, done => {
+          bot[method](USER, data[name]).then(re => {
+            assert(re.ok);
+          }).then(done).catch(done);
+        });
+      }
+    });
+  }
 
   describe('#sendLocation', x => {
     it('should send a location', done => {
