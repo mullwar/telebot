@@ -2,7 +2,7 @@
   Name: Botan
   Description: Advanced analytics for your Telegram bot: http://botan.io
   NPM Requirements: botanio
-  Bot Options: {
+  Module options: {
     botan: 00000 // Your AppMetrika key
   }
 */
@@ -11,8 +11,9 @@
 
 module.exports = function(bot) {
   
+  // Check AppMetrika key
   const TOKEN = bot.cfg.botan;
-  if (!TOKEN) return console.warn('[botan] Error: no token key');
+  if (!TOKEN) return console.error('[botan] no token key');
   
   const botan = require('botanio')(TOKEN);
   
