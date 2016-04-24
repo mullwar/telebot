@@ -9,10 +9,10 @@
 
 'use strict';
 
-module.exports = function(bot) {
+module.exports = (bot, cfg) {
   
   // Check AppMetrika key
-  const TOKEN = bot.cfg.botan;
+  const TOKEN = cfg.botan;
   if (!TOKEN) return console.error('[botan] no token key');
   
   const botan = require('botanio')(TOKEN);
