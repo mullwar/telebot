@@ -1,5 +1,4 @@
 node_modules/
-tests/
 test/
 *.log
 .travis.yml
