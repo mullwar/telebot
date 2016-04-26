@@ -7,9 +7,9 @@ const bot = new TeleBot('-PASTEYOURTELEGRAMBOTAPITOKENHERE-');
 bot.on('text', msg => bot.sendMessage(msg.from.id, msg.text));
 
 // Mod every text message
-bot.mod('message', data => {
+bot.mod('message.text', data => {
   const msg = data.msg;
-  if (msg.text) msg.text = `📢 ${ msg.text }`;
+  msg.text = `📢 ${ msg.text }`;
   return data;
 });
 

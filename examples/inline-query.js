@@ -7,21 +7,23 @@
 'use strict';
 
 const TeleBot = require('../');
-
 const bot = new TeleBot('-PASTEYOURTELEGRAMBOTAPITOKENHERE-');
 
 // Count inline query requests
 let counter = 0;
 
-bot.on('inlineQuery', function(data) {
+// On inline query
+bot.on('inlineQuery', data => {
 
   const query = data.query;
-  console.log('inline query:', query);
-
   counter++;
+
+  console.log(`#${ counter } inline query: ${ query }`);
 
   // Create a new answer list object
   const answers = bot.answerList(data.id);
+  // Set cache time (for better counter updates)
+  answers.cacheTime = 1;
 
   // Add an article
   answers.addArticle({
