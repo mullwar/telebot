@@ -1,104 +1,199 @@
-'use strict';
-
 const
-  fs = require('fs'),
-  assert = require('assert'),
+  test = require('ava'),
   TeleBot = require('../lib/telebot.js');
 
-const TOKEN = process.env.TEST_TELEBOT_TOKEN;
-const USER = process.env.TEST_TELEBOT_USER;
+// Globals
+var bot;
 
-if (!TOKEN) throw Error('TEST_TELEBOT_TOKEN required');
-if (!USER) throw Error('TEST_TELEBOT_USER required');
+// Enviroment data
+const {
+  TEST_TELEBOT_TOKEN: TOKEN,
+  TEST_TELEBOT_USER: USER
+} = process.env;
 
-describe('TeleBot', x => {
 
-  const bot = new TeleBot(TOKEN);
+test('bot environment', t => {
 
-  describe('#getMe', x => {
-    it('should return an User object', done => {
-      bot.getMe().then(re => {
-        assert(re.ok && re.result.id == bot.id);
-      }).then(done).catch(done);
-    });
-  });
-
-  describe('#sendMessage', x => {
-    it('should send a message', done => {
-      const str = 'hello_test';
-      bot.sendMessage(USER, str).then(re => {
-        assert(re.ok && re.result.text == str);
-      }).then(done).catch(done);
-    });
-  });
-
-  const sendMethods = {
-    sendPhoto: {
-      'url': 'https://telegram.org/img/t_logo.png',
-      'file system': `${__dirname}/data/image.jpg`
-    },
-    sendAudio: {
-      'file system': `${__dirname}/data/audio.mp3`
-    },
-    sendDocument: {
-      'url': 'http://www.google.com/humans.txt',
-      'file system': `${__dirname}/data/file.txt`
-    },
-    sendSticker: {
-      'url': 'http://www.gstatic.com/webp/gallery/1.webp',
-      'file system': `${__dirname}/data/sticker.webp`
-    },
-    sendVideo: {
-      'file system': `${__dirname}/data/video.mp4`
-    },
-    sendVoice: {
-      'file system': `${__dirname}/data/voice.m4a`
-    }
-  }
-
-  for (let method in sendMethods) {
-    let data = sendMethods[method];
-    describe(`#${ method }`, x => {
-      for (let name in data) {
-        it(`should send form ${ name }`, done => {
-          bot[method](USER, data[name]).then(re => {
-            assert(re.ok);
-          }).then(done).catch(done);
-        });
-      }
-    });
-  }
-
-  describe('#sendLocation', x => {
-    it('should send a location', done => {
-      bot.sendLocation(USER, [37.641422, -115.783253]).then(re => {
-        assert(re.ok && re.result.location);
-      }).then(done).catch(done);
-    });
-  });
-
-  describe('#sendVenue', x => {
-    it('should send a venue', done => {
-      bot.sendVenue(USER, [56.9713962, 23.9890801], 'This', 'that').then(re => {
-        assert(re.ok && re.result.venue);
-      }).then(done).catch(done);
-    });
-  });
-
-  describe('#sendContact', x => {
-    it('should send a contact', done => {
-      bot.sendContact(USER, '112', 'First', 'Last').then(re => {
-        assert(re.ok && re.result.contact);
-      }).then(done).catch(done);
-    });
-  });
-
-  describe('#sendAction', x => {
-    it('should send a chat action', done => {
-      bot.sendAction(USER, 'typing').then(re => {
-        assert(re.ok && re.result == true);
-      }).then(done).catch(done);
-    });
-  });
+  t.true(!!TOKEN, 'TEST_TELEBOT_TOKEN required');
+  t.true(!!USER, 'TEST_TELEBOT_USER required');
 
 });
+
+test('bot object', t => {
+
+  const set = {
+    token: TOKEN,
+    limit: 30,
+    sleep: 500,
+    timeout: 100,
+    retryTimeout: 10000
+  };
+
+  function check(bot) {
+    t.is(bot.token, TOKEN);
+    t.is(bot.id, TOKEN.split(':')[0]);
+  } 
+
+  // Check new objects
+  check(new TeleBot(TOKEN));
+  
+  check(bot = new TeleBot(set));
+  for (let name in set) t.is(bot[name], set[name]);
+
+  // Connect
+  bot.connect();
+  t.not(bot.loopFn, null);
+  t.deepEqual(bot.flags, { looping: true, pool: true, retry: false });
+
+  // Disconnect
+  bot.disconnect();
+  t.false(bot.flags.looping);
+
+});
+
+test('events', t => {
+
+  t.plan(9);
+
+  function len(event) {
+    return bot.eventList[event].list.length;
+  }
+
+  var delMe = x => {};
+
+  t.is(all(bot.eventList), 2);
+
+  // Set
+  bot.on('connect', x => {});
+  bot.on('connect', delMe);
+  bot.on('custom', x => {});
+  bot.on('custom', x => {});
+
+  // Count
+  t.is(len('custom'), 2);
+  t.is(len('connect'), 2);
+  t.is(all(bot.eventList), 3);
+  
+  // Remove
+  t.true(bot.removeEvent('connect', delMe));
+  t.is(len('connect'), 1);
+
+  // Clean
+  t.true(bot.cleanEvent('custom'));
+
+  // Destroy
+  t.true(bot.destroyEvent('custom'));
+  t.is(all(bot.eventList), 2);
+
+});
+
+test('mods', t => {
+
+  function len(event) {
+    return bot.modList[event].length;
+  }
+
+  var delMe = x => x;
+
+  t.is(all(bot.modList), 0);
+
+  // Set
+  bot.mod('custom', x => ++x);
+  bot.mod('custom', x => ++x);
+  bot.mod('custom', delMe);
+  bot.mod('custom', x => ++x);
+
+  // Count
+  t.is(len('custom'), 4);
+  t.is(all(bot.modList), 1);
+
+  // Run
+  t.is(bot.modRun('custom', 5), 8);
+
+  // Remove
+  t.true(bot.removeMod('custom', delMe));
+  t.false(bot.removeMod('custom'));
+  t.false(bot.removeMod('not_found'));
+
+  t.is(len('custom'), 3);
+  t.is(all(bot.modList), 1);
+
+});
+
+test('bot.getMe', t => {
+  return bot.getMe().then(re => {
+    t.true(re.ok && re.result.id == bot.id);
+  });
+});
+
+test('bot.sendMessage', t => {
+  let str = '#hello_test';
+  return bot.sendMessage(USER, str).then(re => {
+    t.true(re.ok && re.result.text == str);
+  });
+});
+
+const sendMethods = {
+  sendPhoto: {
+    'url': 'https://telegram.org/img/t_logo.png',
+    'file system': `${__dirname}/data/image.jpg`
+  },
+  sendAudio: {
+    'file system': `${__dirname}/data/audio.mp3`
+  },
+  sendDocument: {
+    'url': 'http://www.google.com/humans.txt',
+    'file system': `${__dirname}/data/file.txt`
+  },
+  sendSticker: {
+    'url': 'http://www.gstatic.com/webp/gallery/1.webp',
+    'file system': `${__dirname}/data/sticker.webp`
+  },
+  sendVideo: {
+    'file system': `${__dirname}/data/video.mp4`
+  },
+  sendVoice: {
+    'file system': `${__dirname}/data/voice.m4a`
+  }
+}
+
+for (let method in sendMethods) {
+  let data = sendMethods[method];
+  test(`bot.${ method }`, t => {
+    for (let name in data) {
+      bot[method](USER, data[name]).then(re => t.true(re.ok));
+    }
+  });
+}
+
+test('bot.sendLocation', t => {
+  let loc = [37.641401, -115.783262];
+  return bot.sendLocation(USER, loc).then(re => {
+    t.true(re.ok);
+    t.deepEqual(re.result.location, { latitude: loc[0], longitude: loc[1] });
+  });
+});
+
+test('bot.sendVenue', t => {
+  return bot.sendVenue(USER,  [56.9713962, 23.9890801], 'A', 'B').then(re => {
+    t.truthy(re.ok && re.result.venue);
+  });
+});
+
+test('bot.sendContact', t => {
+  return bot.sendContact(USER, '112', 'First', 'Last').then(re => {
+    t.truthy(re.ok && re.result.contact);
+  });
+});
+
+test('bot.sendAction', t => {
+  return bot.sendAction(USER, 'typing').then(re => {
+    t.true(re.ok && re.result == true);
+  });
+});
+
+// Functions
+
+function all(obj) {
+  return Object.keys(obj).length;
+}

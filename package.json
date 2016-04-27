@@ -10,10 +10,10 @@
     "request": "^2.69.0"
   },
   "devDependencies": {
-    "mocha": "^2.4.5"
+    "ava": "^0.14.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha test/index.js"
+    "test": "./node_modules/.bin/ava test/index.js"
   },
   "repository": {
     "type": "git",
