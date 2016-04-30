@@ -34,7 +34,7 @@ module.exports = (bot, cfg) => {
     return console.error('[report] no event list');
 
   // Create events handler
-  bot.on(eventList, (event={}, info) => {
+  bot.on(eventList, (event={}, self, info) => {
 
     // Skip event with "skipReport: true" option key
     if (
@@ -43,16 +43,18 @@ module.exports = (bot, cfg) => {
     ) return;
     
     const type = info.type;
+    const prefix = type.split('.')[0];
     
     // Stringify object data
     const jsonData = s(JSON.stringify(event, (k, v) => {
       return v.value instanceof Buffer ? '[Buffer]' : v;
     }));
 
+
     // Send to every user in list
     for (let id of toList) {
 
-      if (type == 'error') {
+      if (prefix == 'error') {
 
         // Error event
         const { data, error } = event;
