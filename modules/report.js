@@ -34,7 +34,7 @@ module.exports = (bot, cfg) => {
     return console.error('[report] no event list');
 
   // Create events handler
-  bot.on(eventList, (event, info) => {
+  bot.on(eventList, (event={}, info) => {
 
     // Skip event with "skipReport: true" option key
     if (
@@ -42,8 +42,6 @@ module.exports = (bot, cfg) => {
       (Array.prototype.slice.call(event).slice(-1)[0]).skipReport === true
     ) return;
     
-    event = event || {};
-
     const type = info.type;
     
     // Stringify object data
@@ -57,8 +55,7 @@ module.exports = (bot, cfg) => {
       if (type == 'error') {
 
         // Error event
-        const data = event.data;
-        const error = event.error;
+        const { data, error } = event;
 
         bot.sendMessage(id,
           `👤 <b>User:</b> ${ data.from.id } (${ data.chat.id })\n` +

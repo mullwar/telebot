@@ -9,36 +9,39 @@
 const TeleBot = require('../');
 const bot = new TeleBot('-PASTEYOURTELEGRAMBOTAPITOKENHERE-');
 
-// Count inline query requests
-let counter = 0;
-
 // On inline query
 bot.on('inlineQuery', data => {
 
-  const query = data.query;
-  counter++;
-
-  console.log(`#${ counter } inline query: ${ query }`);
+  let query = data.query;
+  console.log(`inline query: ${ query }`);
 
   // Create a new answer list object
   const answers = bot.answerList(data.id);
-  // Set cache time (for better counter updates)
-  answers.cacheTime = 1;
 
-  // Add an article
+  // Cache time in seconds (defaults to 300)
+  answers.cacheTime = 60;
+
+  // Article
   answers.addArticle({
     id: 'query',
     title: 'Inline Title',
     description: `Your query: ${ query }`,
-    message_text: 'You clicked!'
+    message_text: 'Click!'
   });
 
-  // ...and one more
-  answers.addArticle({
-    id: 'counter',
-    title: 'Counter',
-    description: `Recived query ${ counter } times.`,
-    message_text: 'Counter text here.'
+  // Photo
+  answers.addPhoto({
+    id: 'photo',
+    caption: 'Telegram logo.',
+    photo_url: 'https://telegram.org/img/t_logo.png',
+    thumb_url: 'https://telegram.org/img/t_logo.png'
+  });
+
+  // Gif
+  answers.addGif({
+    id: 'gif',
+    gif_url: 'https://telegram.org/img/tl_card_wecandoit.gif',
+    thumb_url: 'https://telegram.org/img/tl_card_wecandoit.gif'
   });
 
   // Send answers
