@@ -9,17 +9,18 @@
 
 'use strict';
 
-module.exports = (bot, cfg) {
+module.exports = (bot, cfg) => {
   
   // Check AppMetrika key
   const TOKEN = cfg.botan;
+
+  // On no token
   if (!TOKEN) return console.error('[botan] no token key');
   
+  // Require botanio
   const botan = require('botanio')(TOKEN);
   
   // Track every type of message
-  bot.on('*', msg => {
-    botan.track(msg, this.type);
-  });
+  bot.on('*', (msg, props) => botan.track(msg, props.type));
 
 };

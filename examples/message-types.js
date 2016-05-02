@@ -9,7 +9,9 @@ bot.on(['*', '/*'], (msg, self) => {
   let reply = msg.message_id;
   let type = self.type;
   let parse = 'html';
-  return bot.sendMessage(id, `This is a <b>${ type }</b>.`, { reply, parse });
+  return bot.sendMessage(
+    id, `This is a <b>${ type }</b> message.`, { reply, parse }
+  );
 });
 
 bot.connect();

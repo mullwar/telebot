@@ -10,13 +10,13 @@ const TeleBot = require('../');
 const bot = new TeleBot('-PASTEYOURTELEGRAMBOTAPITOKENHERE-');
 
 // On inline query
-bot.on('inlineQuery', data => {
+bot.on('inlineQuery', msg => {
 
-  let query = data.query;
+  let query = msg.query;
   console.log(`inline query: ${ query }`);
 
   // Create a new answer list object
-  const answers = bot.answerList(data.id);
+  const answers = bot.answerList(msg.id);
 
   // Cache time in seconds (defaults to 300)
   answers.cacheTime = 60;

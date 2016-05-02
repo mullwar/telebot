@@ -34,7 +34,7 @@ module.exports = (bot, cfg) => {
     return console.error('[report] no event list');
 
   // Create events handler
-  bot.on(eventList, (event={}, self, info) => {
+  bot.on(eventList, (event={}, props, info) => {
 
     // Skip event with "skipReport: true" option key
     if (
