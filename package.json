@@ -1,16 +1,20 @@
 {
   "name": "telebot",
-  "version": "0.0.5",
+  "version": "1.0.0",
   "description": "Easy way to write Telegram bots.",
-  "main": "index.js",
+  "main": "lib/telebot.js",
   "engines": {
-    "node": ">= 0.12.0"
+    "node": ">= 6.0.0"
   },
   "dependencies": {
-    "request": "^2.60.0",
-    "mime-db": "^1.16.0"
+    "request": "^2.69.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "ava": "^0.14.0"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/ava test/index.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/kosmodrey/telebot.git"

@@ -1,13 +1,13 @@
-var TeleBot = require('../');
+'use strict';
 
-var bot = new TeleBot({
-  token: '-PASTEYOURTELEGRAMBOTAPITOKENHERE-'
-});
+const TeleBot = require('../');
+const bot = new TeleBot('-PASTEYOURTELEGRAMBOTAPITOKENHERE-');
 
-bot.on('text', function(msg) {
-  var id = msg.from.id;
-  var firstName = msg.from.first_name;
-  return bot.sendMessage(id, 'Hello, ' + firstName + '!');
+// On every text message
+bot.on('text', msg => {
+  let id = msg.from.id;
+  let text = msg.text;
+  return bot.sendMessage(id, `You said: ${ text }`);
 });
 
 bot.connect();

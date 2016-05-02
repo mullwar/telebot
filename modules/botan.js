@@ -1,21 +1,27 @@
 /*
   Name: Botan
-  Description: Advanced analytics for your Telegram bot: http://botan.io/
+  Description: Advanced analytics for your Telegram bot: http://botan.io
   NPM Requirements: botanio
-  Bot Options: {
+  Module options: {
     botan: 00000 // Your AppMetrika key
   }
 */
 
-module.exports = function(bot) {
-  var TOKEN = bot.cfg.botan;
-  if (!TOKEN) {
-    console.log('[botan] Error: no token key');
-    return;
-  }
-  var botan = require('botanio')(TOKEN);
+'use strict';
+
+module.exports = (bot, cfg) => {
+  
+  // Check AppMetrika key
+  const TOKEN = cfg.botan;
+
+  // On no token
+  if (!TOKEN) return console.error('[botan] no token key');
+  console.log('[botan] started');
+  
+  // Require botanio
+  const botan = require('botanio')(TOKEN);
+  
   // Track every type of message
-  bot.on('*', function(msg) {
-    botan.track(msg, this.type);
-  });
+  bot.on('*', (msg, props) => botan.track(msg, props.type));
+
 };

@@ -1,36 +1,41 @@
 /*
 
-  Flooder
-  Simple flood protection module
-
-  CONFIG:
-
-  flood: {
-    interval: 1, // in seconds
-    message: 'Flood message.' // message
+  Name: Flooder
+  Description: Simple flood protection module.
+  Module options: {
+    flood: {
+      interval: 1, // In seconds
+      message: 'Flood message.' // Message
+    }
   }
-  
+
   NOTE: Received Telegram message time accuracy is one second!
 
 */
 
 // Store users
-var userList = {};
+const userList = {};
 
 // Export bot module
-module.exports = function(bot) {
+module.exports = (bot, cfg) => {
+
   // Load config data
-  var cfg = bot.cfg.flood || {};
-  var interval = Number(cfg.interval) || 1;
-  var text = cfg.message === undefined ?
-    'Too many messages from you. Please, try later...' : cfg.message;
+  let opt = cfg.flood || {};
+  let interval = Number(opt.interval) || 1;
+  let text = opt.message === undefined ?
+    'Too many messages from you. Please, try later...' :
+      opt.message;
+
   // Create message modifier
-  bot.mod('message', function(data) {
-    var msg = data.msg;
-    var id = msg.from.id, user = userList[id];
-    var now = new Date(msg.date);
+  bot.mod('message', data => {
+
+    let msg = data.msg;
+    let id = msg.from.id;
+    let user = userList[id];
+    let now = new Date(msg.date);
+
     if (user) {
-      var diff = now - user.lastTime;
+      let diff = now - user.lastTime;
       user.lastTime = now;
       if (diff <= interval) {
         if (!user.flood) {
@@ -44,6 +49,9 @@ module.exports = function(bot) {
     } else {
       userList[id] = { lastTime: now };
     }
+  
     return data;
+  
   });
+
 };

@@ -3,37 +3,50 @@
   the placeholder text that the user will see in the input field after typing
   your bot’s name.
 */
-var TeleBot = require('../');
 
-var bot = new TeleBot({
-  token: '-PASTEYOURTELEGRAMBOTAPITOKENHERE-'
-});
+'use strict';
 
-// Count inline query requests
-var counter = 0;
+const TeleBot = require('../');
+const bot = new TeleBot('-PASTEYOURTELEGRAMBOTAPITOKENHERE-');
 
-bot.on('query', function(data) {
-  counter++;
-  var query = data.query;
-  console.log('inline query:', query);
+// On inline query
+bot.on('inlineQuery', msg => {
+
+  let query = msg.query;
+  console.log(`inline query: ${ query }`);
+
   // Create a new answer list object
-  var answers = new bot.answerList(data.id);
-  // Add an article
+  const answers = bot.answerList(msg.id);
+
+  // Cache time in seconds (defaults to 300)
+  answers.cacheTime = 60;
+
+  // Article
   answers.addArticle({
     id: 'query',
     title: 'Inline Title',
-    description: 'Your query: ' + query,
-    message_text: 'You clicked!'
+    description: `Your query: ${ query }`,
+    message_text: 'Click!'
   });
-  // ...and one more
-  answers.addArticle({
-    id: 'counter',
-    title: 'Counter',
-    description: 'Recived query ' + counter + ' times.',
-    message_text: 'Counter text here.'
+
+  // Photo
+  answers.addPhoto({
+    id: 'photo',
+    caption: 'Telegram logo.',
+    photo_url: 'https://telegram.org/img/t_logo.png',
+    thumb_url: 'https://telegram.org/img/t_logo.png'
   });
+
+  // Gif
+  answers.addGif({
+    id: 'gif',
+    gif_url: 'https://telegram.org/img/tl_card_wecandoit.gif',
+    thumb_url: 'https://telegram.org/img/tl_card_wecandoit.gif'
+  });
+
   // Send answers
   return bot.answerQuery(answers);
+
 });
 
 bot.connect();

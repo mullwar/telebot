@@ -3,24 +3,37 @@
   Description: Get direct answers from users!
 */
 
-// Storage
-var LIST = {};
+// Store user list
+const userList = {};
 
-module.exports = function(bot) {
+module.exports = bot => {
+
   // On every text message
-  bot.on('text', function(msg) {
-    var id = msg.chat.id, ask = LIST[id];
+  bot.on('text', msg => {
+
+    let id = msg.chat.id,
+      ask = userList[id];
+    
     // If no question, then it's a regular message
     if (!ask) return;
+
     // Delete user from list and send custom event
-    delete LIST[id];
+    delete userList[id];
     bot.event('ask.' + ask, msg, this);
+  
   });
+  
   // Before call sendMessage method
-  bot.on('sendMessage', function(args) {
-    var id = args[0], opt = args[2] || {};
-    var ask = opt.ask;
+  bot.on('sendMessage', args => {
+
+    let id = args[0],
+      opt = args[2] || {};
+
+    let ask = opt.ask;
+
     // If "ask" in options, add user to list
-    if (ask) LIST[id] = ask;
+    if (ask) userList[id] = ask;
+  
   });
+
 };

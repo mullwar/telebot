@@ -4,55 +4,64 @@
   See this code in action, by visiting @KittyBot on Telegram!
 */
 
-var TeleBot = require('../');
+const TeleBot = require('../');
+const bot = new TeleBot('-PASTEYOURTELEGRAMBOTAPITOKENHERE-');
 
-// Create a new bot
-var bot = new TeleBot({
-  token: '-PASTEYOURTELEGRAMBOTAPITOKENHERE-',
-  sleep: 1000,
-});
-
-// Great API for this
-var API = 'https://thecatapi.com/api/images/get?format=src&type=';
+// Great API for this bot
+const API = 'https://thecatapi.com/api/images/get?format=src&type=';
 
 // Command keyboard
-var keys = bot.keyboard([
+const markup = bot.keyboard([
   ['/kitty', '/kittygif']
 ], { resize: true, once: false });
 
-// On every text message
+// Log every text message
 bot.on('text', function(msg) {
-  console.log('[text] ' + msg.chat.id + ' ' + msg.text);
+  console.log(`[text] ${ msg.chat.id } ${ msg.text }`);
 });
 
-// On command "start" and "help"
+// On command "start" or "help"
 bot.on(['/start', '/help'], function(msg) {
+
   return bot.sendMessage(msg.chat.id,
-    '😺 Use commands: /kitty, /kittygif and /about', { markup: keys }
+    '😺 Use commands: /kitty, /kittygif and /about', { markup }
   );
+
 });
 
 // On command "about"
 bot.on('/about', function(msg) {
-  var text = '😽 This bot is powered by TeleBot library ' +
+
+  let text = '😽 This bot is powered by TeleBot library ' +
     'https://github.com/kosmodrey/telebot Go check the source code!';
+
   return bot.sendMessage(msg.chat.id, text);
+
 });
 
-// On command "kitty" and "kittygif"
+// On command "kitty" or "kittygif"
 bot.on(['/kitty', '/kittygif'], function(msg) {
-  var id = msg.chat.id, cmd = this.cmd[0];
-  // Picture or gif?
-  var promise = cmd == '/kitty' ?
-    // Send downloaded data to user
-    bot.sendPhoto(id, API + 'jpg', { name: 'kitty.jpg' }) :
-    bot.sendDocument(id, API + 'gif', { name: 'kitty.gif' });
+  
+  let promise;
+  let id = msg.chat.id;
+  let cmd = msg.text.split(' ')[0];
+
+  // Photo or gif?
+  if (cmd == '/kitty') {
+    promise = bot.sendPhoto(id, API + 'jpg', { fileName: 'kitty.jpg' });
+  } else {
+    promise = bot.sendDocument(id, API + 'gif', { fileName: 'kitty.gif' });
+  }
+  
   // Send "uploading photo" action
   bot.sendAction(id, 'upload_photo');
-  return promise.catch(function(error) {
+  
+  return promise.catch(error => {
+    console.log('[error]', error);
     // Send an error
-    bot.sendMessage(id, '😿 An error (' + error + ') occurred, try again.');
+    bot.sendMessage(id, `😿 An error ${ error } occurred, try again.`);
   });
+
 });
 
 // Start getting updates
