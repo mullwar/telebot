@@ -6,12 +6,12 @@ Easy way to write Telegram bots.
 
 **Library features:**
 
-- 🍏 Simple. Easy to use.
-- 📝 Full Telegram Bot API support.
-- 🎈 Support modules.
-- ⏰ No callbacks, Promises only.
-- 💡 Build-in modification and event system.
-- 👾 Extendable and hackable.
+- Simple. Easy to use.
+- Full Telegram Bot API support.
+- Support modules.
+- No callbacks, Promises only.
+- Build-in modification and event system.
+- Extendable and hackable.
 
 ## Installation
 
