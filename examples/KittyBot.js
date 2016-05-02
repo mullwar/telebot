@@ -48,7 +48,7 @@ bot.on(['/kitty', '/kittygif'], function(msg) {
 
   // Photo or gif?
   if (cmd == '/kitty') {
-    promise = bot.sendPhoto(id, API + 'jpg', { fileName: 'kitty.jpg' }) :
+    promise = bot.sendPhoto(id, API + 'jpg', { fileName: 'kitty.jpg' });
   } else {
     promise = bot.sendDocument(id, API + 'gif', { fileName: 'kitty.gif' });
   }

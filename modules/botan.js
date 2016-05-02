@@ -16,6 +16,7 @@ module.exports = (bot, cfg) => {
 
   // On no token
   if (!TOKEN) return console.error('[botan] no token key');
+  console.log('[botan] started');
   
   // Require botanio
   const botan = require('botanio')(TOKEN);
