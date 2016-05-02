@@ -1,4 +1,4 @@
-# TeleBot
+![](http://i.imgur.com/C6nTeCS.png)
 
 Easy way to write Telegram bots.
 
