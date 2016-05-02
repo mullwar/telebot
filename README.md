@@ -10,7 +10,7 @@ Easy way to write Telegram bots.
 - 📝 Full Telegram Bot API support.
 - 🎈 Support modules.
 - ⏰ No callbacks, Promises only.
-- 💡 Build-in event system.
+- 💡 Build-in modification and event system.
 - 👾 Extendable and hackable.
 
 ## Installation
