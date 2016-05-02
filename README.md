@@ -73,6 +73,90 @@ This code will send a "welcome" to every users `text` type message as a reply.
 
 ***[See more examples!](/examples)***
 
+## Events
+
+Use ```bot.on(<event>, <function>)``` to handle all possible TeleBot events.
+
+To catch a command with arguments, just add a slash:
+
+```js
+bot.on('/hello', msg => {
+  let [cmdName, firstName, lastName] = msg.text.split(' ');
+  return bot.sendMessage(msg.from.id, `Hello, ${ firstName } ${ lastName }!`);
+});
+```
+
+Also, you can catch multiple events:
+
+```js
+bot.on(['/start', '/help', 'sticker'], msg => {
+  return bot.sendMessage(msg.from.id, 'Bam!');
+});
+```
+
+### TeleBot events:
+
+- **/&#42;** – any user command
+- **/\<cmd\>** – on specific command
+- **inlineQuery** - on inline query
+- **inlineChoice** - on inline choice result
+- **callbackQuery** - on button callback
+- **connect** – bot connected
+- **disconnect** – bot disconnected
+- **reconnecting** – bot reconnecting
+- **reconnected** – bot successfully reconnected
+- **update** - on update
+- **tick** – on bot tick
+- **error** – an error occurred
+
+#### Action events:
+
+*getMe, sendMessage, forwardMessage, sendPhoto, sendAudio, sendDocument, sendSticker, sendVideo, sendVoice, sendLocation, sendVenue, sendContact, sendAction (sendChatAction), getUserPhoto (getUserProfilePhotos), getFile, kickChatMember, unban (unbanChatMember), answerQuery (answerInlineQuery), editMessage (editMessageText), editCaption (editMessageCaption), editMarkup (editMessageReplyMarkup), setWebhook*
+
+### Telegram message events:
+
+- **&#42;** - any type of message
+- **text** – text message
+- **audio** – audio file
+- **voice** – voice message
+- **document** – document file (any kind)
+- **photo** – photo
+- **sticker** – sticker
+- **video** – video file
+- **contact** – contact data
+- **location** – location data
+- **venue** – venue data
+
+*Read more about Telegram Bot API response types: https://core.telegram.org/bots/api#available-types*
+
+## Modifiers
+
+You can add modifier to process data before passing it to event.
+
+```js
+bot.mod('text', data => {
+  let msg = data.msg;
+  msg.text = `📢 ${ msg.text }`;
+  return data;
+});
+```
+
+This code adds emoji to every `text` message.
+
+### TeleBot modifiers:
+
+- **property** - mod form properties
+- **updateList** - list of updates in one tick
+- **update** - every update
+- **message** - process any type of message
+- **\<type\>** - specific type of message (*text, voice, document, photo, sticker, video, contact, location* or *venue*)
+
+## Modules
+
+Use ```bot.use(require(<module_path>))``` to add a module.
+
+**[Check out module folder!](/modules)**
+
 ## Documentation
 
 Read [wiki on GitHub](https://github.com/kosmodrey/telebot/wiki).
