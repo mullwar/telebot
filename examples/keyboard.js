@@ -57,7 +57,8 @@ bot.on('/inlineKeyboard', msg => {
 
 // Inline button callback
 bot.on('callbackQuery', msg => {
-  return bot.sendMessage(msg.from.id, `Inline button callback: ${ msg.data }`);
+  // User message alert
+  return bot.answerCallback(msg.id, `Inline button callback: ${ msg.data }`, true);
 });
 
 // Inline query
