@@ -119,7 +119,7 @@ bot.on(['/start', '/help', 'sticker'], msg => {
 
 #### Action events:
 
-*keyboard*, *button*, *inlineKeyboard*, *inlineButton*, *answerList*, *getMe*, *sendMessage*, *forwardMessage*, *sendPhoto*, *sendAudio*, *sendDocument*, *sendSticker*, *sendVideo*, *sendVoice*, *sendLocation*, *sendVenue*, *sendContact*, *sendChatAction*, *getUserProfilePhotos*, *getFile*, *kickChatMember*, *unbanChatMember*, *answerInlineQuery*, *answerCallbackQuery*, *editMessageText*, *editMessageCaption*, *editMessageReplyMarkup*, *setWebhook*
+*getMe*, *sendMessage*, *forwardMessage*, *sendPhoto*, *sendAudio*, *sendDocument*, *sendSticker*, *sendVideo*, *sendVoice*, *sendLocation*, *sendVenue*, *sendContact*, *sendChatAction*, *getUserProfilePhotos*, *getFile*, *kickChatMember*, *unbanChatMember*, *answerInlineQuery*, *answerCallbackQuery*, *editMessageText*, *editMessageCaption*, *editMessageReplyMarkup*, *setWebhook*
 
 ### Telegram message events:
 
@@ -281,11 +281,11 @@ Use this method to get a list of profile pictures for a user.
 
 Use this method to get basic info about a file and prepare it for downloading.
 
-##### `kickChatMember` as `kick(<chatId>, <user_id>)`
+##### `kickChatMember` as `kick(<chat_id>, <user_id>)`
 
 Use this method to kick a user from a group or a supergroup.
 
-##### `unbanChatMember` as `unban(<chatId>, <user_id>)`
+##### `unbanChatMember` as `unban(<chat_id>, <user_id>)`
 
 Use this method to unban a previously kicked user in a supergroup.
 
