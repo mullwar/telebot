@@ -106,9 +106,6 @@ bot.on(['/start', '/help', 'sticker'], msg => {
 
 - **/&#42;** – any user command
 - **/\<cmd\>** – on specific command
-- **inlineQuery** - on inline query
-- **inlineChoice** - on inline choice result
-- **callbackQuery** - on button callback
 - **connect** – bot connected
 - **disconnect** – bot disconnected
 - **reconnecting** – bot reconnecting
@@ -134,6 +131,9 @@ bot.on(['/start', '/help', 'sticker'], msg => {
 - **contact** – contact data
 - **location** – location data
 - **venue** – venue data
+- **inlineQuery** - inline query data
+- **inlineChoice** - inline query chosen result
+- **callbackQuery** - button callback data
 
 *Read more about Telegram Bot API response types: https://core.telegram.org/bots/api#available-types*
 
@@ -163,7 +163,7 @@ This code adds emoji to every `text` message.
 
 Use ```bot.use(require(<module_path>))``` to add a module.
 
-**[Check out module folder!](/modules)**
+***[Check out module folder!](/modules)***
 
 ## Methods
 
@@ -309,6 +309,6 @@ Use this method to send answers to callback queries sent from inline keyboards.
 
 Use this method to specify a url and receive incoming updates via an outgoing webhook.
 
-## Full Documentation
+## Documentation
 
 Read [wiki on GitHub](https://github.com/kosmodrey/telebot/wiki).
