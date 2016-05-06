@@ -236,6 +236,18 @@ test('bot.editCaption', t => {
   });
 });
 
+test('bot.editMarkup', t => {
+  let markup = bot.inlineKeyboard([
+    [ bot.inlineButton('test', { callback: 1 }) ]
+  ]);
+  return bot.sendMessage(USER, 'markup', { markup }).then(re => {
+    const chatId = USER;
+    const messageId = re.result.message_id;
+    markup = bot.inlineKeyboard([[bot.inlineButton('OK', { callback: 2 })]]);
+    return bot.editMarkup({ chatId, messageId }, markup);
+  });
+});
+
 // Functions
 
 function all(obj) {
