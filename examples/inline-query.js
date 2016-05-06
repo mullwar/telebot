@@ -16,10 +16,7 @@ bot.on('inlineQuery', msg => {
   console.log(`inline query: ${ query }`);
 
   // Create a new answer list object
-  const answers = bot.answerList(msg.id);
-
-  // Cache time in seconds (defaults to 300)
-  answers.cacheTime = 60;
+  const answers = bot.answerList(msg.id, { cacheTime: 60 });
 
   // Article
   answers.addArticle({
