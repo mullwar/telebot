@@ -7,11 +7,11 @@ const
 var bot;
 
 // Enviroment data
-const {
+
+let {
   TEST_TELEBOT_TOKEN: TOKEN,
   TEST_TELEBOT_USER: USER
 } = process.env;
-
 
 test('bot environment', t => {
 
@@ -216,6 +216,23 @@ test('bot.sendContact', t => {
 test('bot.sendAction', t => {
   return bot.sendAction(USER, 'typing').then(re => {
     t.true(re.ok && re.result == true);
+  });
+});
+
+test('bot.editText', t => {
+  return bot.sendMessage(USER, 'text').then(re => {
+    const chatId = USER;
+    const messageId = re.result.message_id;
+    return bot.editText({ chatId, messageId }, 'text OK');
+  });
+});
+
+test('bot.editCaption', t => {
+  const photo = 'https://telegram.org/img/tl_card_destruct.gif';
+  return bot.sendPhoto(USER, photo, { caption: 'caption' }).then(re => {
+    const chatId = USER;
+    const messageId = re.result.message_id;
+    return bot.editCaption({ chatId, messageId }, 'caption OK');
   });
 });
 

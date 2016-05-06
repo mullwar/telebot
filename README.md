@@ -189,11 +189,11 @@ Run data modifiers.
 
 Creates `ReplyKeyboardMarkup` keyboard `markup` object.
 
-##### `button(<location|contact>, <text>)`
+##### `button(<location | contact>, <text>)`
 
 Creates `KeyboardButton` button.
 
-##### `inlineButton(<text>, {url|callback|inline})`
+##### `inlineButton(<text>, {url | callback | inline})`
 
 Creates `InlineKeyboardButton` button object.
 
@@ -233,27 +233,27 @@ Use this method to send text messages.
 
 Use this method to forward messages of any kind.
 
-##### `sendPhoto(<chat_id>, <file_id|path|url|buffer|stream>, {caption, fileName, reply, markup, notify})`
+##### `sendPhoto(<chat_id>, <file_id | path | url | buffer | stream>, {caption, fileName, reply, markup, notify})`
 
 Use this method to send photos.
 
-##### `sendAudio(<chat_id>, <file_id|path|url|buffer|stream>, {fileName, reply, markup, notify})`
+##### `sendAudio(<chat_id>, <file_id | path | url | buffer | stream>, {fileName, reply, markup, notify})`
 
 Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message.
 
-##### `sendDocument(<chat_id>, <file_id|path|url|buffer|stream>, {caption, fileName, reply, markup, notify})`
+##### `sendDocument(<chat_id>, <file_id | path | url | buffer | stream>, {caption, fileName, reply, markup, notify})`
 
 Use this method to send general files.
 
-##### `sendSticker(<chat_id>, <file_id|path|url|buffer|stream>, {fileName, reply, markup, notify})`
+##### `sendSticker(<chat_id>, <file_id | path | url | buffer | stream>, {fileName, reply, markup, notify})`
 
 Use this method to send `.webp` stickers.
 
-##### `sendVideo(<chat_id>, <file_id|path|url|buffer|stream>, {caption, fileName, reply, markup, notify})`
+##### `sendVideo(<chat_id>, <file_id | path | url | buffer | stream>, {caption, fileName, reply, markup, notify})`
 
 Use this method to send video files, Telegram clients support `mp4` videos (other formats may be sent as `Document`).
 
-##### `sendVoice(<chat_id>, <file_id|path|url|buffer|stream>, {fileName, reply, markup, notify})`
+##### `sendVoice(<chat_id>, <file_id | path | url | buffer | stream>, {fileName, reply, markup, notify})`
 
 Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message.
 
@@ -289,15 +289,15 @@ Use this method to kick a user from a group or a supergroup.
 
 Use this method to unban a previously kicked user in a supergroup.
 
-##### `editMessageText` as `editMessage({chat & message|inline}, <text>)`
+##### `editMessageText` as `editText({chatId & messageId | inlineMsgId}, <text>)`
 
 Use this method to edit text messages sent by the bot or via the bot (for inline bots).
 
-##### `editMessageCaption` as `editCaption({chat & message|inline}, <caption>)`
+##### `editMessageCaption` as `editCaption({chat & message | inline}, <caption>)`
 
 Use this method to edit captions of messages sent by the bot or via the bot (for inline bots).
 
-##### `editMessageReplyMarkup` as `editMarkup({chat & message|inline}, <markup>)`
+##### `editMessageReplyMarkup` as `editMarkup({chat & message | inline}, <markup>)`
 
 Use this method to edit only the reply markup of messages sent by the bot or via the bot (for inline bots).
 
