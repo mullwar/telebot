@@ -1,4 +1,5 @@
 const
+  fs = require('fs'),
   test = require('ava'),
   TeleBot = require('../lib/telebot.js');
 
@@ -136,23 +137,29 @@ test('bot.sendMessage', t => {
 const sendMethods = {
   sendPhoto: {
     'url': 'https://telegram.org/img/t_logo.png',
+    'buffer': fs.readFileSync(`${__dirname}/data/image.jpg`),
     'file system': `${__dirname}/data/image.jpg`
   },
   sendAudio: {
+    'buffer': fs.readFileSync(`${__dirname}/data/audio.mp3`),
     'file system': `${__dirname}/data/audio.mp3`
   },
   sendDocument: {
     'url': 'http://www.google.com/humans.txt',
+    'buffer': fs.readFileSync(`${__dirname}/data/file.txt`),
     'file system': `${__dirname}/data/file.txt`
   },
   sendSticker: {
     'url': 'http://www.gstatic.com/webp/gallery/1.webp',
+    'buffer': fs.readFileSync(`${__dirname}/data/sticker.webp`),
     'file system': `${__dirname}/data/sticker.webp`
   },
   sendVideo: {
+    'buffer': fs.readFileSync(`${__dirname}/data/video.mp4`),
     'file system': `${__dirname}/data/video.mp4`
   },
   sendVoice: {
+    'buffer': fs.readFileSync(`${__dirname}/data/voice.m4a`),
     'file system': `${__dirname}/data/voice.m4a`
   }
 }
