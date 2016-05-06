@@ -121,6 +121,26 @@ test('mods', t => {
 
 });
 
+test('bot.answerList', t => {
+
+  const id = 8;
+  
+  const opt = {
+    cacheTime: 200,
+    nextOffset: 3457,
+    personal: true
+  };
+
+  const answers = bot.answerList(id, opt);
+
+  t.is(answers.id, id);
+
+  for (let key in opt) {
+    t.is(answers[key], opt[key]);
+  }
+
+});
+
 test('bot.getMe', t => {
   return bot.getMe().then(re => {
     t.true(re.ok && re.result.id == bot.id);

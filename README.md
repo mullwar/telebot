@@ -197,7 +197,7 @@ Creates `KeyboardButton` button.
 
 Creates `InlineKeyboardButton` button object.
 
-##### `answerList(<inline_query_id>)`
+##### `answerList(<inline_query_id>, {nextOffset, cacheTime, personal})`
 
 Creates `answerInlineQuery` answer list object.
 
