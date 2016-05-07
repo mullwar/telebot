@@ -7,7 +7,7 @@ Easy way to write Telegram bots.
 **Library features:**
 
 - Simple. Easy to use.
-- Full Telegram Bot API support.
+- Full [Telegram Bot API](https://core.telegram.org/bots/API) support.
 - Support modules.
 - No callbacks, Promises only.
 - Build-in modification and event system.
@@ -113,6 +113,9 @@ bot.on(['/start', '/help', 'sticker'], msg => {
 - **update** - on update
 - **tick** – on bot tick
 - **error** – an error occurred
+- **inlineQuery** - inline query data
+- **inlineChoice** - inline query chosen result
+- **callbackQuery** - button callback data
 
 #### Action events:
 
@@ -131,9 +134,6 @@ bot.on(['/start', '/help', 'sticker'], msg => {
 - **contact** – contact data
 - **location** – location data
 - **venue** – venue data
-- **inlineQuery** - inline query data
-- **inlineChoice** - inline query chosen result
-- **callbackQuery** - button callback data
 
 *Read more about Telegram Bot API response types: https://core.telegram.org/bots/api#available-types*
 
