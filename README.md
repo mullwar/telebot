@@ -12,7 +12,7 @@ Easy way to write Telegram bots.
 - No callbacks, Promises only.
 - Build-in modification and event system.
 - Extendable and hackable.
-- Readable [change log](https://github.com/kosmodrey/telebot/releases).
+- Readable [changelog](https://github.com/kosmodrey/telebot/releases).
 
 ## Installation
 

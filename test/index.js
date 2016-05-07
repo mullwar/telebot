@@ -52,7 +52,6 @@ test('bot object', t => {
   check(bot = new TeleBot(oldSet));
 
   for (let name in oldSet) {
-    console.log(name);
     if (name == 'sleep') {
       t.is(bot.interval, oldSet.sleep);
       continue;
