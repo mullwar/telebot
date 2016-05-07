@@ -12,6 +12,7 @@ Easy way to write Telegram bots.
 - No callbacks, Promises only.
 - Build-in modification and event system.
 - Extendable and hackable.
+- Readable [change log](https://github.com/kosmodrey/telebot/releases).
 
 ## Installation
 
@@ -38,10 +39,12 @@ const TeleBot = require('telebot');
 
 const bot = new TeleBot({
   token: '-PASTEYOURTELEGRAMBOTAPITOKENHERE-', // Required.
-  sleep: 1000, // Optional. How often check updates (in ms).
-  timeout: 0, // Optional. Update pulling timeout (0 - short polling).
-  limit: 100, // Optional. Limits the number of updates to be retrieved.
-  retryTimeout: 5000 // Optional. Reconnecting timeout (in ms).
+  pooling: {
+    interval: 1000, // Optional. How often check updates (in ms).
+    timeout: 0, // Optional. Update pulling timeout (0 - short polling).
+    limit: 100, // Optional. Limits the number of updates to be retrieved.
+    retryTimeout: 5000 // Optional. Reconnecting timeout (in ms).
+  },
   webhook: {
     key: '__YOUR_KEY__.pem', // Optional. Private key for server.
     cert: '__YOUR_CERT__.pem', // Optional. Public key.

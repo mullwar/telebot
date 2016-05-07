@@ -22,7 +22,17 @@ test('bot environment', t => {
 
 test('bot object', t => {
 
-  const set = {
+  const newSet = {
+    token: TOKEN,
+    pooling: {
+      interval: 100,
+      limit: 50,
+      timeout: 0,
+      retryTimeout: 5000
+    }
+  };
+
+  const oldSet = {
     token: TOKEN,
     limit: 30,
     sleep: 500,
@@ -38,8 +48,24 @@ test('bot object', t => {
   // Check new objects
   check(new TeleBot(TOKEN));
   
-  check(bot = new TeleBot(set));
-  for (let name in set) t.is(bot[name], set[name]);
+  // Old set
+  check(bot = new TeleBot(oldSet));
+
+  for (let name in oldSet) {
+    console.log(name);
+    if (name == 'sleep') {
+      t.is(bot.interval, oldSet.sleep);
+      continue;
+    };
+    t.is(bot[name], oldSet[name]);
+  }
+
+  // New set
+  check(bot = new TeleBot(newSet));
+
+  for (let name in newSet.pooling) {
+    t.is(bot[name], newSet.pooling[name]);
+  }
 
   // Connect
   bot.connect();
