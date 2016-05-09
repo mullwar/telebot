@@ -38,14 +38,14 @@ Import `telebot` module and create a new bot object:
 const TeleBot = require('telebot');
 
 const bot = new TeleBot({
-  token: '-PASTEYOURTELEGRAMBOTAPITOKENHERE-', // Required.
-  pooling: {
+  token: '-PASTEYOURTELEGRAMBOTAPITOKENHERE-', // Required. Telegram Bot API token.
+  pooling: { // Optional. Use pooling.
     interval: 1000, // Optional. How often check updates (in ms).
     timeout: 0, // Optional. Update pulling timeout (0 - short polling).
     limit: 100, // Optional. Limits the number of updates to be retrieved.
     retryTimeout: 5000 // Optional. Reconnecting timeout (in ms).
   },
-  webhook: {
+  webhook: { // Optional. Use webhook instead of pooling.
     key: '__YOUR_KEY__.pem', // Optional. Private key for server.
     cert: '__YOUR_CERT__.pem', // Optional. Public key.
     url: 'https://....', // HTTPS url to send updates to.
