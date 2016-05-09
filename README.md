@@ -195,6 +195,10 @@ Add data modifier.
 
 Run data modifiers.
 
+##### `use(<function>)`
+
+Use module function.
+
 ##### `keyboard([array of arrays], {resize, once, selective})`
 
 Creates `ReplyKeyboardMarkup` keyboard `markup` object.
