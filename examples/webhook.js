@@ -1,14 +1,14 @@
 'use strict';
 
 const TeleBot = require('../');
-const TOKEN = '-PASTEYOURTELEGRAMBOTAPITOKENHERE-';
 
 const bot = new TeleBot({
-  token: TOKEN,
+  token: '-PASTEYOURTELEGRAMBOTAPITOKENHERE-',
   webhook: {
-    // key: '__YOUR_KEY__.pem',
-    // cert: '__YOUR_CERT__.pem',
-    url: `https://..../${ TOKEN }`,
+    // Self-signed certificate:
+    // key: './key.pem',
+    // cert: './cert.pem',
+    url: 'https://....',
     host: '0.0.0.0',
     port: 443
   }
