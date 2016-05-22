@@ -295,6 +295,26 @@ Use this method to get a list of profile pictures for a user.
 
 Use this method to get basic info about a file and prepare it for downloading.
 
+##### `getChat(<chat_id>)`
+
+Use this method to get up to date information about the chat.
+
+##### `leaveChat(<chat_id>)`
+
+Use this method for your bot to leave a group, supergroup or channel.
+
+##### `getChatAdministrators` as `getAdmins(<chat_id>)`
+
+Use this method to get a list of administrators in a chat.
+
+##### `getChatMembersCount` as `countMembers(<chat_id>)`
+
+Use this method to get the number of members in a chat.
+
+##### `getChatMember` as `getMember(<chat_id>, <user_id>)`
+
+Use this method to get information about a member of a chat.
+
 ##### `kickChatMember` as `kick(<chat_id>, <user_id>)`
 
 Use this method to kick a user from a group or a supergroup.
