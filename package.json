@@ -7,10 +7,10 @@
     "node": ">= 6.0.0"
   },
   "dependencies": {
-    "request": "^2.69.0"
+    "request": "^2.72.0"
   },
   "devDependencies": {
-    "ava": "^0.14.0"
+    "ava": "^0.15.0"
   },
   "scripts": {
     "test": "./node_modules/.bin/ava test/index.js"
