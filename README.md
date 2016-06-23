@@ -144,6 +144,19 @@ bot.on(['/start', '/help', 'sticker'], msg => {
 - **contact** – contact data
 - **location** – location data
 - **venue** – venue data
+- **edited** – edited message
+- **pinnedMessage** – message was pinned
+- **userJoined** – new member was added
+- **userLeft** – member was removed
+- **newTitle** – new chat title
+- **newPhoto** – new chat photo
+- **deletePhoto** – chat photo was deleted
+- **groupCreated** – group has been created
+- **channelCreated** – channel has been created
+- **supergroupCreated** – supergroup has been created
+- **migrateTo** – group has been migrated to a supergroup
+- **migrateFrom** – supergroup has been migrated from a group
+
 
 *Read more about Telegram Bot API response types: https://core.telegram.org/bots/api#available-types*
 
