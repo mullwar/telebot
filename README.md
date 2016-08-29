@@ -129,7 +129,7 @@ bot.on(['/start', '/help', 'sticker'], msg => {
 
 #### Action events:
 
-*keyboard*, *button*, *inlineKeyboard*, *inlineButton*, *answerList*, *getMe*, *sendMessage*, *forwardMessage*, *sendPhoto*, *sendAudio*, *sendDocument*, *sendSticker*, *sendVideo*, *sendVoice*, *sendLocation*, *sendVenue*, *sendContact*, *sendChatAction*, *getUserProfilePhotos*, *getFile*, *kickChatMember*, *unbanChatMember*, *answerInlineQuery*, *answerCallbackQuery*, *editMessageText*, *editMessageCaption*, *editMessageReplyMarkup*, *setWebhook*
+*keyboard*, *button*, *inlineKeyboard*, *inlineQueryKeyboard*, *inlineButton*, *answerList*, *getMe*, *sendMessage*, *forwardMessage*, *sendPhoto*, *sendAudio*, *sendDocument*, *sendSticker*, *sendVideo*, *sendVoice*, *sendLocation*, *sendVenue*, *sendContact*, *sendChatAction*, *getUserProfilePhotos*, *getFile*, *kickChatMember*, *unbanChatMember*, *answerInlineQuery*, *answerCallbackQuery*, *editMessageText*, *editMessageCaption*, *editMessageReplyMarkup*, *setWebhook*
 
 ### Telegram message events:
 
