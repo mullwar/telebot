@@ -224,9 +224,17 @@ Creates `KeyboardButton` button.
 
 Creates `InlineKeyboardButton` button object.
 
+##### `inlineKeyboard([array of arrays])`
+
+Creates inlineKeyboard object for normal bot messages.
+
 ##### `answerList(<inline_query_id>, {nextOffset, cacheTime, personal})`
 
 Creates `answerInlineQuery` answer list object.
+
+##### `inlineQueryKeyboard([array of arrays])`
+
+Creates inlineKeyboard object for answerList articles.
 
 ##### `connect()`
 
