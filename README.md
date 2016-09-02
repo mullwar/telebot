@@ -39,13 +39,13 @@ const TeleBot = require('telebot');
 
 const bot = new TeleBot({
   token: '-PASTEYOURTELEGRAMBOTAPITOKENHERE-', // Required. Telegram Bot API token.
-  pooling: { // Optional. Use pooling.
+  polling: { // Optional. Use polling.
     interval: 1000, // Optional. How often check updates (in ms).
-    timeout: 0, // Optional. Update pulling timeout (0 - short polling).
+    timeout: 0, // Optional. Update polling timeout (0 - short polling).
     limit: 100, // Optional. Limits the number of updates to be retrieved.
     retryTimeout: 5000 // Optional. Reconnecting timeout (in ms).
   },
-  webhook: { // Optional. Use webhook instead of pooling.
+  webhook: { // Optional. Use webhook instead of polling.
     key: '__YOUR_KEY__.pem', // Optional. Private key for server.
     cert: '__YOUR_CERT__.pem', // Optional. Public key.
     url: 'https://....', // HTTPS url to send updates to.
@@ -230,11 +230,11 @@ Creates `answerInlineQuery` answer list object.
 
 ##### `connect()`
 
-Start pulling updates.
+Start polling updates.
 
 ##### `disconnect(<message>)`
 
-Stop pulling updates.
+Stop polling updates.
 
 ### Telegram methods:
 

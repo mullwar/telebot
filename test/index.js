@@ -24,7 +24,7 @@ test('bot object', t => {
 
   const newSet = {
     token: TOKEN,
-    pooling: {
+    polling: {
       interval: 100,
       limit: 50,
       timeout: 0,
@@ -62,14 +62,14 @@ test('bot object', t => {
   // New set
   check(bot = new TeleBot(newSet));
 
-  for (let name in newSet.pooling) {
-    t.is(bot[name], newSet.pooling[name]);
+  for (let name in newSet.polling) {
+    t.is(bot[name], newSet.polling[name]);
   }
 
   // Connect
   bot.connect();
   t.not(bot.loopFn, null);
-  t.deepEqual(bot.flags, { looping: true, pool: false, retry: false });
+  t.deepEqual(bot.flags, { looping: true, poll: false, retry: false });
 
   // Disconnect
   bot.disconnect();
