@@ -129,7 +129,7 @@ bot.on(['/start', '/help', 'sticker'], msg => {
 
 #### Action events:
 
-*keyboard*, *button*, *inlineKeyboard*, *inlineButton*, *answerList*, *getMe*, *sendMessage*, *forwardMessage*, *sendPhoto*, *sendAudio*, *sendDocument*, *sendSticker*, *sendVideo*, *sendVoice*, *sendLocation*, *sendVenue*, *sendContact*, *sendChatAction*, *getUserProfilePhotos*, *getFile*, *kickChatMember*, *unbanChatMember*, *answerInlineQuery*, *answerCallbackQuery*, *editMessageText*, *editMessageCaption*, *editMessageReplyMarkup*, *setWebhook*
+*keyboard*, *button*, *inlineKeyboard*, *inlineQueryKeyboard*, *inlineButton*, *answerList*, *getMe*, *sendMessage*, *forwardMessage*, *sendPhoto*, *sendAudio*, *sendDocument*, *sendSticker*, *sendVideo*, *sendVoice*, *sendLocation*, *sendVenue*, *sendContact*, *sendChatAction*, *getUserProfilePhotos*, *getFile*, *kickChatMember*, *unbanChatMember*, *answerInlineQuery*, *answerCallbackQuery*, *editMessageText*, *editMessageCaption*, *editMessageReplyMarkup*, *setWebhook*
 
 ### Telegram message events:
 
@@ -224,9 +224,17 @@ Creates `KeyboardButton` button.
 
 Creates `InlineKeyboardButton` button object.
 
+##### `inlineKeyboard([array of arrays])`
+
+Creates inlineKeyboard object for normal bot messages.
+
 ##### `answerList(<inline_query_id>, {nextOffset, cacheTime, personal})`
 
 Creates `answerInlineQuery` answer list object.
+
+##### `inlineQueryKeyboard([array of arrays])`
+
+Creates inlineKeyboard object for answerList articles.
 
 ##### `connect()`
 
