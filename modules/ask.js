@@ -9,7 +9,7 @@ const userList = {};
 module.exports = bot => {
 
   // On every text message
-  bot.on('text', msg => {
+  bot.on('*', (msg, info) => {
 
     let id = msg.chat.id,
       ask = userList[id];
@@ -19,7 +19,7 @@ module.exports = bot => {
 
     // Delete user from list and send custom event
     delete userList[id];
-    bot.event('ask.' + ask, msg, this);
+    bot.event('ask.' + ask, msg, info);
   
   });
   
