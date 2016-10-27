@@ -14,7 +14,7 @@ bot.on('/start', msg => {
   ).then(re => {
     // Get message id and chat
     lastMessage = [msg.from.id, re.result.message_id];
-    bot.sendMessage(msg.from.id, 'Now set a new caption using /edit <catpion>');
+    bot.sendMessage(msg.from.id, 'Now set a new caption using /edit <caption>');
   });
 
 });
