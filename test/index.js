@@ -167,8 +167,8 @@ test('bot.answerList', t => {
 });
 
 test('bot.getMe', t => {
-  return bot.getMe().then(re => {
-    t.true(re.ok && re.result.id == bot.id);
+  return bot.getMe().then(data => {
+    t.true(data && data.id == bot.id);
   });
 });
 
