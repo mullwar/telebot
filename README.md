@@ -364,6 +364,10 @@ Use this method to send answers to callback queries sent from inline keyboards.
 
 Use this method to specify a url and receive incoming updates via an outgoing webhook.
 
+##### `getWebhookInfo()`
+
+Use this method to get current webhook status.
+
 ## Documentation
 
 Read [wiki on GitHub](https://github.com/kosmodrey/telebot/wiki).
