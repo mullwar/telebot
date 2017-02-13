@@ -371,3 +371,4 @@ Use this method to get current webhook status.
 ## Documentation
 
 Read [wiki on GitHub](https://github.com/kosmodrey/telebot/wiki).
+Test on [RapidAPI](https://rapidapi.com/package/TelegramBot/functions?utm_source=TelegramGitHub&utm_medium=button)
