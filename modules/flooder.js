@@ -20,7 +20,7 @@ const userList = {};
 module.exports = (bot, cfg) => {
 
   // Load config data
-  let opt = cfg.flood || {};
+  let opt = cfg.flooder || {};
   let interval = Number(opt.interval) || 1;
   let text = opt.message === undefined ?
     'Too many messages from you. Please, try later...' :
@@ -49,9 +49,9 @@ module.exports = (bot, cfg) => {
     } else {
       userList[id] = { lastTime: now };
     }
-  
+
     return data;
-  
+
   });
 
 };
