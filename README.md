@@ -44,7 +44,7 @@ const bot = new TeleBot({
     timeout: 0, // Optional. Update polling timeout (0 - short polling).
     limit: 100, // Optional. Limits the number of updates to be retrieved.
     retryTimeout: 5000, // Optional. Reconnecting timeout (in ms).
-    allowedUpdates : [] // Optional. List the types of updates you want your bot to receive. Specify an empty list to receive all updates regardless of type.
+    allowedUpdates: [] // Optional. List the types of updates you want your bot to receive. Specify an empty list to receive all updates regardless of type.
   },
   webhook: { // Optional. Use webhook instead of polling.
     key: '__YOUR_KEY__.pem', // Optional. Private key for server.
