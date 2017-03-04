@@ -10,7 +10,7 @@
     "request": "^2.72.0"
   },
   "devDependencies": {
-    "ava": "^0.15.0"
+    "ava": "^0.18.2"
   },
   "scripts": {
     "test": "./node_modules/.bin/ava test/index.js"
