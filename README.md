@@ -62,8 +62,7 @@ const bot = new TeleBot({
     //   data: 'my module data'
     // }
     }
-  }
-});
+  });
 ```
 
 Or just:
