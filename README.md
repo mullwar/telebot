@@ -228,7 +228,7 @@ Creates `InlineKeyboardButton` button object.
 
 Creates inlineKeyboard object for normal bot messages.
 
-##### `answerList(<inline_query_id>, {nextOffset, cacheTime, personal})`
+##### `answerList(<inline_query_id>, {nextOffset, cacheTime, personal, pmText, pmParameter})`
 
 Creates `answerInlineQuery` answer list object.
 
