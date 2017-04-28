@@ -1,7 +1,7 @@
 {
   "name": "telebot",
   "version": "1.0.7",
-  "description": "Easy way to write Telegram bots.",
+  "description": "The easy way to write Telegram bots.",
   "main": "lib/telebot.js",
   "engines": {
     "node": ">= 6.0.0"
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/kosmodrey/telebot.git"
+    "url": "https://github.com/mullwar/telebot.git"
   },
   "keywords": [
     "bot",
@@ -29,10 +29,10 @@
     "telegram bot",
     "telegram bot api"
   ],
-  "author": "Kosmodrey <kosmodrey@yandex.ru>",
+  "author": "Mullwar <mullwar@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/kosmodrey/telebot/issues"
+    "url": "https://github.com/mullwar/telebot/issues"
   },
-  "homepage": "https://github.com/kosmodrey/telebot"
+  "homepage": "https://github.com/mullwar/telebot"
 }
