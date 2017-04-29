@@ -1,6 +1,6 @@
 ![](http://i.imgur.com/C6nTeCS.png)
 
-Easy way to write Telegram bots.
+The easy way to write Telegram bots.
 
 [![Build Status](https://travis-ci.org/mullwar/telebot.svg)](https://travis-ci.org/mullwar/telebot) [![Dependency Status](https://david-dm.org/mullwar/telebot.svg)](https://david-dm.org/mullwar/telebot) ![Node.js Version](http://img.shields.io/node/v/telebot.svg)
 
@@ -12,7 +12,7 @@ Easy way to write Telegram bots.
 - No callbacks, Promises only.
 - Build-in modification and event system.
 - Extendable and hackable.
-- Readable [changelog](https://github.com/kosmodrey/telebot/releases).
+- Readable [changelog](https://github.com/mullwar/telebot/releases).
 
 ## Installation
 
@@ -25,7 +25,7 @@ npm install telebot
 Or clone fresh code directly from git:
 
 ```
-git clone https://github.com/kosmodrey/telebot.git
+git clone https://github.com/mullwar/telebot.git
 cd telebot
 npm install
 ```
@@ -53,11 +53,7 @@ const bot = new TeleBot({
     host: '0.0.0.0', // Webhook server host.
     port: 443 // Server port.
   },
-  modules: {
-    // Optional. Module configuration.
-    //
-    // Example:
-    //
+  modules: { // Optional. Module configuration.
     // myModuleName: {
     //   data: 'my module data'
     // }
@@ -375,4 +371,4 @@ Use this method to remove webhook integration if you decide to switch back to ge
 
 ## Documentation
 
-Read [wiki on GitHub](https://github.com/kosmodrey/telebot/wiki).
+Read [wiki on GitHub](https://github.com/mullwar/telebot/wiki).
