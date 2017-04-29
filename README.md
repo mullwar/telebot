@@ -368,6 +368,11 @@ Use this method to specify a url and receive incoming updates via an outgoing we
 
 Use this method to get current webhook status.
 
+#### `deleteWebhook()`
+
+Use this method to remove webhook integration if you decide to switch back to getUpdates. Returns `True` on success.
+
+
 ## Documentation
 
 Read [wiki on GitHub](https://github.com/kosmodrey/telebot/wiki).
