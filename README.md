@@ -308,7 +308,7 @@ Use this method to send phone contacts.
 
 Use this method when you need to tell the user that something is happening on the bot's side.
 
-##### `getUserProfilePhotos` as `getUserPhoto(<chat_id>, {offset, limit})`
+##### `getUserProfilePhotos` as `getUserPhoto(<user_id>, {offset, limit})`
 
 Use this method to get a list of profile pictures for a user.
 
