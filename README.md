@@ -360,7 +360,7 @@ Use this method to edit only the reply markup of messages sent by the bot or via
 
 Use this method to send answers to callback queries sent from inline keyboards.
 
-##### `setWebhook(<url>, <certificate>)`
+##### `setWebhook(<url>, <certificate>, <allowed_updates>, <max_connections>)`
 
 Use this method to specify a url and receive incoming updates via an outgoing webhook.
 
