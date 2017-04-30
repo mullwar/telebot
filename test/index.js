@@ -32,34 +32,12 @@ test('bot object', t => {
     }
   };
 
-  const oldSet = {
-    token: TOKEN,
-    limit: 30,
-    sleep: 500,
-    timeout: 100,
-    retryTimeout: 10000
-  };
-
   function check(bot) {
     t.is(bot.token, TOKEN);
     t.is(bot.id, TOKEN.split(':')[0]);
   } 
 
-  // Check new objects
   check(new TeleBot(TOKEN));
-  
-  // Old set
-  check(bot = new TeleBot(oldSet));
-
-  for (let name in oldSet) {
-    if (name == 'sleep') {
-      t.is(bot.interval, oldSet.sleep);
-      continue;
-    };
-    t.is(bot[name], oldSet[name]);
-  }
-
-  // New set
   check(bot = new TeleBot(newSet));
 
   for (let name in newSet.polling) {
@@ -207,7 +185,7 @@ const sendMethods = {
     'buffer': fs.readFileSync(`${__dirname}/data/voice.m4a`),
     'file system': `${__dirname}/data/voice.m4a`
   }
-}
+};
 
 for (let method in sendMethods) {
   let data = sendMethods[method];
@@ -227,7 +205,7 @@ test('bot.sendLocation', t => {
 });
 
 test('bot.sendVenue', t => {
-  return bot.sendVenue(USER,  [56.9713962, 23.9890801], 'A', 'B').then(re => {
+  return bot.sendVenue(USER, [56.9713962, 23.9890801], 'A', 'B').then(re => {
     t.truthy(re.ok && re.result.venue);
   });
 });
