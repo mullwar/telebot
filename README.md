@@ -268,7 +268,7 @@ Use this method to forward messages of any kind.
 
 Use this method to send photos.
 
-##### `sendAudio(<chat_id>, <file_id | path | url | buffer | stream>, {fileName, serverDownload, reply, markup, notify})`
+##### `sendAudio(<chat_id>, <file_id | path | url | buffer | stream>, {title, performer, duration, caption, fileName, serverDownload, reply, markup, notify})`
 
 Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message.
 
