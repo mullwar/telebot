@@ -284,7 +284,7 @@ Use this method to send `.webp` stickers.
 
 Use this method to send video files, Telegram clients support `mp4` videos (other formats may be sent as `Document`).
 
-##### `sendVoice(<chat_id>, <file_id | path | url | buffer | stream>, {fileName, serverDownload, reply, markup, notify})`
+##### `sendVoice(<chat_id>, <file_id | path | url | buffer | stream>, {duration, caption, fileName, serverDownload, reply, markup, notify})`
 
 Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message.
 
