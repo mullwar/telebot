@@ -264,27 +264,27 @@ Use this method to send text messages.
 
 Use this method to forward messages of any kind.
 
-##### `sendPhoto(<chat_id>, <file_id | path | url | buffer | stream>, {caption, fileName, reply, markup, notify})`
+##### `sendPhoto(<chat_id>, <file_id | path | url | buffer | stream>, {caption, fileName, serverDownload, reply, markup, notify})`
 
 Use this method to send photos.
 
-##### `sendAudio(<chat_id>, <file_id | path | url | buffer | stream>, {fileName, reply, markup, notify})`
+##### `sendAudio(<chat_id>, <file_id | path | url | buffer | stream>, {fileName, serverDownload, reply, markup, notify})`
 
 Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message.
 
-##### `sendDocument(<chat_id>, <file_id | path | url | buffer | stream>, {caption, fileName, reply, markup, notify})`
+##### `sendDocument(<chat_id>, <file_id | path | url | buffer | stream>, {caption, fileName, serverDownload, reply, markup, notify})`
 
 Use this method to send general files.
 
-##### `sendSticker(<chat_id>, <file_id | path | url | buffer | stream>, {fileName, reply, markup, notify})`
+##### `sendSticker(<chat_id>, <file_id | path | url | buffer | stream>, {fileName, serverDownload, reply, markup, notify})`
 
 Use this method to send `.webp` stickers.
 
-##### `sendVideo(<chat_id>, <file_id | path | url | buffer | stream>, {caption, fileName, reply, markup, notify})`
+##### `sendVideo(<chat_id>, <file_id | path | url | buffer | stream>, {caption, fileName, serverDownload, reply, markup, notify})`
 
 Use this method to send video files, Telegram clients support `mp4` videos (other formats may be sent as `Document`).
 
-##### `sendVoice(<chat_id>, <file_id | path | url | buffer | stream>, {fileName, reply, markup, notify})`
+##### `sendVoice(<chat_id>, <file_id | path | url | buffer | stream>, {fileName, serverDownload, reply, markup, notify})`
 
 Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message.
 
