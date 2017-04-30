@@ -13,4 +13,4 @@ bot.mod('text', data => {
   return data;
 });
 
-bot.connect();
+bot.start();

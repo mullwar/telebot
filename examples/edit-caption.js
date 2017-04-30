@@ -36,4 +36,4 @@ bot.on('/edit', msg => {
 
 });
 
-bot.connect();
+bot.start();

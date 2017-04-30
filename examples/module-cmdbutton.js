@@ -37,4 +37,4 @@ bot.on('callbackQuery', msg => {
   bot.answerCallback(msg.id);
 });
 
-bot.connect();
+bot.start();

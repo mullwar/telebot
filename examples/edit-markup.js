@@ -35,7 +35,7 @@ bot.on('callbackQuery', msg => {
 
 });
 
-bot.connect();
+bot.start();
 
 // Returns keyboard markup
 function updateKeyboard(fruit) {

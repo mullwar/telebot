@@ -22,4 +22,4 @@ bot.on('*', msg => {
 
 // Yes, thats it. Now, try to spam bot with messages ;)
 
-bot.connect();
+bot.start();

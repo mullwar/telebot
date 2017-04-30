@@ -47,4 +47,4 @@ bot.on('ask.age', msg => {
 
 });
 
-bot.connect();
+bot.start();

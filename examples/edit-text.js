@@ -24,7 +24,7 @@ function updateTime(chatId, messageId) {
 
 }
 
-bot.connect();
+bot.start();
 
 // Get current time
 function time() {

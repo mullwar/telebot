@@ -71,7 +71,7 @@ const bot = new TeleBot('-PASTEYOURTELEGRAMBOTAPITOKENHERE-');
 
 *Replace `token` value to your [Telegram Bot API](https://core.telegram.org/bots#create-a-new-bot) token key.*
 
-To start getting updates, use ```bot.connect()```.
+To start polling updates, use ```bot.start()```.
 
 ```js
 bot.on('text', msg => {
@@ -81,7 +81,7 @@ bot.on('text', msg => {
   return bot.sendMessage(fromId, `Welcome, ${ firstName }!`, { reply });
 });
 
-bot.connect();
+bot.start();
 ```
 
 This code will send a "welcome" to every users `text` type message as a reply.

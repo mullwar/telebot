@@ -44,8 +44,8 @@ test('bot object', t => {
     t.is(bot[name], newSet.polling[name]);
   }
 
-  // Connect
-  bot.connect();
+  // Start
+  bot.start();
   t.not(bot.loopFn, null);
   t.deepEqual(bot.flags, { looping: true, poll: false, retry: false });
 

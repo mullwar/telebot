@@ -65,4 +65,4 @@ bot.on(['/kitty', '/kittygif'], function(msg) {
 });
 
 // Start getting updates
-bot.connect();
+bot.start();

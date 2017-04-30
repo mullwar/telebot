@@ -14,4 +14,4 @@ bot.on(['*', '/*'], (msg, self) => {
   );
 });
 
-bot.connect();
+bot.start();

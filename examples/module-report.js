@@ -23,4 +23,4 @@ bot.on('/error', x => ___REPORT_ERROR_TEST___);
 // Disconnect
 bot.on('/disconnect', x => bot.disconnect('bye!'));
 
-bot.connect();
+bot.start();

@@ -17,7 +17,7 @@ ngrok.connect(port, (error, url) => {
 
   bot.on('text', msg => bot.sendMessage(msg.from.id, msg.text));
 
-  bot.connect();
+  bot.start();
   
 });
 

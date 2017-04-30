@@ -78,4 +78,4 @@ bot.on('inlineQuery', msg => {
 
 });
 
-bot.connect();
+bot.start();
