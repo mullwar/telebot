@@ -8,7 +8,7 @@ The easy way to write Telegram bots.
 
 - Simple. Easy to use.
 - Full [Telegram Bot API](https://core.telegram.org/bots/API) support.
-- Support modules.
+- Supports modules.
 - No callbacks, Promises only.
 - Build-in modification and event system.
 - Extendable and hackable.
@@ -38,7 +38,7 @@ Import `telebot` module and create a new bot object:
 const TeleBot = require('telebot');
 
 const bot = new TeleBot({
-  token: '-PASTEYOURTELEGRAMBOTAPITOKENHERE-', // Required. Telegram Bot API token.
+  token: 'TELEGRAM_BOT_TOKEN', // Required. Telegram Bot API token.
   polling: { // Optional. Use polling.
     interval: 1000, // Optional. How often check updates (in ms).
     timeout: 0, // Optional. Update polling timeout (0 - short polling).
@@ -59,14 +59,14 @@ const bot = new TeleBot({
     //   data: 'my module data'
     // }
     }
-  });
+});
 ```
 
 Or just:
 
 ```js
 const TeleBot = require('telebot');
-const bot = new TeleBot('-PASTEYOURTELEGRAMBOTAPITOKENHERE-');
+const bot = new TeleBot('TELEGRAM_BOT_TOKEN');
 ```
 
 *Replace `token` value to your [Telegram Bot API](https://core.telegram.org/bots#create-a-new-bot) token key.*
@@ -113,7 +113,7 @@ bot.on(['/start', '/help', 'sticker'], msg => {
 
 - **/&#42;** – any user command
 - **/\<cmd\>** – on specific command
-- **connect** – bot connected
+- **start** – bot started
 - **stop** – bot stopped
 - **reconnecting** – bot reconnecting
 - **reconnected** – bot successfully reconnected
@@ -233,7 +233,7 @@ Creates `answerInlineQuery` answer list object.
 
 Creates inlineKeyboard object for answerList articles.
 
-##### `connect()`
+##### `start()`
 
 Start polling updates.
 
