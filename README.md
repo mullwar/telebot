@@ -114,7 +114,7 @@ bot.on(['/start', '/help', 'sticker'], msg => {
 - **/&#42;** – any user command
 - **/\<cmd\>** – on specific command
 - **connect** – bot connected
-- **disconnect** – bot disconnected
+- **stop** – bot stopped
 - **reconnecting** – bot reconnecting
 - **reconnected** – bot successfully reconnected
 - **update** - on update
@@ -237,7 +237,7 @@ Creates inlineKeyboard object for answerList articles.
 
 Start polling updates.
 
-##### `disconnect(<message>)`
+##### `stop(<message>)`
 
 Stop polling updates.
 
