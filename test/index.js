@@ -1,7 +1,6 @@
-const
-  fs = require('fs'),
-  test = require('ava'),
-  TeleBot = require('../lib/telebot.js');
+const fs = require('fs');
+const test = require('ava');
+const TeleBot = require('../lib/telebot.js');
 
 // Globals
 var bot;
@@ -68,19 +67,19 @@ test('events', t => {
   t.is(all(bot.eventList), 2);
 
   // Set
-  bot.on('connect', x => {});
-  bot.on('connect', delMe);
+  bot.on('start', x => {});
+  bot.on('start', delMe);
   bot.on('custom', x => {});
   bot.on('custom', x => {});
 
   // Count
   t.is(len('custom'), 2);
-  t.is(len('connect'), 2);
+  t.is(len('start'), 2);
   t.is(all(bot.eventList), 3);
   
   // Remove
-  t.true(bot.removeEvent('connect', delMe));
-  t.is(len('connect'), 1);
+  t.true(bot.removeEvent('start', delMe));
+  t.is(len('start'), 1);
 
   // Clean
   t.true(bot.cleanEvent('custom'));
