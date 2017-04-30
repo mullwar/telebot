@@ -49,8 +49,8 @@ test('bot object', t => {
   t.not(bot.loopFn, null);
   t.deepEqual(bot.flags, { looping: true, poll: false, retry: false });
 
-  // Disconnect
-  bot.disconnect();
+  // Stop
+  bot.stop();
   t.false(bot.flags.looping);
 
 });
