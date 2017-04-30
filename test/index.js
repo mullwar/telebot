@@ -93,13 +93,15 @@ test('events', t => {
 
 test('mods', t => {
 
+  const defModCount = bot.useModules.length;
+
   function len(event) {
     return bot.modList[event].length;
   }
 
   var delMe = x => x;
 
-  t.is(all(bot.modList), 0);
+  t.is(all(bot.modList), defModCount);
 
   // Set
   bot.mod('custom', x => ++x);
@@ -109,7 +111,7 @@ test('mods', t => {
 
   // Count
   t.is(len('custom'), 4);
-  t.is(all(bot.modList), 1);
+  t.is(all(bot.modList), 1 + defModCount);
 
   // Run
   t.is(bot.modRun('custom', 5), 8);
@@ -120,7 +122,7 @@ test('mods', t => {
   t.false(bot.removeMod('not_found'));
 
   t.is(len('custom'), 3);
-  t.is(all(bot.modList), 1);
+  t.is(all(bot.modList), 1 + defModCount);
 
 });
 

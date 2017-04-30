@@ -54,6 +54,7 @@ const bot = new TeleBot({
     host: '0.0.0.0', // Webhook server host.
     port: 443 // Server port.
   },
+  useModules: ['shortReply'], // Optional. Use build-in modules from /modules folder.
   modules: { // Optional. Module configuration.
     // myModuleName: {
     //   data: 'my module data'
