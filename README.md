@@ -2,7 +2,7 @@
 
 The easy way to write Telegram bots.
 
-[![Build Status](https://travis-ci.org/mullwar/telebot.svg)](https://travis-ci.org/mullwar/telebot) [![Dependency Status](https://david-dm.org/mullwar/telebot.svg)](https://david-dm.org/mullwar/telebot) ![Node.js Version](http://img.shields.io/node/v/telebot.svg)
+[![Build Status](https://travis-ci.org/mullwar/telebot.svg)](https://travis-ci.org/mullwar/telebot) [![Dependency Status](https://david-dm.org/mullwar/telebot.svg)](https://david-dm.org/mullwar/telebot) ![Node.js Version](http://img.shields.io/node/v/telebot.svg) [![TeleBot Chat](https://img.shields.io/badge/telegram-TeleBot%20Chat-blue.svg)](https://t.me/joinchat/AAAAAEF1Ivern8XS4DKn-A)
 
 **Library features:**
 
