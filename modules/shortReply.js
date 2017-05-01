@@ -30,7 +30,7 @@ module.exports = (bot, config) => {
 
     function replyObject(data) {
 
-        const msg = data.msg;
+        const msg = data.message;
         const userId = isPrivate ? msg.from.id : msg.chat.id;
 
         const replyMethods = {};
@@ -45,7 +45,7 @@ module.exports = (bot, config) => {
     }
 
     bot.mod('message', (data) => {
-        data.msg[methodName] = replyObject(data);
+        data.message[methodName] = replyObject(data);
         return data;
     });
 

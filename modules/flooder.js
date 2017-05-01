@@ -29,7 +29,7 @@ module.exports = (bot, cfg) => {
   // Create message modifier
   bot.mod('message', data => {
 
-    let msg = data.msg;
+    let msg = data.message;
     let id = msg.from.id;
     let user = userList[id];
     let now = new Date(msg.date);
@@ -42,7 +42,7 @@ module.exports = (bot, cfg) => {
           if (text) bot.sendMessage(id, text);
           user.flood = true;
         }
-        data.msg = {};
+        data.message = {};
       } else {
         user.flood = false;
       }

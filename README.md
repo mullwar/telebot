@@ -164,7 +164,7 @@ You can add modifier to process data before passing it to event.
 
 ```js
 bot.mod('text', data => {
-  let msg = data.msg;
+  let msg = data.message;
   msg.text = `📢 ${ msg.text }`;
   return data;
 });
@@ -202,7 +202,7 @@ Invokes the event handlers.
 
 Add data modifier.
 
-##### `runMod(<names>, <data>)`
+##### `modRun(<names>, <data>)`
 
 Run data modifiers.
 
