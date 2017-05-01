@@ -59,23 +59,28 @@ test('events', t => {
   t.plan(9);
 
   function len(event) {
-    return bot.eventList[event].list.length;
+    return bot.eventList.get(event).list.length;
+  }
+
+  function count() {
+    return bot.eventList.size;
   }
 
   var delMe = x => {};
 
-  t.is(all(bot.eventList), 2);
+  t.is(count(), 2);
 
   // Set
   bot.on('start', x => {});
   bot.on('start', delMe);
   bot.on('custom', x => {});
   bot.on('custom', x => {});
+  bot.on('custom', x => {});
 
   // Count
-  t.is(len('custom'), 2);
+  t.is(len('custom'), 3);
   t.is(len('start'), 2);
-  t.is(all(bot.eventList), 3);
+  t.is(count(), 3);
   
   // Remove
   t.true(bot.removeEvent('start', delMe));
@@ -86,7 +91,7 @@ test('events', t => {
 
   // Destroy
   t.true(bot.destroyEvent('custom'));
-  t.is(all(bot.eventList), 2);
+  t.is(count(), 2);
 
 });
 
