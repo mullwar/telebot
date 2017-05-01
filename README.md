@@ -8,7 +8,7 @@ The easy way to write Telegram bots.
 
 - Simple. Easy to use.
 - Full [Telegram Bot API](https://core.telegram.org/bots/API) support.
-- Supports modules.
+- Supports plugins!
 - No callbacks, Promises only.
 - Build-in modification and event system.
 - Extendable and hackable.
@@ -54,10 +54,10 @@ const bot = new TeleBot({
     host: '0.0.0.0', // Webhook server host.
     port: 443 // Server port.
   },
-  useModules: ['shortReply'], // Optional. Use build-in modules from /modules folder.
-  modules: { // Optional. Module configuration.
-    // myModuleName: {
-    //   data: 'my module data'
+  usePlugins: ['shortReply'], // Optional. Use build-in plugins from /plugins folder.
+  plugins: { // Optional. Plugin configuration.
+    // myPluginName: {
+    //   data: 'my custom value'
     // }
     }
 });
@@ -180,11 +180,11 @@ This code adds emoji to every `text` message.
 - **message** - process any type of message
 - **\<type\>** - specific type of message (*text, voice, document, photo, sticker, video, contact, location* or *venue*)
 
-## Modules
+## Plugins
 
-Use ```bot.use(require(<module_path>))``` to add a module.
+Use ```bot.use(require(<plugin_path>))``` to use a plugin.
 
-***[Check out module folder!](/modules)***
+***[Check out plugins folder!](/plugins)***
 
 ## Methods
 

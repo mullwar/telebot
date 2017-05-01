@@ -97,7 +97,7 @@ test('events', t => {
 
 test('mods', t => {
 
-  const defModCount = bot.useModules.length;
+  const defModCount = bot.usePlugins.length;
 
   function len(event) {
     return bot.modList[event].length;

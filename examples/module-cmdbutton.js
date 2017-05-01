@@ -4,7 +4,7 @@ const TeleBot = require('../');
 const bot = new TeleBot('-PASTEYOURTELEGRAMBOTAPITOKENHERE-');
 
 // Use command button module
-bot.use(require('../modules/cmdbutton.js'));
+bot.use(require('../plugins/cmdbutton.js'));
 
 // Command /start
 bot.on('/start', msg => {

@@ -4,7 +4,7 @@ const TeleBot = require('../');
 
 const bot = new TeleBot({
   token: '-PASTEYOURTELEGRAMBOTAPITOKENHERE-',
-  modules: {
+  plugins: {
     flooder: {
       interval: 2,
       message: 'Too many messages!'
@@ -13,7 +13,7 @@ const bot = new TeleBot({
 });
 
 // Use flooder module
-bot.use(require('../modules/flooder.js'));
+bot.use(require('../plugins/flooder.js'));
 
 // On every message
 bot.on('*', msg => {

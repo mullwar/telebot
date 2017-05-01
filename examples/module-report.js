@@ -4,7 +4,7 @@ const TeleBot = require('../');
 
 const bot = new TeleBot({
   token: '-PASTEYOURTELEGRAMBOTAPITOKENHERE-',
-  modules: {
+  plugins: {
     report: {
       // What to report?
       events: ['*', 'reconnect', 'reconnected', 'disconnect', 'error'],
@@ -15,7 +15,7 @@ const bot = new TeleBot({
 });
 
 // Use report module
-bot.use(require('../modules/report.js'));
+bot.use(require('../plugins/report.js'));
 
 // Error
 bot.on('/error', x => ___REPORT_ERROR_TEST___);
