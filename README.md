@@ -8,10 +8,10 @@ The easy way to write Telegram bots.
 
 - Simple. Easy to use.
 - Full [Telegram Bot API](https://core.telegram.org/bots/API) support.
-- Supports plugins!
-- No callbacks, Promises only.
+- Supports [plugins](https://github.com/mullwar/telebot/tree/master/plugins)!
 - Build-in modification and event system.
 - Extendable and hackable.
+- No callbacks, Promises only.
 - Readable [changelog](https://github.com/mullwar/telebot/releases).
 
 ## Installation
