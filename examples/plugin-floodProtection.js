@@ -3,7 +3,7 @@ const TeleBot = require('../');
 const bot = new TeleBot({
     token: 'TELEGRAM_BOT_TOKEN',
     usePlugin: ['floodProtection'],
-    plugins: {
+    pluginConfig: {
         floodProtection: {
             interval: 2,
             message: 'Too many messages, relax!'

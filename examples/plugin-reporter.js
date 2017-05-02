@@ -3,7 +3,7 @@ const TeleBot = require('../');
 const bot = new TeleBot({
     token: 'TELEGRAM_BOT_TOKEN',
     usePlugins: ['reporter'],
-    plugins: {
+    pluginConfig: {
         reporter: {
             // What to report?
             events: ['*', 'reconnect', 'reconnected', 'stop', 'error'],
