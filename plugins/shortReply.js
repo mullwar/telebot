@@ -10,6 +10,7 @@ const SHORTCUTS = {
     sticker: 'sendSticker',
     audio: 'sendAudio',
     voice: 'sendVoice',
+    game: 'sendGame',
     action: 'sendChatAction',
     location: 'sendLocation',
     place(position, title, address, props = {}) {
