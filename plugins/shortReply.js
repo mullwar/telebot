@@ -8,7 +8,14 @@ const SHORTCUTS = {
     video: 'sendVideo',
     file: 'sendDocument',
     sticker: 'sendSticker',
-    audio: 'sendAudio'
+    audio: 'sendAudio',
+    voice: 'sendVoice',
+    action: 'sendChatAction',
+    location: 'sendLocation',
+    place(position, title, address, props = {}) {
+        const msg = this.data.message;
+        return this.bot.sendVenue(this.userId, position, title, address, this.propertyProcessor(msg, props));
+    }
 };
 
 module.exports = {
@@ -18,17 +25,19 @@ module.exports = {
     defaultConfig: {
         methodName: 'reply',
         privateMode: false,
-        asReply: false
+        replyMode: false
     },
 
     plugin(bot, cfg) {
 
         const methodName = cfg.methodName || 'reply';
         const isPrivate = cfg.privateMode === true;
-        const asReply = cfg.asReply === true;
+        const replyMode = cfg.replyMode === true;
 
         function propertyProcessor(msg, props) {
-            if (asReply || props.asReply === true) props.reply = msg.message_id;
+            if (replyMode || props.asReply === true) {
+                props.reply = msg.message_id;
+            }
             return props;
         }
 
@@ -40,8 +49,13 @@ module.exports = {
             const replyMethods = {};
 
             for (let name in SHORTCUTS) {
-                replyMethods[name] = (data, props = {}) => {
-                    return bot[SHORTCUTS[name]](userId, data, propertyProcessor(msg, props));
+                const fn = SHORTCUTS[name];
+                if (typeof fn === 'string') {
+                    replyMethods[name] = (data, props = {}) => {
+                        return bot[fn](userId, data, propertyProcessor(msg, props));
+                    }
+                } else {
+                    replyMethods[name] = fn.bind({bot, data, userId, propertyProcessor});
                 }
             }
 
