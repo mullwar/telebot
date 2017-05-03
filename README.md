@@ -1,4 +1,4 @@
-![](http://i.imgur.com/C6nTeCS.png)
+![](http://i.imgur.com/eELz6Aw.jpg)
 
 The easy way to write Telegram bots.
 
@@ -70,22 +70,58 @@ const TeleBot = require('telebot');
 const bot = new TeleBot('TELEGRAM_BOT_TOKEN');
 ```
 
-*Replace `token` value to your [Telegram Bot API](https://core.telegram.org/bots#create-a-new-bot) token key.*
+*Don't forget to insert your [Telegram Bot API](https://core.telegram.org/bots#create-a-new-bot) token key.*
 
 To start polling updates, use ```bot.start()```.
 
 ```js
-bot.on('text', msg => {
-  let fromId = msg.from.id;
-  let firstName = msg.from.first_name;
-  let reply = msg.message_id;
-  return bot.sendMessage(fromId, `Welcome, ${ firstName }!`, { reply });
-});
+bot.on('text', (msg) => msg.reply.text(msg.text));
 
 bot.start();
 ```
 
-This code will send a "welcome" to every users `text` type message as a reply.
+We just created echo bot!
+
+## Quick examples
+
+Send text on `/start` or `/hello` command:
+
+```js
+bot.on(['/start', '/hello'], (msg) => msg.reply.text('Welcome!'));
+```
+
+When sticker received, reply back:
+
+```js
+bot.on('sticker', (msg) => {
+    return msg.reply.sticker('http://i.imgur.com/VRYdhuD.png', { asReply: true });
+});
+```
+
+Sends photo on "show kitty" or "kitty" text message (using RegExp):
+
+```js
+bot.on(/(show\s)?kitty*/, (msg) => {
+    return msg.reply.photo('http://thecatapi.com/api/images/get');
+});
+```
+
+Command with arguments `/say <your message>`:
+
+```js
+bot.on(/^\/say (.+)$/, (msg, props) => {
+    const text = props.match[1];
+    return bot.sendMessage(msg.from.id, text, { reply: msg.message_id });
+});
+```
+
+When message was edited:
+
+```js
+bot.on('edit', (msg) => {
+    return msg.reply.text('I saw it! You edited message!', { asReply: true });
+});
+```
 
 ***[See more examples!](/examples)***
 
@@ -93,19 +129,18 @@ This code will send a "welcome" to every users `text` type message as a reply.
 
 Use ```bot.on(<event>, <function>)``` to handle all possible TeleBot events.
 
-To catch a command with arguments, just add a slash:
+For example, to catch a command, just add a slash:
 
 ```js
-bot.on('/hello', msg => {
-  let [cmdName, firstName, lastName] = msg.text.split(' ');
-  return bot.sendMessage(msg.from.id, `Hello, ${ firstName } ${ lastName }!`);
+bot.on('/hello', (msg) => {
+  return bot.sendMessage(msg.from.id, `Hello, ${ msg.from.first_name }!`);
 });
 ```
 
 Also, you can catch multiple events:
 
 ```js
-bot.on(['/start', '/help', 'sticker'], msg => {
+bot.on(['/start', 'audio', 'sticker'], msg => {
   return bot.sendMessage(msg.from.id, 'Bam!');
 });
 ```
@@ -125,7 +160,7 @@ bot.on(['/start', '/help', 'sticker'], msg => {
 - **inlineChoice** - inline query chosen result
 - **callbackQuery** - button callback data
 
-#### Action events:
+#### Events:
 
 *keyboard*, *button*, *inlineKeyboard*, *inlineQueryKeyboard*, *inlineButton*, *answerList*, *getMe*, *sendMessage*, *forwardMessage*, *sendPhoto*, *sendAudio*, *sendDocument*, *sendSticker*, *sendVideo*, *sendVoice*, *sendLocation*, *sendVenue*, *sendContact*, *sendChatAction*, *getUserProfilePhotos*, *getFile*, *kickChatMember*, *unbanChatMember*, *answerInlineQuery*, *answerCallbackQuery*, *editMessageText*, *editMessageCaption*, *editMessageReplyMarkup*, *setWebhook*
 
@@ -142,7 +177,9 @@ bot.on(['/start', '/help', 'sticker'], msg => {
 - **contact** – contact data
 - **location** – location data
 - **venue** – venue data
-- **edited** – edited message
+- **game** - game data
+- **edit** – edited message
+- **forward** – forwarded message
 - **pinnedMessage** – message was pinned
 - **userJoined** – new member was added
 - **userLeft** – member was removed
@@ -155,7 +192,6 @@ bot.on(['/start', '/help', 'sticker'], msg => {
 - **migrateTo** – group has been migrated to a supergroup
 - **migrateFrom** – supergroup has been migrated from a group
 
-
 *Read more about Telegram Bot API response types: https://core.telegram.org/bots/api#available-types*
 
 ## Modifiers
@@ -163,7 +199,7 @@ bot.on(['/start', '/help', 'sticker'], msg => {
 You can add modifier to process data before passing it to event.
 
 ```js
-bot.mod('text', data => {
+bot.mod('text', (data) => {
   let msg = data.message;
   msg.text = `📢 ${ msg.text }`;
   return data;
@@ -182,9 +218,24 @@ This code adds emoji to every `text` message.
 
 ## Plugins
 
-Use ```bot.use(require(<plugin_path>))``` to use a plugin.
+Use ```bot.use(require(<plugin_path>))``` to plug an external plugin.
 
 ***[Check out plugins folder!](/plugins)***
+
+### Plugin structure
+
+```js
+module.exports = {
+    id: 'myPlugin', // Unique plugin name
+    defaultConfig: {
+        // Default plugin config
+        key: 'value'
+    },
+    plugin(bot, config) {
+        // Plugin code
+    }
+};
+```
 
 ## Methods
 
@@ -294,7 +345,7 @@ Use this method to send audio files, if you want Telegram clients to display the
 
 Use this method to send point on the map.
 
-##### `sendVenue(<chat_id>, [<latitude>, <longitude>], <title>, <address>, {foursquare, reply, markup, notify})`
+##### `sendVenue(<chat_id>, [<latitude>, <longitude>], <title>, <address>, {foursquareId, reply, markup, notify})`
 
 Use this method to send information about a venue.
 
@@ -305,6 +356,18 @@ Use this method to send phone contacts.
 ##### `sendAction(<chat_id>, <action>)`
 
 Use this method when you need to tell the user that something is happening on the bot's side.
+
+##### `sendGame(<chat_id>, <game_short_name>, {notify, reply, markup})`
+
+Use this method to send a game.
+
+##### `setGameScore(<user_id>, <score>, {force, disableEditMessage, chatId, messageId, inlineMessageId})`
+
+Use this method to set the score of the specified user in a game. On success, if the message was sent by the bot, returns the edited *Message*, otherwise returns *True*. Returns an error, if the new score is not greater than the user's current score in the chat and force is *False*.
+
+##### `getGameHighScores(<user_id>, {chatId, messageId, inlineMessageId})`
+
+Use this method to get data for high score tables. Will return the score of the specified user and several of his neighbours in a game. On success, returns an *Array* of *GameHighScore* objects.
 
 ##### `getUserProfilePhotos` as `getUserPhoto(<user_id>, {offset, limit})`
 
@@ -366,11 +429,6 @@ Use this method to specify a url and receive incoming updates via an outgoing we
 
 Use this method to get current webhook status.
 
-#### `deleteWebhook()`
+##### `deleteWebhook()`
 
 Use this method to remove webhook integration if you decide to switch back to getUpdates. Returns `True` on success.
-
-
-## Documentation
-
-Read [wiki on GitHub](https://github.com/mullwar/telebot/wiki).
