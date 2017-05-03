@@ -201,9 +201,13 @@ const sendMethods = {
 for (let method in sendMethods) {
     let data = sendMethods[method];
     test(`bot.${ method }`, t => {
+        let promise = Promise.resolve();
         for (let name in data) {
-            bot[method](USER, data[name]).then(re => t.true(re.ok));
+            promise = promise.then(() => {
+                return bot[method](USER, data[name]).then(re => t.true(re.ok));
+            });
         }
+        return promise;
     });
 }
 
@@ -238,7 +242,7 @@ test('bot.editText', t => {
         const chatId = USER;
         const messageId = re.result.message_id;
         return bot.editText({chatId, messageId}, 'text OK');
-    });
+    }).then(re => t.true(re.ok));
 });
 
 test('bot.editCaption', t => {
@@ -247,7 +251,7 @@ test('bot.editCaption', t => {
         const chatId = USER;
         const messageId = re.result.message_id;
         return bot.editCaption({chatId, messageId}, 'caption OK');
-    });
+    }).then(re => t.true(re.ok));
 });
 
 test('bot.editMarkup', t => {
@@ -259,7 +263,7 @@ test('bot.editMarkup', t => {
         const messageId = re.result.message_id;
         markup = bot.inlineKeyboard([[bot.inlineButton('OK', {callback: 2})]]);
         return bot.editMarkup({chatId, messageId}, markup);
-    });
+    }).then(re => t.true(re.ok));
 });
 
 // Functions
