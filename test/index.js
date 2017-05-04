@@ -179,7 +179,6 @@ const sendMethods = {
         'file system': `${__dirname}/data/audio.mp3`
     },
     sendDocument: {
-        'url': 'http://www.google.com/humans.txt',
         'buffer': fs.readFileSync(`${__dirname}/data/file.txt`),
         'file system': `${__dirname}/data/file.txt`
     },
