@@ -54,7 +54,8 @@ const bot = new TeleBot({
         host: '0.0.0.0', // Webhook server host.
         port: 443 // Server port.
     },
-    usePlugins: ['shortReply'], // Optional. Use build-in plugins from /plugins folder.
+    usePlugins: ['askUser'], // Optional. Use build-in plugins from pluginFolder.
+    pluginFolder: '../plugins/', // Optional. Plugin folder location relative to telebot package.
     pluginConfig: { // Optional. Plugin configuration.
         // myPluginName: {
         //   data: 'my custom value'
@@ -218,9 +219,19 @@ This code adds emoji to every `text` message.
 
 ## Plugins
 
-Use ```bot.use(require(<plugin_path>))``` to plug an external plugin.
+Use `usePlugins` config option to load build-in plugins from `pluginFolder`:
 
-***[Check out plugins folder!](/plugins)***
+```js
+const bot = new TeleBot({
+    token: 'TELEGRAM_BOT_TOKEN',
+    usePlugins: ['askUser', 'commandButtons'],
+    pluginFolder: '../plugins/'
+});
+```
+
+Or use ```bot.use(require(<plugin_path>))``` to plug an external plugin.
+
+***[Check out build-in plugin folder!](/plugins)***
 
 ### Plugin structure
 
