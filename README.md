@@ -6,20 +6,21 @@ The easy way to write Telegram bots.
 
 **Library features:**
 
-- Simple. Easy to use.
-- Full [Telegram Bot API](https://core.telegram.org/bots/API) support.
-- Supports [plugins](https://github.com/mullwar/telebot/tree/master/plugins)!
-- Build-in modification and event system.
-- Extendable and hackable.
-- No callbacks, Promises only.
-- Readable [changelog](https://github.com/mullwar/telebot/releases).
+- 🍎 Simple. Easy to use.
+- 🏰 Full [Telegram Bot API](https://core.telegram.org/bots/API) support.
+- 🔌 Supports [plugins](https://github.com/mullwar/telebot/tree/master/plugins)!
+- 📡 Build-in modification and event system.
+- 🛠 Extendable and hackable.
+- 🔮 No callbacks, Promises only.
+- 🤓 Readable [changelog](https://github.com/mullwar/telebot/releases).
+- ☺️ Friendly [TeleBot community group](https://goo.gl/gXvm12).
 
-## Installation
+## 🔨 Installation
 
 Download and install via [npm package manager](https://www.npmjs.com/package/telebot) (stable):
 
 ```
-npm install telebot
+npm install telebot --save
 ```
 
 Or clone fresh code directly from git:
@@ -30,7 +31,7 @@ cd telebot
 npm install
 ```
 
-## Usage
+## 🕹 Usage
 
 Import `telebot` module and create a new bot object:
 
@@ -83,7 +84,7 @@ bot.start();
 
 We just created echo bot!
 
-## Quick examples
+## 🌱 Quick examples
 
 Send text on `/start` or `/hello` command:
 
@@ -126,7 +127,7 @@ bot.on('edit', (msg) => {
 
 ***[See more examples!](/examples)***
 
-## Events
+## ⏰ Events
 
 Use ```bot.on(<event>, <function>)``` to handle all possible TeleBot events.
 
@@ -195,7 +196,7 @@ bot.on(['/start', 'audio', 'sticker'], msg => {
 
 *Read more about Telegram Bot API response types: https://core.telegram.org/bots/api#available-types*
 
-## Modifiers
+## 🚜 Modifiers
 
 You can add modifier to process data before passing it to event.
 
@@ -217,7 +218,7 @@ This code adds emoji to every `text` message.
 - **message** - process any type of message
 - **\<type\>** - specific type of message (*text, voice, document, photo, sticker, video, contact, location* or *venue*)
 
-## Plugins
+## 🔌 Plugins
 
 Use `usePlugins` config option to load build-in plugins from `pluginFolder`:
 
@@ -225,7 +226,10 @@ Use `usePlugins` config option to load build-in plugins from `pluginFolder`:
 const bot = new TeleBot({
     token: 'TELEGRAM_BOT_TOKEN',
     usePlugins: ['askUser', 'commandButtons'],
-    pluginFolder: '../plugins/'
+    pluginFolder: '../plugins/',
+    pluginConfig: {
+        // Plugin configs
+    }
 });
 ```
 
@@ -242,13 +246,13 @@ module.exports = {
         // Default plugin config
         key: 'value'
     },
-    plugin(bot, config) {
+    plugin(bot, pluginConfig) {
         // Plugin code
     }
 };
 ```
 
-## Methods
+## ⚙️ Methods
 
 ### TeleBot methods:
 
