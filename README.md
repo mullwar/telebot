@@ -176,6 +176,7 @@ bot.on(['/start', 'audio', 'sticker'], msg => {
 - **photo** – photo
 - **sticker** – sticker
 - **video** – video file
+- **videoNote** - video note
 - **contact** – contact data
 - **location** – location data
 - **venue** – venue data
@@ -351,6 +352,10 @@ Use this method to send `.webp` stickers.
 ##### `sendVideo(<chat_id>, <file_id | path | url | buffer | stream>, {duration, width, height, caption, fileName, serverDownload, reply, markup, notify})`
 
 Use this method to send video files, Telegram clients support `mp4` videos (other formats may be sent as `Document`).
+
+##### `sendVideoNote(<chat_id>, <file_id | path | url | buffer | stream>, {duration, length, fileName, serverDownload, reply, markup, notify})`
+
+Use this method to send video messages.
 
 ##### `sendVoice(<chat_id>, <file_id | path | url | buffer | stream>, {duration, caption, fileName, serverDownload, reply, markup, notify})`
 
