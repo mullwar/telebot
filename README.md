@@ -185,6 +185,7 @@ bot.on(['/start', 'audio', 'sticker'], msg => {
 - **forward** – forwarded message
 - **pinnedMessage** – message was pinned
 - **userJoined** – new member was added
+- **newChatMembers** - new members that were added to the group or supergroup
 - **userLeft** – member was removed
 - **newTitle** – new chat title
 - **newPhoto** – new chat photo
