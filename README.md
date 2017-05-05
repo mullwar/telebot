@@ -420,11 +420,11 @@ Use this method to unban a previously kicked user in a supergroup.
 
 Use this method to edit text messages sent by the bot or via the bot (for inline bots).
 
-##### `editMessageCaption` as `editCaption({chat & message | inline}, <caption>)`
+##### `editMessageCaption` as `editCaption({chatId & messageId | inlineMsgId}, <caption>)`
 
 Use this method to edit captions of messages sent by the bot or via the bot (for inline bots).
 
-##### `editMessageReplyMarkup` as `editMarkup({chat & message | inline}, <markup>)`
+##### `editMessageReplyMarkup` as `editMarkup({chatId & messageId | inlineMsgId}, <markup>)`
 
 Use this method to edit only the reply markup of messages sent by the bot or via the bot (for inline bots).
 
