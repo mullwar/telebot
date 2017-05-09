@@ -432,7 +432,7 @@ Use this method to edit captions of messages sent by the bot or via the bot (for
 
 Use this method to edit only the reply markup of messages sent by the bot or via the bot (for inline bots).
 
-##### `answerCallbackQuery` as `answerCallback(<callback_query_id>, <text>, <show_alert>)`
+##### `answerCallbackQuery` as `answerCallback(<callback_query_id>, {text, url, showAlert, cacheTime})`
 
 Use this method to send answers to callback queries sent from inline keyboards.
 
