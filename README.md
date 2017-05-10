@@ -284,7 +284,7 @@ Creates `ReplyKeyboardMarkup` keyboard `markup` object.
 
 Creates `KeyboardButton` button.
 
-##### `inlineButton(<text>, {url | callback | inline})`
+##### `inlineButton(<text>, {url | callback | game | inline | inlineCurrent})`
 
 Creates `InlineKeyboardButton` button object.
 
