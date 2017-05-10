@@ -30,7 +30,7 @@
     "telegram bot api"
   ],
   "author": "Mullwar <mullwar@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/mullwar/telebot/issues"
   },
