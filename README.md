@@ -45,16 +45,17 @@ const bot = new TeleBot({
         timeout: 0, // Optional. Update polling timeout (0 - short polling).
         limit: 100, // Optional. Limits the number of updates to be retrieved.
         retryTimeout: 5000, // Optional. Reconnecting timeout (in ms).
-        allowedUpdates: [], // Optional. List the types of updates you want your bot to receive. Specify an empty list to receive all updates.
         proxy: 'http://username:password@yourproxy.com:8080' // Optional. An HTTP proxy to be used (supports Basic Auth).
     },
     webhook: { // Optional. Use webhook instead of polling.
-        key: '__YOUR_KEY__.pem', // Optional. Private key for server.
-        cert: '__YOUR_CERT__.pem', // Optional. Public key.
+        key: 'key.pem', // Optional. Private key for server.
+        cert: 'cert.pem', // Optional. Public key.
         url: 'https://....', // HTTPS url to send updates to.
         host: '0.0.0.0', // Webhook server host.
-        port: 443 // Server port.
+        port: 443, // Server port.
+        maxConnections: 40 // Optional. Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery
     },
+    allowedUpdates: [], // Optional. List the types of updates you want your bot to receive. Specify an empty list to receive all updates.
     usePlugins: ['askUser'], // Optional. Use build-in plugins from pluginFolder.
     pluginFolder: '../plugins/', // Optional. Plugin folder location relative to telebot package.
     pluginConfig: { // Optional. Plugin configuration.
