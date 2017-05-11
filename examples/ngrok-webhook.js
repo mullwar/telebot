@@ -18,4 +18,3 @@ ngrok.connect(port, (error, url) => {
     bot.start();
 
 });
-

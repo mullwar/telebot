@@ -17,7 +17,7 @@ module.exports = {
     plugin(bot, cfg) {
 
         const buttons = cfg.buttons || {};
-        
+
         bot.on('text', (msg, props) => {
             const text = msg.text;
             for (let buttonId in buttons) {
