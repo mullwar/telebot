@@ -1,6 +1,7 @@
 node_modules/
 resources/
-.idea/
+examples/
 test/
+.idea/
 *.log
 .travis.yml
