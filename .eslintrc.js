@@ -9,6 +9,9 @@ module.exports = {
         "indent": ["error", 4],
         "semi": ["error", "always"],
         "no-trailing-spaces": "error",
-        "eol-last": ["error", "always"]
+        "eol-last": ["error", "always"],
+        "curly": ["error", "multi-line"],
+        "keyword-spacing": ["error", { "before": true }],
+        "space-before-blocks": "error"
     }
 };
