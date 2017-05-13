@@ -14,7 +14,8 @@
     "eslint": "^3.19.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/ava test/index.js"
+    "test": "./node_modules/.bin/ava test/index.js",
+    "lint": "./node_modules/.bin/eslint **/*.js"
   },
   "repository": {
     "type": "git",
