@@ -162,10 +162,12 @@ bot.on(['/start', 'audio', 'sticker'], msg => {
 - **inlineQuery** - inline query data
 - **inlineChoice** - inline query chosen result
 - **callbackQuery** - button callback data
+- **shippingQuery** - incoming shipping query
+- **preShippingQuery** - incoming pre-checkout query
 
 #### Events:
 
-*keyboard*, *button*, *inlineKeyboard*, *inlineQueryKeyboard*, *inlineButton*, *answerList*, *getMe*, *sendMessage*, *deleteMessage*, *forwardMessage*, *sendPhoto*, *sendAudio*, *sendDocument*, *sendSticker*, *sendVideo*, *sendVideoNote*, *sendVoice*, *sendLocation*, *sendVenue*, *sendContact*, *sendChatAction*, *getUserProfilePhotos*, *getFile*, *kickChatMember*, *unbanChatMember*, *answerInlineQuery*, *answerCallbackQuery*, *editMessageText*, *editMessageCaption*, *editMessageReplyMarkup*, *setWebhook*
+*keyboard*, *button*, *inlineKeyboard*, *inlineQueryKeyboard*, *inlineButton*, *answerList*, *getMe*, *sendMessage*, *deleteMessage*, *forwardMessage*, *sendPhoto*, *sendAudio*, *sendDocument*, *sendSticker*, *sendVideo*, *sendVideoNote*, *sendVoice*, *sendLocation*, *sendVenue*, *sendContact*, *sendChatAction*, *getUserProfilePhotos*, *getFile*, *kickChatMember*, *unbanChatMember*, *answerInlineQuery*, *answerCallbackQuery*, *answerShippingQuery*, *answerPreCheckoutQuery*, *editMessageText*, *editMessageCaption*, *editMessageReplyMarkup*, *setWebhook*
 
 ### Telegram message events:
 
@@ -182,6 +184,7 @@ bot.on(['/start', 'audio', 'sticker'], msg => {
 - **location** – location data
 - **venue** – venue data
 - **game** - game data
+- **invoice** - invoice for a payment
 - **edit** – edited message
 - **forward** – forwarded message
 - **pinnedMessage** – message was pinned
@@ -218,7 +221,7 @@ This code adds emoji to every `text` message.
 - **updateList** - list of updates in one tick
 - **update** - every update
 - **message** - process any type of message
-- **\<type\>** - specific type of message (*text, voice, document, photo, sticker, video, contact, location* or *venue*)
+- **\<type\>** - specific type of message
 
 ## 🔌 Plugins
 
@@ -445,6 +448,14 @@ Use this method to edit only the reply markup of messages sent by the bot or via
 ##### `answerCallbackQuery` as `answerCallback(<callback_query_id>, {text, url, showAlert, cacheTime})`
 
 Use this method to send answers to callback queries sent from inline keyboards.
+
+##### `answerShippingQuery(<shipping_query_id>, <ok> {shippingOptions, errorMessage})`
+
+Use this method to reply to shipping queries.
+
+##### `answerPreCheckoutQuery(<pre_checkout_query_id>, <ok> {errorMessage})`
+
+Use this method to respond to such pre-checkout queries.
 
 ##### `setWebhook(<url>, <certificate>, <allowed_updates>, <max_connections>)`
 
