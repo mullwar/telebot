@@ -165,7 +165,7 @@ bot.on(['/start', 'audio', 'sticker'], msg => {
 
 #### Events:
 
-*keyboard*, *button*, *inlineKeyboard*, *inlineQueryKeyboard*, *inlineButton*, *answerList*, *getMe*, *sendMessage*, *forwardMessage*, *sendPhoto*, *sendAudio*, *sendDocument*, *sendSticker*, *sendVideo*, *sendVoice*, *sendLocation*, *sendVenue*, *sendContact*, *sendChatAction*, *getUserProfilePhotos*, *getFile*, *kickChatMember*, *unbanChatMember*, *answerInlineQuery*, *answerCallbackQuery*, *editMessageText*, *editMessageCaption*, *editMessageReplyMarkup*, *setWebhook*
+*keyboard*, *button*, *inlineKeyboard*, *inlineQueryKeyboard*, *inlineButton*, *answerList*, *getMe*, *sendMessage*, *deleteMessage*, *forwardMessage*, *sendPhoto*, *sendAudio*, *sendDocument*, *sendSticker*, *sendVideo*, *sendVideoNote*, *sendVoice*, *sendLocation*, *sendVenue*, *sendContact*, *sendChatAction*, *getUserProfilePhotos*, *getFile*, *kickChatMember*, *unbanChatMember*, *answerInlineQuery*, *answerCallbackQuery*, *editMessageText*, *editMessageCaption*, *editMessageReplyMarkup*, *setWebhook*
 
 ### Telegram message events:
 
@@ -177,6 +177,7 @@ bot.on(['/start', 'audio', 'sticker'], msg => {
 - **photo** – photo
 - **sticker** – sticker
 - **video** – video file
+- **videoNote** - video note
 - **contact** – contact data
 - **location** – location data
 - **venue** – venue data
@@ -185,6 +186,7 @@ bot.on(['/start', 'audio', 'sticker'], msg => {
 - **forward** – forwarded message
 - **pinnedMessage** – message was pinned
 - **userJoined** – new member was added
+- **newChatMembers** - new members that were added to the group or supergroup
 - **userLeft** – member was removed
 - **newTitle** – new chat title
 - **newPhoto** – new chat photo
@@ -333,6 +335,10 @@ Use this method to send text messages.
 
 Use this method to forward messages of any kind.
 
+##### `deleteMessage(<chat_id>, <from_message_id>)`
+
+Use this method to delete a message. A message can only be deleted if it was sent less than 48 hours ago. Any such sent outgoing message may be deleted. Additionally, if the bot is an administrator in a group chat, it can delete any message. If the bot is an administrator of a supergroup or channel, it can delete ordinary messages from any other user, including service messages about people added or removed from the chat. Returns *True* on success.
+
 ##### `sendPhoto(<chat_id>, <file_id | path | url | buffer | stream>, {caption, fileName, serverDownload, reply, markup, notify})`
 
 Use this method to send photos.
@@ -353,6 +359,10 @@ Use this method to send `.webp` stickers.
 
 Use this method to send video files, Telegram clients support `mp4` videos (other formats may be sent as `Document`).
 
+##### `sendVideoNote(<chat_id>, <file_id | path | url | buffer | stream>, {duration, length, fileName, serverDownload, reply, markup, notify})`
+
+Use this method to send video messages.
+
 ##### `sendVoice(<chat_id>, <file_id | path | url | buffer | stream>, {duration, caption, fileName, serverDownload, reply, markup, notify})`
 
 Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message.
@@ -371,7 +381,7 @@ Use this method to send phone contacts.
 
 ##### `sendAction(<chat_id>, <action>)`
 
-Use this method when you need to tell the user that something is happening on the bot's side.
+Use this method when you need to tell the user that something is happening on the bot's side. Choose one, depending on what the user is about to receive: *typing* for text messages, *upload_photo* for photos, *record_video* or *upload_video* for videos, *record_audio* or *upload_audio* for audio files, *upload_document* for general files, *find_location* for location data, *record_video_note* or *upload_video_note* for video notes.
 
 ##### `sendGame(<chat_id>, <game_short_name>, {notify, reply, markup})`
 
