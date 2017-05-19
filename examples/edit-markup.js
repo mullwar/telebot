@@ -26,10 +26,10 @@ bot.on('callbackQuery', msg => {
 
     const data = msg.data;
     const [chatId, messageId] = lastMessage;
-    const markup = updateKeyboard(data);
+    const replyMarkup = updateKeyboard(data);
 
     // Edit message markup
-    return bot.editMarkup({chatId, messageId}, {markup});
+    return bot.editMarkup({chatId, messageId}, {replyMarkup});
 
 });
 

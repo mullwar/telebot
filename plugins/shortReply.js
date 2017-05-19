@@ -37,7 +37,7 @@ module.exports = {
 
         function propertyProcessor(msg, props) {
             if (replyMode || props.asReply === true) {
-                props.reply = msg.message_id;
+                props.replyToMessage = msg.message_id;
             }
             return props;
         }

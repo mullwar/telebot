@@ -10,7 +10,7 @@ const bot = new TeleBot('TELEGRAM_BOT_TOKEN');
 const API = 'https://thecatapi.com/api/images/get?format=src&type=';
 
 // Command keyboard
-const markup = bot.keyboard([
+const replyMarkup = bot.keyboard([
     ['/kitty', '/kittygif']
 ], {resize: true, once: false});
 
@@ -23,7 +23,7 @@ bot.on('text', function (msg) {
 bot.on(['/start', '/help'], function (msg) {
 
     return bot.sendMessage(msg.chat.id,
-        '😺 Use commands: /kitty, /kittygif and /about', {markup}
+        '😺 Use commands: /kitty, /kittygif and /about', {replyMarkup}
     );
 
 });

@@ -4,31 +4,31 @@ const bot = new TeleBot('TELEGRAM_BOT_TOKEN');
 // On commands
 bot.on(['/start', '/back'], msg => {
 
-    let markup = bot.keyboard([
+    let replyMarkup = bot.keyboard([
         ['/buttons', '/inlineKeyboard'],
         ['/start', '/hide']
     ], {resize: true});
 
-    return bot.sendMessage(msg.from.id, 'Keyboard example.', {markup});
+    return bot.sendMessage(msg.from.id, 'Keyboard example.', {replyMarkup});
 
 });
 
 // Buttons
 bot.on('/buttons', msg => {
 
-    let markup = bot.keyboard([
+    let replyMarkup = bot.keyboard([
         [bot.button('contact', 'Your contact'), bot.button('location', 'Your location')],
         ['/back', '/hide']
     ], {resize: true});
 
-    return bot.sendMessage(msg.from.id, 'Button example.', {markup});
+    return bot.sendMessage(msg.from.id, 'Button example.', {replyMarkup});
 
 });
 
 // Hide keyboard
 bot.on('/hide', msg => {
     return bot.sendMessage(
-        msg.from.id, 'Hide keyboard example. Type /back to show.', {markup: 'hide'}
+        msg.from.id, 'Hide keyboard example. Type /back to show.', {replyMarkup: 'hide'}
     );
 });
 
@@ -40,7 +40,7 @@ bot.on(['location', 'contact'], (msg, self) => {
 // Inline buttons
 bot.on('/inlineKeyboard', msg => {
 
-    let markup = bot.inlineKeyboard([
+    let replyMarkup = bot.inlineKeyboard([
         [
             bot.inlineButton('callback', {callback: 'this_is_data'}),
             bot.inlineButton('inline', {inline: 'some query'})
@@ -49,7 +49,7 @@ bot.on('/inlineKeyboard', msg => {
         ]
     ]);
 
-    return bot.sendMessage(msg.from.id, 'Inline keyboard example.', {markup});
+    return bot.sendMessage(msg.from.id, 'Inline keyboard example.', {replyMarkup});
 
 });
 

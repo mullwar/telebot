@@ -254,14 +254,14 @@ test('bot.editCaption', t => {
 });
 
 test('bot.editMarkup', t => {
-    let markup = bot.inlineKeyboard([
+    let replyMarkup = bot.inlineKeyboard([
         [bot.inlineButton('test', {callback: 1})]
     ]);
-    return bot.sendMessage(USER, 'markup', {markup}).then(re => {
+    return bot.sendMessage(USER, 'markup', {replyMarkup}).then(re => {
         const chatId = USER;
         const messageId = re.result.message_id;
-        markup = bot.inlineKeyboard([[bot.inlineButton('OK', {callback: 2})]]);
-        return bot.editMarkup({chatId, messageId}, markup);
+        replyMarkup = bot.inlineKeyboard([[bot.inlineButton('OK', {callback: 2})]]);
+        return bot.editMarkup({chatId, messageId}, replyMarkup);
     }).then(re => t.true(re.ok));
 });
 

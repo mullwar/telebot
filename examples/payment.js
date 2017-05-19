@@ -21,7 +21,7 @@ bot.on('/start', (msg) => {
             {label: 'For testing!', amount: 1250},
             {label: 'Discount', amount: -120}
         ],
-        markup: inlineKeyboard
+        replyMarkup: inlineKeyboard
     }).then(data => {
         console.log('OK', data);
     }).catch(error => {

@@ -9,7 +9,7 @@ const bot = new TeleBot({
 bot.on('/start', msg => {
 
     // Inline keyboard markup
-    const markup = bot.inlineKeyboard([
+    const replyMarkup = bot.inlineKeyboard([
         [
             // First row with command callback button
             bot.inlineButton('Command button', {callback: '/hello'})
@@ -21,7 +21,7 @@ bot.on('/start', msg => {
     ]);
 
     // Send message with keyboard markup
-    return bot.sendMessage(msg.from.id, 'Example of command button.', {markup});
+    return bot.sendMessage(msg.from.id, 'Example of command button.', {replyMarkup});
 
 });
 

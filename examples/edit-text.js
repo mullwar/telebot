@@ -16,7 +16,7 @@ function updateTime(chatId, messageId) {
     setInterval(() => {
         bot.editText(
             {chatId, messageId}, `<b>Current time:</b> ${ time() }`,
-            {parse: 'html'}
+            {parseMode: 'html'}
         ).catch(error => console.log('Error:', error));
     }, 1000);
 

@@ -115,7 +115,7 @@ Command with arguments `/say <your message>`:
 ```js
 bot.on(/^\/say (.+)$/, (msg, props) => {
     const text = props.match[1];
-    return bot.sendMessage(msg.from.id, text, { reply: msg.message_id });
+    return bot.sendMessage(msg.from.id, text, { replyToMessage: msg.message_id });
 });
 ```
 
@@ -284,7 +284,7 @@ Use module function.
 
 ##### `keyboard([array of arrays], {resize, once, selective})`
 
-Creates `ReplyKeyboardMarkup` keyboard `markup` object.
+Creates `ReplyKeyboardMarkup` keyboard `replyMarkup` object.
 
 ##### `button(<location | contact>, <text>)`
 
@@ -330,11 +330,11 @@ Use this method to send `answerList` to an inline query.
 
 Use this method to get basic info about a file and prepare it for downloading.
 
-##### `sendMessage(<chat_id>, <text>, {parse, reply, markup, notify, preview})`
+##### `sendMessage(<chat_id>, <text>, {parseMode, replyToMessage, replyMarkup, notification, webPreview})`
 
 Use this method to send text messages.
 
-##### `forwardMessage(<chat_id>, <from_chat_id>, <message_id>, {notify})`
+##### `forwardMessage(<chat_id>, <from_chat_id>, <message_id>, {notification})`
 
 Use this method to forward messages of any kind.
 
@@ -342,43 +342,43 @@ Use this method to forward messages of any kind.
 
 Use this method to delete a message. A message can only be deleted if it was sent less than 48 hours ago. Any such sent outgoing message may be deleted. Additionally, if the bot is an administrator in a group chat, it can delete any message. If the bot is an administrator of a supergroup or channel, it can delete ordinary messages from any other user, including service messages about people added or removed from the chat. Returns *True* on success.
 
-##### `sendPhoto(<chat_id>, <file_id | path | url | buffer | stream>, {caption, fileName, serverDownload, reply, markup, notify})`
+##### `sendPhoto(<chat_id>, <file_id | path | url | buffer | stream>, {caption, fileName, serverDownload, replyToMessage, replyMarkup, notification})`
 
 Use this method to send photos.
 
-##### `sendAudio(<chat_id>, <file_id | path | url | buffer | stream>, {title, performer, duration, caption, fileName, serverDownload, reply, markup, notify})`
+##### `sendAudio(<chat_id>, <file_id | path | url | buffer | stream>, {title, performer, duration, caption, fileName, serverDownload, replyToMessage, replyMarkup, notification})`
 
 Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message.
 
-##### `sendDocument(<chat_id>, <file_id | path | url | buffer | stream>, {caption, fileName, serverDownload, reply, markup, notify})`
+##### `sendDocument(<chat_id>, <file_id | path | url | buffer | stream>, {caption, fileName, serverDownload, replyToMessage, replyMarkup, notification})`
 
 Use this method to send general files.
 
-##### `sendSticker(<chat_id>, <file_id | path | url | buffer | stream>, {fileName, serverDownload, reply, markup, notify})`
+##### `sendSticker(<chat_id>, <file_id | path | url | buffer | stream>, {fileName, serverDownload, replyToMessage, replyMarkup, notification})`
 
 Use this method to send `.webp` stickers.
 
-##### `sendVideo(<chat_id>, <file_id | path | url | buffer | stream>, {duration, width, height, caption, fileName, serverDownload, reply, markup, notify})`
+##### `sendVideo(<chat_id>, <file_id | path | url | buffer | stream>, {duration, width, height, caption, fileName, serverDownload, replyToMessage, replyMarkup, notification})`
 
 Use this method to send video files, Telegram clients support `mp4` videos (other formats may be sent as `Document`).
 
-##### `sendVideoNote(<chat_id>, <file_id | path | url | buffer | stream>, {duration, length, fileName, serverDownload, reply, markup, notify})`
+##### `sendVideoNote(<chat_id>, <file_id | path | url | buffer | stream>, {duration, length, fileName, serverDownload, replyToMessage, replyMarkup, notification})`
 
 Use this method to send video messages.
 
-##### `sendVoice(<chat_id>, <file_id | path | url | buffer | stream>, {duration, caption, fileName, serverDownload, reply, markup, notify})`
+##### `sendVoice(<chat_id>, <file_id | path | url | buffer | stream>, {duration, caption, fileName, serverDownload, replyToMessage, replyMarkup, notification})`
 
 Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message.
 
-##### `sendLocation(<chat_id>, [<latitude>, <longitude>], {reply, markup, notify})`
+##### `sendLocation(<chat_id>, [<latitude>, <longitude>], {replyToMessage, replyMarkup, notification})`
 
 Use this method to send point on the map.
 
-##### `sendVenue(<chat_id>, [<latitude>, <longitude>], <title>, <address>, {foursquareId, reply, markup, notify})`
+##### `sendVenue(<chat_id>, [<latitude>, <longitude>], <title>, <address>, {foursquareId, replyToMessage, replyMarkup, notification})`
 
 Use this method to send information about a venue.
 
-##### `sendContact(<chat_id>, <number>, <firstName>, <lastName>, { reply, markup, notify})`
+##### `sendContact(<chat_id>, <number>, <firstName>, <lastName>, { replyToMessage, replyMarkup, notification})`
 
 Use this method to send phone contacts.
 
@@ -386,7 +386,7 @@ Use this method to send phone contacts.
 
 Use this method when you need to tell the user that something is happening on the bot's side. Choose one, depending on what the user is about to receive: *typing* for text messages, *upload_photo* for photos, *record_video* or *upload_video* for videos, *record_audio* or *upload_audio* for audio files, *upload_document* for general files, *find_location* for location data, *record_video_note* or *upload_video_note* for video notes.
 
-##### `sendGame(<chat_id>, <game_short_name>, {notify, reply, markup})`
+##### `sendGame(<chat_id>, <game_short_name>, {notification, replyToMessage, replyMarkup})`
 
 Use this method to send a game.
 
@@ -406,7 +406,7 @@ Use this method to get a list of profile pictures for a user.
 
 Use this method to get basic info about a file and prepare it for downloading.
 
-##### `sendInvoice(<chat_id>, {title, description, payload, providerToken, startParameter, currency, prices, photo: {url, width, height}, need: {name, phoneNumber, email, shippingAddress}, isFlexible, notify, reply, markup})`
+##### `sendInvoice(<chat_id>, {title, description, payload, providerToken, startParameter, currency, prices, photo: {url, width, height}, need: {name, phoneNumber, email, shippingAddress}, isFlexible, notification, replyToMessage, replyMarkup})`
 
 Use this method to send invoices.
 
@@ -446,7 +446,7 @@ Use this method to edit text messages sent by the bot or via the bot (for inline
 
 Use this method to edit captions of messages sent by the bot or via the bot (for inline bots).
 
-##### `editMessageReplyMarkup` as `editMarkup({chatId & messageId | inlineMsgId}, <markup>)`
+##### `editMessageReplyMarkup` as `editMarkup({chatId & messageId | inlineMsgId}, <replyMarkup>)`
 
 Use this method to edit only the reply markup of messages sent by the bot or via the bot (for inline bots).
 

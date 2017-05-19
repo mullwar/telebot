@@ -28,16 +28,16 @@ const bot = new TeleBot({
 
 bot.on('/hello', (msg) => msg.reply.text('Hello command!'));
 bot.on('/world', (msg) => msg.reply.text('World command!'));
-bot.on('/hide', (msg) => msg.reply.text('Type /start to show keyboard again.', {markup: 'hide'}));
+bot.on('/hide', (msg) => msg.reply.text('Type /start to show keyboard again.', {replyMarkup: 'hide'}));
 
 bot.on('/start', (msg) => {
 
-    let markup = bot.keyboard([
+    let replyMarkup = bot.keyboard([
         [BUTTONS.hello.label, BUTTONS.world.label],
         [BUTTONS.hide.label]
     ], {resize: true});
 
-    return bot.sendMessage(msg.from.id, 'See keyboard below.', {markup});
+    return bot.sendMessage(msg.from.id, 'See keyboard below.', {replyMarkup});
 
 });
 

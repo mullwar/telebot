@@ -63,7 +63,7 @@ module.exports = {
                         `${ error.stack ? `🚧 <b>Stack:</b>\n${ s(error.stack) }\n` : '' }` +
                         `⏰ <b>Event:</b> ${ type }\n` +
                         `💾 <b>Data:</b> ${ jsonData }`,
-                        {parse: 'html', skipReport: true}
+                        {parseMode: 'html', skipReport: true}
                     );
 
                 } else {
@@ -72,7 +72,7 @@ module.exports = {
                     bot.sendMessage(userId,
                         `⏰ <b>Event:</b> ${ type }\n` +
                         (jsonData && jsonData != '{}' ? `💾 <b>Data:</b> ${ jsonData }` : ''),
-                        {parse: 'html', skipReport: true}
+                        {parseMode: 'html', skipReport: true}
                     );
 
                 }
