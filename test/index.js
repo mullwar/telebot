@@ -66,20 +66,20 @@ test('events', t => {
         return bot.eventList.size;
     }
 
-    var delMe = x => {
+    var delMe = () => {
     };
 
     t.is(count(), 2);
 
     // Set
-    bot.on('start', x => {
+    bot.on('start', () => {
     });
     bot.on('start', delMe);
-    bot.on('custom', x => {
+    bot.on('custom', () => {
     });
-    bot.on('custom', x => {
+    bot.on('custom', () => {
     });
-    bot.on('custom', x => {
+    bot.on('custom', () => {
     });
 
     // Count

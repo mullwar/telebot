@@ -1,6 +1,6 @@
 {
   "name": "telebot",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "The easy way to write Telegram bots.",
   "main": "lib/telebot.js",
   "engines": {
@@ -10,10 +10,12 @@
     "request": "^2.81.0"
   },
   "devDependencies": {
-    "ava": "^0.19.1"
+    "ava": "^0.19.1",
+    "eslint": "^3.19.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/ava test/index.js"
+    "test": "./node_modules/.bin/ava test/index.js",
+    "lint": "./node_modules/.bin/eslint **/*.js"
   },
   "repository": {
     "type": "git",
@@ -30,7 +32,7 @@
     "telegram bot api"
   ],
   "author": "Mullwar <mullwar@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/mullwar/telebot/issues"
   },

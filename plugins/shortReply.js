@@ -54,7 +54,7 @@ module.exports = {
                 if (typeof fn === 'string') {
                     replyMethods[name] = (data, props = {}) => {
                         return bot[fn](userId, data, propertyProcessor(msg, props));
-                    }
+                    };
                 } else {
                     replyMethods[name] = fn.bind({bot, data, userId, propertyProcessor});
                 }

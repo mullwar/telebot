@@ -14,9 +14,9 @@ const bot = new TeleBot({
 });
 
 // Make an error
-bot.on('/error', x => ___REPORT_ERROR_TEST___);
+bot.on('/error', (msg) => msg.MAKE_AN_ERROR);
 
 // Stop with message
-bot.on('/stop', x => bot.stop('bye!'));
+bot.on('/stop', () => bot.stop('bye!'));
 
 bot.start();

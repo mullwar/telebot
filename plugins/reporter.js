@@ -19,18 +19,17 @@ module.exports = {
     plugin(bot, cfg) {
 
         // If no module options
-        if (typeof cfg != 'object')
+        if (typeof cfg != 'object') {
             return console.error('[report] no config data');
+        }
 
         // Get lists
         let toList = Array.isArray(cfg.to) ? cfg.to : [];
         let eventList = Array.isArray(cfg.events) ? cfg.events : [];
 
         // Check lists
-        if (!toList.length)
-            return console.error('[report] no user list');
-        if (!eventList.length)
-            return console.error('[report] no event list');
+        if (!toList.length) return console.error('[report] no user list');
+        if (!eventList.length) return console.error('[report] no event list');
 
         // Create events handler
         bot.on(eventList, (event = {}, props, info) => {

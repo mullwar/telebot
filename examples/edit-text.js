@@ -13,7 +13,7 @@ bot.on('/time', msg => {
 function updateTime(chatId, messageId) {
 
     // Update every second
-    setInterval(x => {
+    setInterval(() => {
         bot.editText(
             {chatId, messageId}, `<b>Current time:</b> ${ time() }`,
             {parse: 'html'}

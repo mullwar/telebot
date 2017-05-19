@@ -1,6 +1,8 @@
 node_modules/
 resources/
-.idea/
+examples/
 test/
+.idea/
 *.log
+.eslintrc.js
 .travis.yml
