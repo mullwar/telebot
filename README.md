@@ -405,6 +405,10 @@ Use this method to get a list of profile pictures for a user.
 
 Use this method to get basic info about a file and prepare it for downloading.
 
+##### `sendInvoice(<chat_id>, {title, description, payload, providerToken, startParameter, currency, prices, photo: {url, width, height}, need: {name, phoneNumber, email, shippingAddress}, isFlexible, notify, reply, markup})`
+
+Use this method to send invoices.
+
 ##### `getChat(<chat_id>)`
 
 Use this method to get up to date information about the chat.
