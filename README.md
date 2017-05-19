@@ -185,17 +185,16 @@ bot.on(['/start', 'audio', 'sticker'], msg => {
 - **edit** – edited message
 - **forward** – forwarded message
 - **pinnedMessage** – message was pinned
-- **userJoined** – new member was added
 - **newChatMembers** - new members that were added to the group or supergroup
-- **userLeft** – member was removed
-- **newTitle** – new chat title
-- **newPhoto** – new chat photo
-- **deletePhoto** – chat photo was deleted
-- **groupCreated** – group has been created
-- **channelCreated** – channel has been created
-- **supergroupCreated** – supergroup has been created
-- **migrateTo** – group has been migrated to a supergroup
-- **migrateFrom** – supergroup has been migrated from a group
+- **leftChatMember** – member was removed
+- **newChatTitle** – new chat title
+- **newChatPhoto** – new chat photo
+- **deleteChatPhoto** – chat photo was deleted
+- **groupChatCreated** – group has been created
+- **channelChatCreated** – channel has been created
+- **supergroupChatCreated** – supergroup has been created
+- **migrateToChat** – group has been migrated to a supergroup
+- **migrateFromChat** – supergroup has been migrated from a group
 
 *Read more about Telegram Bot API response types: https://core.telegram.org/bots/api#available-types*
 
