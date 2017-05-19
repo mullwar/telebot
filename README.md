@@ -46,7 +46,7 @@ const bot = new TeleBot({
         timeout: 0, // Optional. Update polling timeout (0 - short polling).
         limit: 100, // Optional. Limits the number of updates to be retrieved.
         retryTimeout: 5000, // Optional. Reconnecting timeout (in ms).
-        proxy: 'http://username:password@yourproxy.com:8080' // Optional. An HTTP proxy to be used (supports Basic Auth).
+        proxy: 'http://username:password@yourproxy.com:8080' // Optional. An HTTP proxy to be used.
     },
     webhook: { // Optional. Use webhook instead of polling.
         key: 'key.pem', // Optional. Private key for server.
@@ -126,6 +126,8 @@ bot.on('edit', (msg) => {
     return msg.reply.text('I saw it! You edited message!', { asReply: true });
 });
 ```
+
+*Note: `msg.reply` is a bot method shortcut, part of [shortReply](/plugins/shortReply.js) plugin.*
 
 ***[See more examples!](/examples)***
 
