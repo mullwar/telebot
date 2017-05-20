@@ -6,6 +6,7 @@ const SHORTCUTS = {
     text: 'sendMessage',
     photo: 'sendPhoto',
     video: 'sendVideo',
+    videoNote: 'sendVideoNote',
     file: 'sendDocument',
     sticker: 'sendSticker',
     audio: 'sendAudio',
@@ -29,11 +30,11 @@ module.exports = {
         replyMode: false
     },
 
-    plugin(bot, cfg) {
+    plugin(bot, pluginConfig) {
 
-        const methodName = cfg.methodName || 'reply';
-        const isPrivate = cfg.privateMode === true;
-        const replyMode = cfg.replyMode === true;
+        const methodName = pluginConfig.methodName || 'reply';
+        const isPrivate = pluginConfig.privateMode === true;
+        const replyMode = pluginConfig.replyMode === true;
 
         function propertyProcessor(msg, props) {
             if (replyMode || props.asReply === true) {
