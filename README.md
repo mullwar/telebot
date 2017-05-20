@@ -163,7 +163,7 @@ bot.on(['/start', 'audio', 'sticker'], msg => {
 - **tick** – on bot tick
 - **error** – an error occurred
 - **inlineQuery** - inline query data
-- **inlineChoice** - inline query chosen result
+- **chosenInlineResult** - inline query chosen result
 - **callbackQuery** - button callback data
 - **shippingQuery** - incoming shipping query
 - **preShippingQuery** - incoming pre-checkout query
