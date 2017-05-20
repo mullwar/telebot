@@ -8,7 +8,7 @@ bot.on('/start', msg => {
     const markup = updateKeyboard('apples');
 
     return bot.sendMessage(
-        msg.from.id, 'This is a editMarkup example. So, apples or oranges?', {markup}
+        msg.from.id, 'This is a editMessageReplyMarkup example. So, apples or oranges?', {markup}
     ).then(re => {
         // Start updating message
         lastMessage = [msg.from.id, re.result.message_id];
@@ -20,7 +20,7 @@ bot.on('/start', msg => {
 bot.on('callbackQuery', msg => {
 
     // Send confirm
-    bot.answerCallback(msg.id);
+    bot.answerCallbackQuery(msg.id);
 
     if (!lastMessage) return bot.sendMessage(msg.from.id, 'Type /start');
 
@@ -29,7 +29,7 @@ bot.on('callbackQuery', msg => {
     const replyMarkup = updateKeyboard(data);
 
     // Edit message markup
-    return bot.editMarkup({chatId, messageId}, {replyMarkup});
+    return bot.editMessageReplyMarkup({chatId, messageId}, {replyMarkup});
 
 });
 

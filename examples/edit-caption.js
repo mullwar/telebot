@@ -29,7 +29,7 @@ bot.on('/edit', msg => {
     if (caption == '/edit') caption = 'No caption.';
 
     // Change caption
-    return bot.editCaption({chatId, messageId}, caption).then(() => {
+    return bot.editMessageCaption({chatId, messageId}, caption).then(() => {
         bot.sendMessage(msg.from.id, `Caption changed to: ${ caption }`);
     });
 

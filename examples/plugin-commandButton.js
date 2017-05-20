@@ -34,7 +34,7 @@ bot.on('/hello', msg => {
 bot.on('callbackQuery', (msg) => {
 
     console.log('callbackQuery data:', msg.data);
-    bot.answerCallback(msg.id);
+    bot.answerCallbackQuery(msg.id);
 
 });
 

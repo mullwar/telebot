@@ -18,7 +18,7 @@ bot.on('callbackQuery', (msg) => {
 
     if (gameId == GAME_ID) {
         // Send game url
-        return bot.answerCallback(msg.id, {url: GAME_URL});
+        return bot.answerCallbackQuery(msg.id, {url: GAME_URL});
     }
 
 });

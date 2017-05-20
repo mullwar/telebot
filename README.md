@@ -400,7 +400,7 @@ Use this method to set the score of the specified user in a game. On success, if
 
 Use this method to get data for high score tables. Will return the score of the specified user and several of his neighbours in a game. On success, returns an *Array* of *GameHighScore* objects.
 
-##### `getUserProfilePhotos` as `getUserPhoto(<user_id>, {offset, limit})`
+##### `getUserProfilePhotos(<user_id>, {offset, limit})`
 
 Use this method to get a list of profile pictures for a user.
 
@@ -420,39 +420,39 @@ Use this method to get up to date information about the chat.
 
 Use this method for your bot to leave a group, supergroup or channel.
 
-##### `getChatAdministrators` as `getAdmins(<chat_id>)`
+##### `getChatAdministrators(<chat_id>)`
 
 Use this method to get a list of administrators in a chat.
 
-##### `getChatMembersCount` as `countMembers(<chat_id>)`
+##### `getChatMembersCount(<chat_id>)`
 
 Use this method to get the number of members in a chat.
 
-##### `getChatMember` as `getMember(<chat_id>, <user_id>)`
+##### `getChatMember(<chat_id>, <user_id>)`
 
 Use this method to get information about a member of a chat.
 
-##### `kickChatMember` as `kick(<chat_id>, <user_id>)`
+##### `kickChatMember(<chat_id>, <user_id>)`
 
 Use this method to kick a user from a group or a supergroup.
 
-##### `unbanChatMember` as `unban(<chat_id>, <user_id>)`
+##### `unbanChatMember(<chat_id>, <user_id>)`
 
 Use this method to unban a previously kicked user in a supergroup.
 
-##### `editMessageText` as `editText({chatId & messageId | inlineMsgId}, <text>)`
+##### `editMessageText({chatId & messageId | inlineMsgId}, <text>)`
 
 Use this method to edit text messages sent by the bot or via the bot (for inline bots).
 
-##### `editMessageCaption` as `editCaption({chatId & messageId | inlineMsgId}, <caption>)`
+##### `editMessageCaption({chatId & messageId | inlineMsgId}, <caption>)`
 
 Use this method to edit captions of messages sent by the bot or via the bot (for inline bots).
 
-##### `editMessageReplyMarkup` as `editMarkup({chatId & messageId | inlineMsgId}, <replyMarkup>)`
+##### `editMessageReplyMarkup({chatId & messageId | inlineMsgId}, <replyMarkup>)`
 
 Use this method to edit only the reply markup of messages sent by the bot or via the bot (for inline bots).
 
-##### `answerCallbackQuery` as `answerCallback(<callback_query_id>, {text, url, showAlert, cacheTime})`
+##### `answerCallbackQuery(<callback_query_id>, {text, url, showAlert, cacheTime})`
 
 Use this method to send answers to callback queries sent from inline keyboards.
 

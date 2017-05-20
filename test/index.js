@@ -236,24 +236,24 @@ test('bot.sendAction', t => {
     });
 });
 
-test('bot.editText', t => {
+test('bot.editMessageText', t => {
     return bot.sendMessage(USER, 'text').then(re => {
         const chatId = USER;
         const messageId = re.result.message_id;
-        return bot.editText({chatId, messageId}, 'text OK');
+        return bot.editMessageText({chatId, messageId}, 'text OK');
     }).then(re => t.true(re.ok));
 });
 
-test('bot.editCaption', t => {
+test('bot.editMessageCaption', t => {
     const photo = 'https://telegram.org/img/tl_card_destruct.gif';
     return bot.sendPhoto(USER, photo, {caption: 'caption'}).then(re => {
         const chatId = USER;
         const messageId = re.result.message_id;
-        return bot.editCaption({chatId, messageId}, 'caption OK');
+        return bot.editMessageCaption({chatId, messageId}, 'caption OK');
     }).then(re => t.true(re.ok));
 });
 
-test('bot.editMarkup', t => {
+test('bot.editMessageReplyMarkup', t => {
     let replyMarkup = bot.inlineKeyboard([
         [bot.inlineButton('test', {callback: 1})]
     ]);
@@ -261,7 +261,7 @@ test('bot.editMarkup', t => {
         const chatId = USER;
         const messageId = re.result.message_id;
         replyMarkup = bot.inlineKeyboard([[bot.inlineButton('OK', {callback: 2})]]);
-        return bot.editMarkup({chatId, messageId}, replyMarkup);
+        return bot.editMessageReplyMarkup({chatId, messageId}, replyMarkup);
     }).then(re => t.true(re.ok));
 });
 

@@ -41,7 +41,7 @@ module.exports = {
 
             function answerCallback() {
                 if (!isAnswered) {
-                    bot.answerCallback(msg.id);
+                    bot.answerCallbackQuery(msg.id);
                     isAnswered = true;
                 }
             }

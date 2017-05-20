@@ -14,7 +14,7 @@ function updateTime(chatId, messageId) {
 
     // Update every second
     setInterval(() => {
-        bot.editText(
+        bot.editMessageText(
             {chatId, messageId}, `<b>Current time:</b> ${ time() }`,
             {parseMode: 'html'}
         ).catch(error => console.log('Error:', error));
