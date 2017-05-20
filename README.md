@@ -241,7 +241,7 @@ const bot = new TeleBot({
 });
 ```
 
-Or use ```bot.use(require(<plugin_path>))``` to plug an external plugin.
+Or use ```plugin(require(<plugin_path>))``` to plug an external plugin.
 
 ***[Check out build-in plugin folder!](/plugins)***
 
@@ -280,9 +280,9 @@ Add data modifier.
 
 Run data modifiers.
 
-##### `use(<function>)`
+##### `plug(<plugin function>)`
 
-Use module function.
+Use plugin function.
 
 ##### `keyboard([array of arrays], {resize, once, selective})`
 
