@@ -241,7 +241,7 @@ const bot = new TeleBot({
 });
 ```
 
-Or use ```plugin(require(<plugin_path>))``` to plug an external plugin.
+Or use ```plug(require(<plugin_path>))``` to plug an external plugin.
 
 ***[Check out build-in plugin folder!](/plugins)***
 
