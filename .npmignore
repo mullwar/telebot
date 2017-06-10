@@ -6,3 +6,4 @@ test/
 *.log
 .eslintrc.js
 .travis.yml
+package-lock.json
