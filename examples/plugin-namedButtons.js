@@ -17,7 +17,7 @@ const BUTTONS = {
 
 const bot = new TeleBot({
     token: 'TELEGRAM_BOT_TOKEN',
-    usePlugin: ['namedButtons'],
+    usePlugins: ['namedButtons'],
     pluginConfig: {
         namedButtons: {
             buttons: BUTTONS

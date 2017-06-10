@@ -2,7 +2,7 @@ const TeleBot = require('../');
 
 const bot = new TeleBot({
     token: 'TELEGRAM_BOT_TOKEN',
-    usePlugin: ['floodProtection'],
+    usePlugins: ['floodProtection'],
     pluginConfig: {
         floodProtection: {
             interval: 2,
