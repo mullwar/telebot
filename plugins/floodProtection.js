@@ -9,16 +9,15 @@ const userList = {};
 module.exports = {
 
     id: 'floodProtection',
-
     defaultConfig: {
         interval: 1,
         message: 'Too many messages, relax!'
     },
 
-    plugin(bot, cfg) {
+    plugin(bot, pluginConfig) {
 
-        const interval = Number(cfg.interval) || 1;
-        const text = cfg.message;
+        const interval = Number(pluginConfig.interval) || 1;
+        const text = pluginConfig.message;
 
         bot.mod('message', (data) => {
 

@@ -7,6 +7,7 @@ const userList = {};
 module.exports = {
 
     id: 'askUser',
+
     plugin(bot) {
 
         // On every message

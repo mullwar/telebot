@@ -8,6 +8,7 @@ module.exports = {
     defaultConfig: {
         regExpEvents: true
     },
+
     plugin(bot, pluginConfig) {
 
         const { regExpEvents } = pluginConfig;

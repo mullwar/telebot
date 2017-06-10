@@ -16,16 +16,16 @@ module.exports = {
         to: []
     },
 
-    plugin(bot, cfg) {
+    plugin(bot, pluginConfig) {
 
         // If no module options
-        if (typeof cfg != 'object') {
+        if (typeof pluginConfig != 'object') {
             return console.error('[report] no config data');
         }
 
         // Get lists
-        let toList = Array.isArray(cfg.to) ? cfg.to : [];
-        let eventList = Array.isArray(cfg.events) ? cfg.events : [];
+        let toList = Array.isArray(pluginConfig.to) ? pluginConfig.to : [];
+        let eventList = Array.isArray(pluginConfig.events) ? pluginConfig.events : [];
 
         // Check lists
         if (!toList.length) return console.error('[report] no user list');

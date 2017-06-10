@@ -5,6 +5,7 @@
 module.exports = {
 
     id: 'regExpMessage',
+
     plugin(bot) {
 
         bot.mod('text', (data) => {
