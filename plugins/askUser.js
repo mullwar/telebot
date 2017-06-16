@@ -13,7 +13,7 @@ module.exports = {
         // On every message
         bot.on('*', (msg, props) => {
 
-            const id = msg.from.id;
+            const id = msg.chat.id;
             const ask = userList[id];
 
             // If no question, then it's a regular message
