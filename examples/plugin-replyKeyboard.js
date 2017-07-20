@@ -44,7 +44,8 @@ function sendKeyboard(msg) {
         },
         onUnknown: (replyMsg) => {
             replyMsg.reply.text('⛔️ Unknown action!\nType /start to start again').catch(console.error);
-        }
+        },
+        deleteKeyboardOnReply: true
     });
 
 }

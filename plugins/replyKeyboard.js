@@ -61,12 +61,14 @@ module.exports = {
 							let chatId = replyMsg.chat.id;
 							let messageId = replyMsg.message_id;
 
-							// Delete keyboard message
-							bot.deleteMessage(chatId, keyboardMsgId).catch(() => {
-								if (config.logDeleteErrors) {
-									console.log('[bot.plugin.replyKeyboard] can\'t delete message');
-								}
-							});
+							if (keyboardConfig.deleteKeyboardOnReply) {
+								// Delete keyboard message
+								bot.deleteMessage(chatId, keyboardMsgId).catch(() => {
+									if (config.logDeleteErrors) {
+										console.log('[bot.plugin.replyKeyboard] can\'t delete message');
+									}
+								});
+							}
 
 							// Delete response message
 							bot.deleteMessage(chatId, messageId).catch(() => {
@@ -76,25 +78,27 @@ module.exports = {
 							});
 
 							if (option === config.cancelLabel) {
-								keyboardConfig.onCancel(replyMsg);
+								keyboardConfig.onCancel(replyMsg, keyboardMsgId);
 							} else if (labels.indexOf(option) > -1) {
 
 								keyboardConfig.labels.forEach(label => {
 
 									if (label.text === option) {
-										label.call(replyMsg);
+										label.call(replyMsg, keyboardMsgId);
 									}
 
 								});
 
 							} else {
-								keyboardConfig.onUnknown(replyMsg);
+								keyboardConfig.onUnknown(replyMsg, keyboardMsgId);
 							}
 
 						}.bind({keyboardConfig}));
 
                     })
-                    .catch(console.error);
+                    .catch(error => {
+						console.log('[bot.plugin.replyKeyboard] Keyboard error', error);
+					});
 
             }.bind({bot, data});
             return data;
