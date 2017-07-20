@@ -1,5 +1,11 @@
 const TeleBot = require('../');
 
+/*
+
+    Note: This plugin depends on askUser plugin to work.
+
+ */
+
 const bot = new TeleBot({
     token: 'TELEGRAM_BOT_TOKEN',
     usePlugins: ['askUser', 'replyKeyboard'],
