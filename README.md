@@ -448,6 +448,30 @@ Use this method to restrict a user in a supergroup. The bot must be an administr
 
 Use this method to promote or demote a user in a supergroup or a channel. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
 
+##### `exportChatInviteLink(<chat_id>)`
+
+Use this method to export an invite link to a supergroup or a channel. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
+
+##### `setChatPhoto(<chat_id>, <file_id | path | url | buffer | stream>)`
+
+Use this method to set a new profile photo for the chat. Photos can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
+
+##### `deleteChatPhoto(<chat_id>)`
+
+Use this method to delete a chat photo. Photos can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
+
+##### `setChatTitle(<chat_id>, <title>)`
+
+Use this method to change the title of a chat. Titles can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
+
+##### `setChatDescription(<chat_id>, <description>)`
+
+Use this method to change the description of a supergroup or a channel. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
+
+##### `pinChatMessage(<chat_id>, <message_id>)`
+
+Use this method to pin a message in a supergroup. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
+
 ##### `editMessageText({chatId & messageId | inlineMsgId}, <text>)`
 
 Use this method to edit text messages sent by the bot or via the bot (for inline bots).
