@@ -380,6 +380,30 @@ Use this method to send point on the map.
 
 Use this method to send information about a venue.
 
+##### `getStickerSet(<name>)`
+
+Use this method to get a sticker set.
+
+##### `uploadStickerFile(<user_id>, <file_id | path | url | buffer | stream>)`
+
+Use this method to upload a .png file with a sticker for later use in createNewStickerSet and addStickerToSet methods (can be used multiple times).
+
+##### `createNewStickerSet(<user_id>, <name>, <file_id | path | url | buffer | stream>, <emojis>, {containsMasks, maskPosition})`
+
+Use this method to create new sticker set owned by a user. The bot will be able to edit the created sticker set.
+
+##### `addStickerToSet(<user_id>, <name>, <file_id | path | url | buffer | stream>, <emojis>, {maskPosition})`
+
+Use this method to add a new sticker to a set created by the bot.
+
+##### `setStickerPositionInSet(<sticker>, <position>)`
+
+Use this method to move a sticker in a set created by the bot to a specific position.
+
+##### `deleteStickerFromSet(<sticker>)`
+
+Use this method to delete a sticker from a set created by the bot.
+
 ##### `sendContact(<chat_id>, <number>, <firstName>, <lastName>, { replyToMessage, replyMarkup, notification})`
 
 Use this method to send phone contacts.
