@@ -444,6 +444,10 @@ Use this method to unban a previously kicked user in a supergroup.
 
 Use this method to restrict a user in a supergroup. The bot must be an administrator in the supergroup for this to work and must have the appropriate admin rights.
 
+##### `promoteChatMember(<chat_id>, <user_id>, {canChangeInfo, canPostMessages, canEditMessages, canDeleteMessages, canInviteUsers, canRestrictMembers, canPinMessages, canPromoteMembers})`
+
+Use this method to promote or demote a user in a supergroup or a channel. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
+
 ##### `editMessageText({chatId & messageId | inlineMsgId}, <text>)`
 
 Use this method to edit text messages sent by the bot or via the bot (for inline bots).
