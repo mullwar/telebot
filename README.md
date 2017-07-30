@@ -440,6 +440,10 @@ Use this method to kick a user from a group or a supergroup.
 
 Use this method to unban a previously kicked user in a supergroup.
 
+##### `restrictChatMember(<chat_id>, <user_id>, {untilDate, canSendMessages, canSendMediaMessages, canSendOtherMessages, canAddWebPagePreviews})`
+
+Use this method to restrict a user in a supergroup. The bot must be an administrator in the supergroup for this to work and must have the appropriate admin rights.
+
 ##### `editMessageText({chatId & messageId | inlineMsgId}, <text>)`
 
 Use this method to edit text messages sent by the bot or via the bot (for inline bots).
