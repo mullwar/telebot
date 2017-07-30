@@ -432,7 +432,7 @@ Use this method to get the number of members in a chat.
 
 Use this method to get information about a member of a chat.
 
-##### `kickChatMember(<chat_id>, <user_id>)`
+##### `kickChatMember(<chat_id>, <user_id>, {untilDate})`
 
 Use this method to kick a user from a group or a supergroup.
 
