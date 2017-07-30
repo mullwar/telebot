@@ -4,6 +4,7 @@ examples/
 test/
 .idea/
 *.log
+.DS_Store
 .eslintrc.js
 .travis.yml
 package-lock.json
