@@ -284,7 +284,7 @@ Run data modifiers.
 
 Use plugin function.
 
-##### `keyboard([array of arrays], {resize, once, selective})`
+##### `keyboard([array of arrays], {resize, once, remove, selective})`
 
 Creates `ReplyKeyboardMarkup` keyboard `replyMarkup` object.
 
