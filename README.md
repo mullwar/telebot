@@ -2,14 +2,17 @@
 
 The easy way to write Telegram bots.
 
-[![Build Status](https://travis-ci.org/mullwar/telebot.svg)](https://travis-ci.org/mullwar/telebot) [![Dependency Status](https://david-dm.org/mullwar/telebot.svg)](https://david-dm.org/mullwar/telebot) ![Node.js Version](http://img.shields.io/node/v/telebot.svg) [![TeleBot Group](https://img.shields.io/badge/telegram-TeleBot%20Group-blue.svg)](https://goo.gl/gXvm12)
+[![Build Status](https://travis-ci.org/mullwar/telebot.svg)](https://travis-ci.org/mullwar/telebot) [![Dependency Status](https://david-dm.org/mullwar/telebot.svg)](https://david-dm.org/mullwar/telebot) ![Node.js Version](http://img.shields.io/node/v/telebot.svg)
+
+[![TeleBot Plugins](https://img.shields.io/badge/telebot-plugins-blue.svg)](https://github.com/mullwar/telebot-examples) [![TeleBot Examples](https://img.shields.io/badge/telebot-examples-blue.svg)](https://github.com/mullwar/telebot/tree/master/examples) [![TeleBot Bot](https://img.shields.io/badge/telebot-community%20bot-blue.svg)](https://github.com/mullwar/telebot-bot) [![TeleBot Group](https://img.shields.io/badge/telebot-community%20group-blue.svg)](https://goo.gl/gXvm12)
+
 
 **Library features:**
 
 - 🍎 Simple. Easy to use.
 - 🏰 Full [Telegram Bot API](https://core.telegram.org/bots/API) support.
 - 💰 Supports [payments](https://core.telegram.org/bots/payments).
-- 🔌 Supports [plugins](https://github.com/mullwar/telebot/tree/master/plugins).
+- 🔌 Supports [plugins](https://github.com/mullwar/telebot-plugins)!
 - 📡 Build-in modification and event system.
 - 🛠 Extendable and hackable.
 - 🔮 No callbacks, Promises only.
@@ -57,8 +60,8 @@ const bot = new TeleBot({
         maxConnections: 40 // Optional. Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery
     },
     allowedUpdates: [], // Optional. List the types of updates you want your bot to receive. Specify an empty list to receive all updates.
-    usePlugins: ['askUser'], // Optional. Use build-in plugins from pluginFolder.
-    pluginFolder: '../plugins/', // Optional. Plugin folder location relative to telebot package.
+    usePlugins: ['askUser'], // Optional. Use user plugins from pluginFolder.
+    pluginFolder: '../plugins/', // Optional. Plugin folder location.
     pluginConfig: { // Optional. Plugin configuration.
         // myPluginName: {
         //   data: 'my custom value'
@@ -127,7 +130,7 @@ bot.on('edit', (msg) => {
 });
 ```
 
-*Note: `msg.reply` is a bot method shortcut, part of [shortReply](/plugins/shortReply.js) plugin.*
+*Note: `msg.reply` is a bot method shortcut, part of [shortReply](/plugins/shortReply.js) build-in plugin.*
 
 ***[See more examples!](/examples)***
 
@@ -228,7 +231,7 @@ This code adds emoji to every `text` message.
 
 ## 🔌 Plugins
 
-Use `usePlugins` config option to load build-in plugins from `pluginFolder`:
+Use `usePlugins` config option to load plugins from `pluginFolder` directory:
 
 ```js
 const bot = new TeleBot({
