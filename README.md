@@ -395,6 +395,14 @@ Use this method to upload a .png file with a sticker for later use in createNewS
 
 Use this method to create new sticker set owned by a user. The bot will be able to edit the created sticker set.
 
+##### `setChatStickerSet(<chat_id>, <sticker_set_name>)`
+
+Use this method to set a new group sticker set for a supergroup. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
+
+##### `deleteChatStickerSet(<chat_id>)`
+
+Use this method to delete a group sticker set from a supergroup. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
+
 ##### `addStickerToSet(<user_id>, <name>, <file_id | path | url | buffer | stream>, <emojis>, {maskPosition})`
 
 Use this method to add a new sticker to a set created by the bot.
