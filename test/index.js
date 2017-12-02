@@ -164,7 +164,7 @@ test('bot.getMe', t => {
 test('bot.sendMessage', t => {
     let str = '#hello_test';
     return bot.sendMessage(USER, str).then(re => {
-        t.true(re.ok && re.result.text == str);
+        t.true(re.text == str);
     });
 });
 
@@ -203,7 +203,7 @@ for (let method in sendMethods) {
         let promise = Promise.resolve();
         for (let name in data) {
             promise = promise.then(() => {
-                return bot[method](USER, data[name]).then(re => t.true(re.ok));
+                return bot[method](USER, data[name]).then(re => t.true(!!re));
             });
         }
         return promise;
@@ -213,44 +213,44 @@ for (let method in sendMethods) {
 test('bot.sendLocation', t => {
     let loc = [37.641401, -115.783262];
     return bot.sendLocation(USER, loc).then(re => {
-        t.true(re.ok);
-        t.deepEqual(re.result.location, {latitude: loc[0], longitude: loc[1]});
+        t.true(!!re);
+        t.deepEqual(re.location, {latitude: loc[0], longitude: loc[1]});
     });
 });
 
 test('bot.sendVenue', t => {
     return bot.sendVenue(USER, [56.9713962, 23.9890801], 'A', 'B').then(re => {
-        t.truthy(re.ok && re.result.venue);
+        t.truthy(re.venue);
     });
 });
 
 test('bot.sendContact', t => {
     return bot.sendContact(USER, '112', 'First', 'Last').then(re => {
-        t.truthy(re.ok && re.result.contact);
+        t.truthy(re.contact);
     });
 });
 
 test('bot.sendAction', t => {
     return bot.sendAction(USER, 'typing').then(re => {
-        t.true(re.ok && re.result == true);
+        t.true(!!re);
     });
 });
 
 test('bot.editMessageText', t => {
     return bot.sendMessage(USER, 'text').then(re => {
         const chatId = USER;
-        const messageId = re.result.message_id;
+        const messageId = re.message_id;
         return bot.editMessageText({chatId, messageId}, 'text OK');
-    }).then(re => t.true(re.ok));
+    }).then(re => t.true(!!re));
 });
 
 test('bot.editMessageCaption', t => {
     const photo = 'https://telegram.org/img/tl_card_destruct.gif';
     return bot.sendPhoto(USER, photo, {caption: 'caption'}).then(re => {
         const chatId = USER;
-        const messageId = re.result.message_id;
+        const messageId = re.message_id;
         return bot.editMessageCaption({chatId, messageId}, 'caption OK');
-    }).then(re => t.true(re.ok));
+    }).then(re => t.true(!!re));
 });
 
 test('bot.editMessageReplyMarkup', t => {
@@ -259,10 +259,10 @@ test('bot.editMessageReplyMarkup', t => {
     ]);
     return bot.sendMessage(USER, 'markup', {replyMarkup}).then(re => {
         const chatId = USER;
-        const messageId = re.result.message_id;
+        const messageId = re.message_id;
         replyMarkup = bot.inlineKeyboard([[bot.inlineButton('OK', {callback: 2})]]);
         return bot.editMessageReplyMarkup({chatId, messageId}, replyMarkup);
-    }).then(re => t.true(re.ok));
+    }).then(re => t.true(!!re));
 });
 
 // Functions
