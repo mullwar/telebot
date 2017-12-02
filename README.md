@@ -379,6 +379,18 @@ Use this method to send audio files, if you want Telegram clients to display the
 
 Use this method to send point on the map.
 
+##### `sendLocation(<chat_id>, [<latitude>, <longitude>], {replyToMessage, replyMarkup, notification})`
+
+Use this method to send point on the map.
+
+##### `editMessageLiveLocation({chatId + messageId | inlineMessageId, latitude, longitude}, {replyMarkup})`
+
+Use this method to edit live location messages sent by the bot or via the bot (for inline bots). A location can be edited until its live_period expires or editing is explicitly disabled by a call to stopMessageLiveLocation.
+
+##### `stopMessageLiveLocation({chatId + messageId | inlineMessageId}, {replyMarkup})`
+
+Use this method to stop updating a live location message sent by the bot or via the bot (for inline bots) before live_period expires.
+
 ##### `sendVenue(<chat_id>, [<latitude>, <longitude>], <title>, <address>, {foursquareId, replyToMessage, replyMarkup, notification})`
 
 Use this method to send information about a venue.
