@@ -11,8 +11,7 @@ module.exports = {
         bot.mod('text', (data) => {
             const {message, props} = data;
             const text = message.text;
-
-            let promise = Promise.resolve();
+            let promise = data.promise;
 
             for (let eventType of bot.eventList.keys()) {
                 if (eventType instanceof RegExp) {
