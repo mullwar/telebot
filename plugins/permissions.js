@@ -1,5 +1,3 @@
-var startDate;
-
 module.exports = {
 
     id: 'permissions',
@@ -19,18 +17,5 @@ module.exports = {
 
             return data;
         });
-
-        bot.on('start', () => {
-            startDate = Date.now();
-        });
-
-        bot.mod('message', (data) => {
-        if (data.message.date*1000 < startDate) {
-            data.message = {};
-        }
-
-        return data;
-    });
-
     }
 };
