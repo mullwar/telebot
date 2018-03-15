@@ -15,11 +15,11 @@ module.exports = {
 
         const indx = pluginConfig.messageTypes.indexOf('*');
         if(indx > -1) {
-            console.log('type * is not allowed, it cause a bug.');
+            console.error('ERROR using askUser plugin: type \'*\' is not allowed, it cause a bug. removing');
             pluginConfig.messageTypes.splice(indx, 1);
         }
         if(pluginConfig.messageTypes.length===0) {
-            console.log('you must specify at least one valid type');
+            console.error('ERROR using askUser plugin: you must specify at least one valid type. adding type \'text\'');
              pluginConfig.messageTypes.push('text');
         }
         // On every message
