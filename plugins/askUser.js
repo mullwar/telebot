@@ -13,7 +13,7 @@ module.exports = {
 
     plugin(bot, pluginConfig) {
 
-        const indx = pluginConfig.messageType.indexOf('*');
+        const indx = pluginConfig.messageTypes.indexOf('*');
         if(indx > -1) {
             console.log('type * is not allowed, it cause a bug.');
             pluginConfig.messageTypes.splice(indx, 1);
