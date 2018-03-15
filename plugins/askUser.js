@@ -7,11 +7,23 @@ const userList = {};
 module.exports = {
 
     id: 'askUser',
+    defaultConfig: {
+        messageTypes: ['text']
+    },
 
-    plugin(bot) {
+    plugin(bot, pluginConfig) {
 
+        const indx = pluginConfig.messageType.indexOf('*');
+        if(indx > -1) {
+            console.log('type * is not allowed, it cause a bug.');
+            pluginConfig.messageTypes.splice(indx, 1);
+        }
+        if(pluginConfig.messageTypes.length===0) {
+            console.log('you must specify at least one valid type');
+             pluginConfig.messageTypes.push('text');
+        }
         // On every message
-        bot.on('*', (msg, props) => {
+        bot.on(pluginConfig.messageTypes, (msg, props) => {
 
             const id = msg.chat.id;
             const ask = userList[id];
