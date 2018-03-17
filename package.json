@@ -1,6 +1,6 @@
 {
   "name": "telebot",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "The easy way to write Telegram bots.",
   "main": "lib/telebot.js",
   "engines": {
