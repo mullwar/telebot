@@ -2,7 +2,7 @@ var startDate;
 
 module.exports = {
 
-id: 'ignoreMessagesBeforeStart',
+    id: 'ignoreMessagesBeforeStart',
 
     plugin(bot) {
 
