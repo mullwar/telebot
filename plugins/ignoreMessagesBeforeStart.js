@@ -6,7 +6,7 @@ module.exports = {
 
     plugin(bot) {
 
-        bot.on('start', () => {
+        bot.on(['start', '/start'], () => {
             startDate = Date.now();
         });
 
