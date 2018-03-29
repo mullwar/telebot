@@ -10,7 +10,7 @@ module.exports = {
 
     plugin(bot, config) {
 
-        bot.on([config.start ? 'start', '/start' : 'start'], (msg) => {
+        bot.on(config.start ? ['start', '/start'] : 'start', (msg) => {
             let userId = 'main_bot';
             if (msg && msg.from) {
                 userId = msg.from.id;
