@@ -1,26 +1,17 @@
-const startDate = {};
+var startDate;
 
 module.exports = {
 
     id: 'ignoreMessagesBeforeStart',
 
-    defaultConfig: {
-        start: true
-    },
+    plugin(bot) {
 
-    plugin(bot, config) {
-
-        bot.on([config.start ? 'start', '/start' : 'start'], (msg) => {
-            let userId = 'main_bot';
-            if (msg && msg.from) {
-                userId = msg.from.id;
-            }
-            startDate[userId] = Date.now();
+        bot.on(['start', '/start'], () => {
+            startDate = Date.now();
         });
 
         bot.mod('message', (data) => {
-            const { date, from } = data.message;
-            if (date * 1000 < startDate[from.id] || date * 1000 < startDate.main_bot) {
+            if (data.message.date*1000 < startDate) {
                 data.message = {};
             }
 
