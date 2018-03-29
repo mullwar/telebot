@@ -3,6 +3,7 @@ module.exports = {
     id: 'permissions',
     defaultConfig: {
         allowedUserIds: [],
+        allowedChannels: [],
         message: '⛔ you are not authorized'
     },
 
@@ -11,12 +12,13 @@ module.exports = {
         bot.mod('message', (data) => {
             if (data.message.chat.type === 'channel') {
                 const chatId = data.message.chat.id;
-                bot.sendMessage(userId, pluginConfig.message).then(() => {
-                    bot.leaveChat(chatId);
-                });
+                if (!pluginConfig.allowedChannels.includes(chatId)) {
+                    data.message = {};
+                    bot.sendMessage(chatId, pluginConfig.message);
+                }
             } else {
                 const userId = data.message.from.id;
-                if (pluginConfig.allowedUserIds.includes(userId) < 0) {
+                if (!pluginConfig.allowedUserIds.includes(userId)) {
                     data.message = {};
                     bot.sendMessage(userId, pluginConfig.message);
                 }
