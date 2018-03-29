@@ -2,17 +2,26 @@ module.exports = {
 
     id: 'permissions',
     defaultConfig: {
-        allowedUserNames: [],
+        allowedUserIds: [],
+        allowedChannels: [],
         message: '⛔ you are not authorized'
     },
 
     plugin(bot, pluginConfig) {
 
         bot.mod('message', (data) => {
-            const userId = data.message.from.id;
-            if (pluginConfig.allowedUserNames.indexOf(data.message.from.username) < 0) {
-                data.message = {};
-                bot.sendMessage(userId, pluginConfig.message);
+            if (data.message.chat.type === 'channel') {
+                const chatId = data.message.chat.id;
+                if (!pluginConfig.allowedChannels.includes(chatId)) {
+                    data.message = {};
+                    bot.sendMessage(chatId, pluginConfig.message);
+                }
+            } else {
+                const userId = data.message.from.id;
+                if (!pluginConfig.allowedUserIds.includes(userId)) {
+                    data.message = {};
+                    bot.sendMessage(userId, pluginConfig.message);
+                }
             }
 
             return data;
