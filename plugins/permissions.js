@@ -16,7 +16,7 @@ module.exports = {
                 });
             } else {
                 const userId = data.message.from.id;
-                if (pluginConfig.allowedUserNames.includes(userId) < 0) {
+                if (pluginConfig.allowedUserIds.includes(userId) < 0) {
                     data.message = {};
                     bot.sendMessage(userId, pluginConfig.message);
                 }
