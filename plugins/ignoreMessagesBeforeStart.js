@@ -20,7 +20,7 @@ module.exports = {
 
         bot.mod('message', (data) => {
             const { date, from } = data.message;
-            if (date * 1000 < startDate[from.id] || date * 1000 < startDate.main_bot) {
+            if (from && (date * 1000 < startDate[from.id] || date * 1000 < startDate.main_bot)) {
                 data.message = {};
             }
 
