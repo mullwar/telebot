@@ -5,7 +5,7 @@ bot.on('/time', msg => {
 
     return bot.sendMessage(msg.from.id, 'Getting time...').then(re => {
         // Start updating message
-        updateTime(msg.from.id, re.result.message_id);
+        updateTime(msg.from.id, re.message_id);
     });
 
 });
