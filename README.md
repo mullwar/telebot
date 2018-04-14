@@ -50,6 +50,7 @@ const bot = new TeleBot({
         limit: 100, // Optional. Limits the number of updates to be retrieved.
         retryTimeout: 5000, // Optional. Reconnecting timeout (in ms).
         proxy: 'http://username:password@yourproxy.com:8080' // Optional. An HTTP proxy to be used.
+        socketTimeout: 30000, // Optional. Socket timeout (in ms).
     },
     webhook: { // Optional. Use webhook instead of polling.
         key: 'key.pem', // Optional. Private key for server.
