@@ -52,6 +52,7 @@ const bot = new TeleBot({
         proxy: 'http://username:password@yourproxy.com:8080' // Optional. An HTTP proxy to be used.
     },
     webhook: { // Optional. Use webhook instead of polling.
+        createServer: true, //Optional. Specifies whether httpServer or httpsServer instance should be created or not. Defaults to true. When set to false, bot.start() returns a promise which resolves with a listener function to be attached to the server manually. 
         key: 'key.pem', // Optional. Private key for server.
         cert: 'cert.pem', // Optional. Public key.
         url: 'https://....', // HTTPS url to send updates to.
@@ -313,7 +314,7 @@ Creates inlineKeyboard object for answerList articles.
 
 ##### `start()`
 
-Start polling updates.
+Start polling updates. If createServer is set to false in webhook options, then the method returns a promise resolving to a listener function suitable for usage with httpServer/httpsServer createServer method.
 
 ##### `stop(<message>)`
 
