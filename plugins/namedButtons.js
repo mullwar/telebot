@@ -9,7 +9,8 @@ module.exports = {
         buttons: {
             // myButton: {
             //     label: '😄 My Button Name',
-            //     command: '/myBotCommand'
+            //     command: '/myBotCommand',
+            //     cb: _=> { console.log("Event My Button"); }
             // }
         }
     },
@@ -23,6 +24,8 @@ module.exports = {
             for (let buttonId in buttons) {
                 const button = buttons[buttonId];
                 if (button.label === text) {
+                    if(typeof button.cb === "function")
+                        button.cb(msg);
                     return bot.event(button.command, msg, props);
                 }
             }
