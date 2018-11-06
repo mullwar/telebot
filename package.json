@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "request": "^2.81.0",
-    "socks5-http-client": "^1.0.3",
     "socks5-https-client": "^1.2.1",
+    "dashbot": "^10.2.1"
   },
   "devDependencies": {
     "ava": "^0.19.1",
