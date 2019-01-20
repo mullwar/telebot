@@ -22,6 +22,7 @@ module.exports = {
             console.error('ERROR using askUser plugin: you must specify at least one valid type. adding type \'text\'');
             pluginConfig.messageTypes.push('text');
         }
+
         // On every message
         bot.on(pluginConfig.messageTypes, (msg, props) => {
 
@@ -31,9 +32,15 @@ module.exports = {
             // If no question, then it's a regular message
             if (!ask) return;
 
-            // Delete user from list and send custom event
+            // Delete user from list
             delete userList[id];
-            bot.event('ask.' + ask, msg, props);
+
+            // Send cancel event or custom event
+            if (msg.text === "/cancel") {
+                bot.event('ask.' + ask + '.cancel', msg, props);
+            } else {
+                bot.event('ask.' + ask, msg, props);
+            }
 
         });
 
