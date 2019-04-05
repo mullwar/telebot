@@ -7,7 +7,8 @@
     "node": ">= 6.0.0"
   },
   "dependencies": {
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "socks-proxy-agent": "^4.0.2"
   },
   "devDependencies": {
     "ava": "^0.19.1",
