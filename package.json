@@ -7,11 +7,11 @@
     "node": ">= 6.0.0"
   },
   "dependencies": {
-    "request": "^2.81.0"
+    "request": "^2.88.2"
   },
   "devDependencies": {
-    "ava": "^0.19.1",
-    "eslint": "^3.19.0"
+    "ava": "^3.5.0",
+    "eslint": "^6.8.0"
   },
   "scripts": {
     "test": "./node_modules/.bin/ava test/index.js",
