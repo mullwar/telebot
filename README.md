@@ -367,6 +367,10 @@ Use this method to send video files, Telegram clients support `mp4` videos (othe
 
 Use this method to send video messages.
 
+##### `sendMediaGroup(<chat_id>, <media: [InputMediaPhoto | InputMediaVideo]>)`
+
+Use this method to send a group of photos or videos as an album.
+
 ##### `sendVoice(<chat_id>, <file_id | path | url | buffer | stream>, {duration, caption, fileName, serverDownload, replyToMessage, replyMarkup, notification})`
 
 Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message.
@@ -451,7 +455,7 @@ Use this method to get a list of profile pictures for a user.
 
 Use this method to get basic info about a file and prepare it for downloading.
 
-##### `sendInvoice(<chat_id>, {title, description, payload, providerToken, startParameter, currency, prices, photo: {url, width, height}, need: {name, phoneNumber, email, shippingAddress}, isFlexible, notification, replyToMessage, replyMarkup})`
+##### `sendInvoice(<chat_id>, {title, description, payload, providerToken, startParameter, currency, sendPhoneNumberToProvider, sendEmailToProvider, prices, providerData, photo: {url, width, height}, need: {name, phoneNumber, email, shippingAddress}, isFlexible, notification, replyToMessage, replyMarkup})`
 
 Use this method to send invoices.
 
