@@ -4,7 +4,7 @@ The easy way to write Telegram bots.
 
 [![Build Status](https://travis-ci.org/mullwar/telebot.svg)](https://travis-ci.org/mullwar/telebot) [![Dependency Status](https://david-dm.org/mullwar/telebot.svg)](https://david-dm.org/mullwar/telebot) ![Node.js Version](http://img.shields.io/node/v/telebot.svg)
 
-[![TeleBot 2.0](https://img.shields.io/badge/dev-TeleBot%202%2e0-ff0061.svg)](https://github.com/mullwar/telebot/tree/v2.0) [![TeleBot Examples](https://img.shields.io/badge/telebot-examples-blue.svg)](https://github.com/mullwar/telebot/tree/master/examples) [![TeleBot Bot](https://img.shields.io/badge/telebot-community%20bot-blue.svg)](https://github.com/mullwar/telebot-bot) [![TeleBot Group](https://img.shields.io/badge/telebot-community%20group-blue.svg)](https://goo.gl/gXvm12)
+[![TeleBot 2.0](https://img.shields.io/badge/dev-TeleBot%202%2e0-ff0061.svg)](https://github.com/mullwar/telebot/tree/version-2) [![TeleBot Examples](https://img.shields.io/badge/telebot-examples-blue.svg)](https://github.com/mullwar/telebot/tree/master/examples) [![TeleBot Bot](https://img.shields.io/badge/telebot-community%20bot-blue.svg)](https://github.com/mullwar/telebot-bot) [![TeleBot Group](https://img.shields.io/badge/telebot-community%20group-blue.svg)](https://goo.gl/gXvm12)
 
 
 **Library features:**
@@ -21,18 +21,14 @@ The easy way to write Telegram bots.
 
 ## 🔨 Installation
 
-Download and install via [npm package manager](https://www.npmjs.com/package/telebot) (stable):
-
 ```
 npm install telebot --save
 ```
 
-Or clone fresh code directly from git:
+Or using [yarn](https://yarnpkg.com) package manager:
 
 ```
-git clone https://github.com/mullwar/telebot.git
-cd telebot
-npm install
+yarn add telebot
 ```
 
 ## 🕹 Usage
