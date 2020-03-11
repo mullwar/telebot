@@ -200,6 +200,8 @@ bot.on(['/start', 'audio', 'sticker'], msg => {
 - **supergroupChatCreated** – supergroup has been created
 - **migrateToChat** – group has been migrated to a supergroup
 - **migrateFromChat** – supergroup has been migrated from a group
+- **successfulPayment** – message is a service message about a successful payment
+- **passportData** – Telegram Passport data
 
 *Read more about Telegram Bot API response types: https://core.telegram.org/bots/api#available-types*
 
@@ -359,7 +361,7 @@ Use this method to send general files.
 
 Use this method to send `.webp` stickers.
 
-##### `sendVideo(<chat_id>, <file_id | path | url | buffer | stream>, {duration, width, height, caption, fileName, serverDownload, replyToMessage, replyMarkup, notification})`
+##### `sendVideo(<chat_id>, <file_id | path | url | buffer | stream>, {duration, width, height, caption, fileName, serverDownload, replyToMessage, replyMarkup, notification, supportsStreaming})`
 
 Use this method to send video files, Telegram clients support `mp4` videos (other formats may be sent as `Document`).
 
