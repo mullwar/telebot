@@ -182,6 +182,7 @@ bot.on(['/start', 'audio', 'sticker'], msg => {
 - **sticker** – sticker
 - **video** – video file
 - **videoNote** - video note
+- **animation** – animation data
 - **contact** – contact data
 - **location** – location data
 - **venue** – venue data
@@ -357,6 +358,10 @@ Use this method to send audio files, if you want Telegram clients to display the
 
 Use this method to send general files.
 
+##### `sendAnimation(<chat_id>, <animation>, {caption, fileName, serverDownload, replyToMessage, replyMarkup, notification})`
+
+Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without sound).
+
 ##### `sendSticker(<chat_id>, <file_id | path | url | buffer | stream>, {fileName, serverDownload, replyToMessage, replyMarkup, notification})`
 
 Use this method to send `.webp` stickers.
@@ -393,7 +398,7 @@ Use this method to edit live location messages sent by the bot or via the bot (f
 
 Use this method to stop updating a live location message sent by the bot or via the bot (for inline bots) before live_period expires.
 
-##### `sendVenue(<chat_id>, [<latitude>, <longitude>], <title>, <address>, {foursquareId, replyToMessage, replyMarkup, notification})`
+##### `sendVenue(<chat_id>, [<latitude>, <longitude>], <title>, <address>, {foursquareId, foursquareType, replyToMessage, replyMarkup, notification})`
 
 Use this method to send information about a venue.
 
