@@ -38,7 +38,9 @@ module.exports = {
             if (
                 Object.prototype.toString.call(event) == '[object Arguments]' &&
                 (Array.prototype.slice.call(event).slice(-1)[0]).skipReport === true
-            ) return;
+            ) {
+                return;
+            }
 
             const type = info.type;
             const prefix = type.split('.')[0];
@@ -58,11 +60,11 @@ module.exports = {
                     const {data, error} = event;
 
                     bot.sendMessage(userId,
-                        `👤 <b>User:</b> ${ data.from.id } (${ data.chat.id })\n` +
-                        `⚠ <b>Error:</b> ${ error.message || error }\n` +
-                        `${ error.stack ? `🚧 <b>Stack:</b>\n${ s(error.stack) }\n` : '' }` +
-                        `⏰ <b>Event:</b> ${ type }\n` +
-                        `💾 <b>Data:</b> ${ jsonData }`,
+                        `👤 <b>User:</b> ${data.from.id} (${data.chat.id})\n` +
+                        `⚠ <b>Error:</b> ${error.message || error}\n` +
+                        `${error.stack ? `🚧 <b>Stack:</b>\n${s(error.stack)}\n` : ''}` +
+                        `⏰ <b>Event:</b> ${type}\n` +
+                        `💾 <b>Data:</b> ${jsonData}`,
                         {parseMode: 'html', skipReport: true}
                     );
 
@@ -70,8 +72,8 @@ module.exports = {
 
                     // Another type of event
                     bot.sendMessage(userId,
-                        `⏰ <b>Event:</b> ${ type }\n` +
-                        (jsonData && jsonData != '{}' ? `💾 <b>Data:</b> ${ jsonData }` : ''),
+                        `⏰ <b>Event:</b> ${type}\n` +
+                        (jsonData && jsonData != '{}' ? `💾 <b>Data:</b> ${jsonData}` : ''),
                         {parseMode: 'html', skipReport: true}
                     );
 
