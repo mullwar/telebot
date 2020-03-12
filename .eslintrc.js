@@ -3,11 +3,11 @@ module.exports = {
     extends: [
         'eslint:recommended',
         'plugin:@typescript-eslint/recommended',
-        'plugin:@typescript-eslint/eslint-recommended',
+        'plugin:@typescript-eslint/eslint-recommended'
     ],
     parserOptions: {
         ecmaVersion: 2019,
-        sourceType: 'module',
+        sourceType: 'module'
     },
     env: {
         es6: true,
@@ -16,7 +16,18 @@ module.exports = {
     },
     plugins: ['@typescript-eslint'],
     rules: {
+        "no-console": "error",
+        "comma-dangle": ["error", "never"],
         "quotes": ["error", "double"],
-        "@typescript-eslint/explicit-function-return-type": "off",
+        "indent": ["error", 4],
+        "semi": ["error", "always"],
+        "no-trailing-spaces": "error",
+        "eol-last": ["error", "always"],
+        "curly": ["error", "multi-line"],
+        "keyword-spacing": ["error", {"before": true}],
+        "space-before-blocks": "error",
+        "object-property-newline": "error",
+        "object-curly-newline": ["error", "always"],
+        "@typescript-eslint/explicit-function-return-type": "off"
     }
 };
