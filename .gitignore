@@ -1,6 +1,5 @@
 node_modules/
 .idea/
-local_*
-*.log
+dist/
+
 .DS_Store
-package-lock.json

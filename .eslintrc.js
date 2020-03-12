@@ -1,20 +1,22 @@
 module.exports = {
-    "env": {
-        "es6": true,
-        "node": true
+    parser: '@typescript-eslint/parser',
+    extends: [
+        'eslint:recommended',
+        'plugin:@typescript-eslint/recommended',
+        'plugin:@typescript-eslint/eslint-recommended',
+    ],
+    parserOptions: {
+        ecmaVersion: 2019,
+        sourceType: 'module',
     },
-    "extends": "eslint:recommended",
-    "parserOptions": {
-        "ecmaVersion": 2017
+    env: {
+        es6: true,
+        node: true,
+        jest: true
     },
-    "rules": {
-        "no-console": "off",
-        "indent": ["error", 4],
-        "semi": ["error", "always"],
-        "no-trailing-spaces": "error",
-        "eol-last": ["error", "always"],
-        "curly": ["error", "multi-line"],
-        "keyword-spacing": ["error", { "before": true }],
-        "space-before-blocks": "error"
+    plugins: ['@typescript-eslint'],
+    rules: {
+        "quotes": ["error", "double"],
+        "@typescript-eslint/explicit-function-return-type": "off",
     }
 };
