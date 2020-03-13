@@ -19,7 +19,7 @@ module.exports = {
         "no-console": "error",
         "comma-dangle": ["error", "never"],
         "quotes": ["error", "double"],
-        "indent": ["error", 4],
+        "indent": ["error", 4, {"SwitchCase": 1}],
         "semi": ["error", "always"],
         "no-trailing-spaces": "error",
         "eol-last": ["error", "always"],
@@ -27,7 +27,7 @@ module.exports = {
         "keyword-spacing": ["error", {"before": true}],
         "space-before-blocks": "error",
         "object-property-newline": "error",
-        "object-curly-newline": ["error", "always"],
+        "object-curly-spacing": ["error", "always"],
         "@typescript-eslint/explicit-function-return-type": "off"
     }
 };
