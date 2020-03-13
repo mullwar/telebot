@@ -1,4 +1,4 @@
-export type TelegramBotToken = string;
+import { TelegramBotToken } from "./telegram";
 
 export type TeleBotOptions = {
     token: TelegramBotToken;
@@ -8,7 +8,7 @@ export type TeleBotOptions = {
         timeout?: number;
         waitEvents?: boolean;
     };
-} | TelegramBotToken;
+};
 
 export type TeleBotFlags = {
     isRunning: boolean;
@@ -22,3 +22,11 @@ export type TeleBotPolling = {
     interval: number;
     limit: number;
 };
+
+export enum TeleBotScenario {
+    Restart = "restart",
+    Terminate = "terminate",
+    Pass = "pass"
+}
+
+export type TeleBotRunningInstanceScenario = TeleBotScenario;

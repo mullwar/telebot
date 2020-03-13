@@ -1,16 +1,22 @@
 import {
-    TeleBotFlags, TeleBotOptions, TeleBotPolling, TelegramBotToken
+    TeleBotFlags,
+    TeleBotOptions,
+    TeleBotPolling,
+    TeleBotRunningInstanceScenario,
+    TeleBotScenario
 } from "./types/telebot";
+import { TelegramBotToken } from "./types/telegram";
+import { ERROR_TELEBOT_ALREADY_RUNNING, TeleBotError } from "./errors";
 
 const TELEGRAM_BOT_API = (botToken: string) => `https://api.telegram.org/bot${botToken}`;
 
-class TeleBotError extends Error {
+type TeleBotLifeCycle = Promise<void>;
 
-}
-
-class TeleBot {
+export class TeleBot {
     private readonly botAPI: string;
     private readonly botToken: TelegramBotToken;
+
+    public runningInstanceScenario: TeleBotRunningInstanceScenario = TeleBotScenario.Pass;
 
     private polling: TeleBotPolling = {
         offset: 0,
@@ -25,7 +31,10 @@ class TeleBot {
         waitEvents: false
     };
 
-    constructor(options: TeleBotOptions) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private lifeIntervalFn: any;
+
+    constructor(options: TeleBotOptions | TelegramBotToken) {
         if (typeof options === "string") {
             options = {
                 token: options
@@ -62,18 +71,95 @@ class TeleBot {
 
     }
 
-    public hasFlag<T extends keyof TeleBotFlags>(name: T) {
+    public start(): void {
+        const {
+            interval
+        } = this.polling;
+
+        if (!this.hasFlag("isRunning")) {
+            this.setFlag("isRunning");
+            try {
+                const endOfLife = interval > 0 ? this.startLifeInterval(interval) : this.startLifeCycle();
+                endOfLife.catch(() => {
+                    // TODO: handle error
+                }).finally(() => {
+                    this.stop();
+                });
+            } catch (error) {
+                throw new TeleBotError(error);
+            }
+        } else {
+            switch (this.runningInstanceScenario) {
+                case TeleBotScenario.Restart:
+                    this.restart();
+                    break;
+                case TeleBotScenario.Terminate:
+                    this.stop();
+                    throw new TeleBotError(ERROR_TELEBOT_ALREADY_RUNNING);
+                case TeleBotScenario.Pass:
+                default:
+                    break;
+            }
+        }
+
+    }
+
+    public restart(): void {
+        this.stop();
+        this.start();
+    }
+
+    public stop(): void {
+        this.unsetFlag("isRunning");
+
+        if (this.lifeIntervalFn) {
+            clearInterval(this.lifeIntervalFn);
+            this.lifeIntervalFn = undefined;
+        }
+    }
+
+    public hasFlag<T extends keyof TeleBotFlags>(name: T): boolean {
         return this.flags[name];
     }
 
-    public setFlag<T extends keyof TeleBotFlags>(name: T) {
+    public setFlag<T extends keyof TeleBotFlags>(name: T): void {
         this.flags[name] = true;
     }
 
-    public unsetFlag<T extends keyof TeleBotFlags>(name: T) {
+    public unsetFlag<T extends keyof TeleBotFlags>(name: T): void {
         this.flags[name] = false;
     }
 
-}
+    private startLifeCycle(): TeleBotLifeCycle {
+        return this.lifeCycle(false);
+    }
 
-export = TeleBot;
+    private startLifeInterval(interval: number): TeleBotLifeCycle {
+        return new Promise((resolve, reject) => {
+            this.lifeIntervalFn = setInterval(() => {
+                if (this.hasFlag("isRunning")) {
+                    if (this.hasFlag("canFetch")) {
+                        this.unsetFlag("canFetch");
+                        this.lifeCycle(true).then(() => {
+                            this.setFlag("canFetch");
+                        }).catch(reject);
+                    }
+                } else {
+                    resolve();
+                }
+            }, interval);
+        });
+    }
+
+    private async lifeCycle(liveOnce = true): TeleBotLifeCycle {
+        if (this.hasFlag("isRunning")) {
+            await new Promise((resolve) => {
+                setTimeout(() => resolve(), 350);
+            });
+            return liveOnce ? Promise.resolve() : this.lifeCycle(false);
+        } else {
+            return Promise.resolve();
+        }
+    }
+
+}
