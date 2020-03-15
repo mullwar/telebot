@@ -169,7 +169,7 @@ bot.on(['/start', 'audio', 'sticker'], msg => {
 
 #### Events:
 
-*keyboard*, *button*, *inlineKeyboard*, *inlineQueryKeyboard*, *inlineButton*, *answerList*, *getMe*, *sendMessage*, *deleteMessage*, *forwardMessage*, *sendPhoto*, *sendAudio*, *sendDocument*, *sendSticker*, *sendVideo*, *sendVideoNote*, *sendVoice*, *sendLocation*, *sendVenue*, *sendContact*, *sendChatAction*, *getUserProfilePhotos*, *getFile*, *kickChatMember*, *unbanChatMember*, *answerInlineQuery*, *answerCallbackQuery*, *answerShippingQuery*, *answerPreCheckoutQuery*, *editMessageText*, *editMessageCaption*, *editMessageReplyMarkup*, *setWebhook*
+*keyboard*, *button*, *inlineKeyboard*, *inlineQueryKeyboard*, *inlineButton*, *answerList*, *getMe*, *sendMessage*, *deleteMessage*, *forwardMessage*, *sendPhoto*, *sendAudio*, *sendDocument*, *sendSticker*, *sendVideo*, *sendVideoNote*, *sendVoice*, *sendLocation*, *sendVenue*, *sendContact*, *sendChatAction*, *getUserProfilePhotos*, *getFile*, *kickChatMember*, *unbanChatMember*, *answerInlineQuery*, *answerCallbackQuery*, *answerShippingQuery*, *answerPreCheckoutQuery*, *editMessageText*, *editMessageMedia*, *editMessageCaption*, *editMessageReplyMarkup*, *setWebhook*
 
 ### Telegram message events:
 
@@ -374,7 +374,7 @@ Use this method to send video files, Telegram clients support `mp4` videos (othe
 
 Use this method to send video messages.
 
-##### `sendMediaGroup(<chat_id>, <media: [InputMediaPhoto | InputMediaVideo]>)`
+##### `sendMediaGroup(<chat_id>, <media: InputMedia>)`
 
 Use this method to send a group of photos or videos as an album.
 
@@ -529,6 +529,10 @@ Use this method to pin a message in a supergroup. The bot must be an administrat
 ##### `editMessageText({chatId & messageId | inlineMsgId}, <text>)`
 
 Use this method to edit text messages sent by the bot or via the bot (for inline bots).
+
+##### `editMessageMedia({chatId | messageId | inlineMessageId, media: InputMedia, replyMarkup: inlineKeyboard})`
+
+Use this method to edit animation, audio, document, photo, or video messages.
 
 ##### `editMessageCaption({chatId & messageId | inlineMsgId}, <caption>)`
 
