@@ -35,15 +35,15 @@ function createNewBot(options: Partial<TeleBotOptions>): TeleBot {
             interval: false,
             limit: 100
         }
-    }
+    } as TeleBotOptions
 }, {
     name: "TeleBot using lifeInterval",
     options: {
         polling: {
-            interval: 100,
-            allowedUpdates: ["text"]
-        }
-    }
+            interval: 100
+        },
+        allowedUpdates: ["text"]
+    } as TeleBotOptions
 }] as Array<TestCase>).forEach((testCase) => {
     const { name, options } = testCase;
 
