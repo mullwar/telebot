@@ -1,5 +1,63 @@
 export type TelegramBotToken = string;
 
+export type TelegramResponse<T> = {
+    ok: boolean;
+    result: T;
+    error?: string;
+    error_code?: string;
+    description?: string;
+    parameters?: ResponseParameters;
+};
+
+export type Update = {
+    update_id: number;
+    message?: Message;
+    edited_message?: Message;
+    channel_post?: Message;
+    edited_channel_post?: Message;
+    inline_query?: InlineQuery;
+    chosen_inline_result?: ChosenInlineResult;
+    callback_query?: CallbackQuery;
+    shipping_query?: ShippingQuery;
+    pre_checkout_query?: PreCheckoutQuery;
+    poll?: Poll;
+    poll_answer?: PollAnswer;
+};
+
+export type WebhookInfo = {
+    url: string;
+    has_custom_certificate: boolean;
+    pending_update_count: boolean;
+    last_error_date?: boolean;
+    last_error_message?: string;
+    max_connections?: number;
+    allowed_updates?: UpdateTypes;
+};
+
+export type UpdateTypes = string[]; // TODO: keyof Update
+
+export type ChatId = number | string;
+
+export type InputFile = string;
+
+export type BotInputFile = InputFile | string;
+
+export type InlineQuery = {
+    id: string;
+    from: User;
+    location?: Location;
+    query: string;
+    offset: string;
+};
+
+export type ChosenInlineResult = {
+    result_id: string;
+    from: User;
+    location?: Location;
+    inline_message_id?: string;
+    query: string;
+};
+
 export type User = {
     id: string;
     is_bot: boolean;
@@ -13,7 +71,8 @@ export type User = {
 };
 
 export type MessageEntity = {
-    type: "mention" | "hashtag" | "cashtag" | "bot_command" | "url" | "email" | "phone_number" | "bold" | "italic" | "underline" | "strikethrough" | "code" | "pre" | "text_link" | "text_mention";
+    type: "mention" | "hashtag" | "cashtag" | "bot_command" | "url" | "email" | "phone_number" | "bold" | "italic" |
+        "underline" | "strikethrough" | "code" | "pre" | "text_link" | "text_mention";
     offset: number;
     length: number;
     url?: string;
@@ -82,7 +141,9 @@ export type PassportFile = FileIdentifier & {
 };
 
 export type EncryptedPassportElement = {
-    type: "personal_details" | "passport" | "driver_license" | "identity_card" | "internal_passport" | "address" | "utility_bill" | "bank_statement" | "rental_agreement" | "passport_registration" | "temporary_registration" | "phone_number" | "email";
+    type: "personal_details" | "passport" | "driver_license" | "identity_card" | "internal_passport" | "address" |
+        "utility_bill" | "bank_statement" | "rental_agreement" | "passport_registration" | "temporary_registration" |
+        "phone_number" | "email";
     data?: string;
     phone_number?: string;
     email?: string;
@@ -370,7 +431,7 @@ export type ForceReply = {
 export type ChatType = "private" | "group" | "supergroup" | "channel";
 
 export type Chat = {
-    id: string;
+    id: number;
     type: ChatType;
     title?: string;
     username?: string;
@@ -425,14 +486,14 @@ export type ResponseParameters = {
     retry_after?: number;
 };
 
-type InputFile = string;
-
 type InputMedia = {
     media: string;
     thumb?: InputFile;
     caption?: string;
-    parse_mode?: "markdown" | "html";
+    parse_mode?: ParseMode;
 };
+
+export type ParseMode = "markdown" | "html";
 
 export type InputMediaPhoto = Omit<InputMedia, "thumb"> & {
     type: "photo";
@@ -462,4 +523,13 @@ export type InputMediaAudio = InputMedia & {
 
 export type InputMediaDocument = InputMedia & {
     type: "document";
+};
+
+export type ReplyMarkup = InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply;
+
+export type TelegramMessageOptional = {
+    parse_mode?: ParseMode;
+    disable_notification?: boolean;
+    reply_to_message_id?: number;
+    reply_markup?: ReplyMarkup;
 };

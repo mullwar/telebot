@@ -21,13 +21,15 @@ module.exports = {
         "quotes": ["error", "double"],
         "indent": ["error", 4, {"SwitchCase": 1}],
         "semi": ["error", "always"],
+        "@typescript-eslint/semi": ["error"],
         "no-trailing-spaces": "error",
         "eol-last": ["error", "always"],
         "curly": ["error", "multi-line"],
         "keyword-spacing": ["error", {"before": true}],
         "space-before-blocks": "error",
-        "object-property-newline": "error",
+        "object-property-newline": ["error", {"allowAllPropertiesOnSameLine": true}],
         "object-curly-spacing": ["error", "always"],
+        "@typescript-eslint/camelcase": "off",
         "@typescript-eslint/explicit-function-return-type": "off"
     }
 };

@@ -1,6 +1,19 @@
-import { TeleBot } from "../src/telebot";
+import axios from "axios";
+import MockAdapter from "axios-mock-adapter";
+import { TeleBot } from "../src";
 import { ERROR_TELEBOT_ALREADY_RUNNING, TeleBotError } from "../src/errors";
-import { TeleBotOptions, TeleBotScenario } from "../src/types/telebot";
+import { TeleBotFlags, TeleBotOptions, TeleBotScenario } from "../src/types/telebot";
+import { TelegramResponse, Update } from "../src/types/telegram";
+import { DEFAULT_POLLING } from "../src/telebot";
+
+const MOCK_URL = "/mock";
+
+const mock = new MockAdapter(axios);
+
+mock.onPost(`${MOCK_URL}/getUpdates`).reply(200, {
+    ok: true,
+    result: [{ update_id: 0 }]
+} as TelegramResponse<Update[]>);
 
 type TestCase = {
     name: string;
@@ -9,13 +22,9 @@ type TestCase = {
 
 function createNewBot(options: Partial<TeleBotOptions>): TeleBot {
     return new TeleBot({
-        token: "test",
-        polling: {
-            interval: 0,
-            timeout: 0,
-            limit: 100,
-            ...options.polling
-        }
+        token: "__test__",
+        botAPI: MOCK_URL,
+        ...options
     });
 }
 
@@ -23,14 +32,16 @@ function createNewBot(options: Partial<TeleBotOptions>): TeleBot {
     name: "TeleBot using lifeCycle",
     options: {
         polling: {
-            interval: 0
+            interval: false,
+            limit: 100
         }
     }
 }, {
     name: "TeleBot using lifeInterval",
     options: {
         polling: {
-            interval: 100
+            interval: 100,
+            allowedUpdates: ["text"]
         }
     }
 }] as Array<TestCase>).forEach((testCase) => {
@@ -48,11 +59,23 @@ function createNewBot(options: Partial<TeleBotOptions>): TeleBot {
             bot.stop();
         });
 
-        test("flags should set properly", () => {
+        test("validate bot instance options", () => {
+            const botOptions = bot.getOptions();
+            expect(botOptions).toEqual({
+                polling: {
+                    ...DEFAULT_POLLING,
+                    ...options.polling
+                }
+            });
+        });
 
-            expect(bot.hasFlag("waitEvents")).toBe(options?.polling?.waitEvents === true);
-            expect(bot.hasFlag("canFetch")).toBe(true);
-            expect(bot.hasFlag("isRunning")).toBe(false);
+        test("flags should set properly", async () => {
+
+            expect(bot.getFlags()).toEqual({
+                canFetch: true,
+                isRunning: false,
+                waitEvents: false
+            } as TeleBotFlags);
 
             bot.start();
 
@@ -63,7 +86,7 @@ function createNewBot(options: Partial<TeleBotOptions>): TeleBot {
             expect(bot.hasFlag("isRunning")).toBe(false);
         });
 
-        test("multiple instance resolution scenarios", () => {
+        test("multiple instance resolution scenarios", async () => {
 
             bot.start();
 
