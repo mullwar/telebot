@@ -1,14 +1,24 @@
-import { Message, TelegramBotToken } from "./telegram";
+import { Message, TelegramBotToken, UpdateTypes } from "./telegram";
 import { RequireFields } from "./utilites";
 
 export type TeleBotOptions = {
     token: TelegramBotToken;
     botAPI?: string;
     polling?: Partial<TeleBotPolling>;
+    webhook?: WebhookOptions;
+    allowedUpdates?: UpdateTypes | undefined;
     // scenarios?: {
     //     onRunningInstanceStart?: TeleBotRunningInstanceScenario;
     //     onTelegramFetchError?: TelegramFetchErrorScenario;
     // };
+};
+
+export type WebhookOptions = {
+    url: string;
+    host: string;
+    port: number;
+    key?: string;
+    cert?: string;
 };
 
 export type TeleBotFlags = {
@@ -22,7 +32,6 @@ export type TeleBotPolling = {
     interval: number | false;
     timeout: number;
     limit: number;
-    allowedUpdates: string[] | undefined;
     retryTimes: number;
     retryTimeout: number;
 };

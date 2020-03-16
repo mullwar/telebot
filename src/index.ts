@@ -1,5 +1,5 @@
 import { TeleBot } from "./telebot";
-import "./methods";
+import "./telebot/methods";
 
 export {
     TeleBot

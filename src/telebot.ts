@@ -4,14 +4,16 @@ import {
     TeleBotPolling,
     TeleBotRunningInstanceScenario,
     TeleBotScenario,
-    TelegramFetchErrorScenario
+    TelegramFetchErrorScenario,
+    WebhookOptions
 } from "./types/telebot";
-import { Message, TelegramBotToken, TelegramResponse, Update } from "./types/telegram";
+import { Message, TelegramBotToken, TelegramResponse, Update, UpdateTypes } from "./types/telegram";
 import { ERROR_TELEBOT_ALREADY_RUNNING, TeleBotError } from "./errors";
-import { TeleBotDevkit } from "./devkit";
+import { TeleBotDevkit } from "./telebot/devkit";
 import axios from "axios";
-import { TeleBotEvents } from "./events";
-import { updateProcessors } from "./processors";
+import { TeleBotEvents } from "./telebot/events";
+import { updateProcessors } from "./telebot/processors";
+import { webhookServer } from "./telebot/webhook";
 
 const TELEGRAM_BOT_API = (botToken: string) => `https://api.telegram.org/bot${botToken}`;
 
@@ -20,7 +22,6 @@ export const DEFAULT_POLLING: TeleBotPolling = {
     interval: false,
     timeout: 0,
     limit: 100,
-    allowedUpdates: undefined,
     retryTimeout: 3000,
     retryTimes: Infinity
 };
@@ -33,6 +34,7 @@ export class TeleBot extends TeleBotEvents {
     public telegramFetchErrorScenario: TelegramFetchErrorScenario = TeleBotScenario.Reconnect;
 
     private polling: TeleBotPolling = DEFAULT_POLLING;
+    private readonly webhook?: WebhookOptions;
 
     private flags: TeleBotFlags = {
         isRunning: false,
@@ -42,8 +44,9 @@ export class TeleBot extends TeleBotEvents {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private lifeIntervalFn: any;
+    private allowedUpdates: UpdateTypes = [];
 
-    private dev = new TeleBotDevkit("telebot");
+    public dev = new TeleBotDevkit("telebot");
 
     constructor(options: TeleBotOptions | TelegramBotToken) {
         super();
@@ -57,7 +60,9 @@ export class TeleBot extends TeleBotEvents {
         const {
             token,
             botAPI,
-            polling
+            polling,
+            webhook,
+            allowedUpdates
         } = options;
 
         this.botToken = token;
@@ -68,6 +73,8 @@ export class TeleBot extends TeleBotEvents {
 
         this.botAPI = botAPI || TELEGRAM_BOT_API(this.botToken);
 
+        this.webhook = webhook;
+
         if (polling) {
             const {
                 offset,
@@ -75,8 +82,7 @@ export class TeleBot extends TeleBotEvents {
                 timeout,
                 limit,
                 retryTimes,
-                retryTimeout,
-                allowedUpdates
+                retryTimeout
             } = polling;
 
             if (offset !== undefined && Number.isInteger(offset)) {
@@ -104,10 +110,14 @@ export class TeleBot extends TeleBotEvents {
             }
 
             if (allowedUpdates !== undefined && Array.isArray(allowedUpdates) && allowedUpdates.length) {
-                this.polling.allowedUpdates = allowedUpdates;
+                this.allowedUpdates = allowedUpdates;
             }
         }
 
+    }
+
+    public getToken(): TelegramBotToken {
+        return this.botToken;
     }
 
     public getOptions() {
@@ -120,6 +130,20 @@ export class TeleBot extends TeleBotEvents {
         const {
             interval
         } = this.polling;
+
+        const webhook = this.webhook;
+
+        if (webhook) {
+            const url = `${webhook.url}/${this.getToken()}`;
+
+            return this.setWebhook(url, {
+                certificate: webhook.cert
+            }).then(() => {
+                this.dev.log("webhook", `set to "${url}"`);
+                return webhookServer(this, webhook);
+            });
+
+        }
 
         // TODO: validate bot token by getMe() method
 
@@ -245,14 +269,18 @@ export class TeleBot extends TeleBotEvents {
                 processPromise = this.processTelegramUpdates(updates);
             }
 
-            return processPromise;
+            return processPromise.then(() => {
+                if (updates.length > 0) {
+                    this.setOffset(++updates[updates.length - 1].update_id);
+                }
+            });
         }).catch((error: any) => {
             this.dev.log("ERROR", error.response.data);
             return Promise.reject(error);
         });
     }
 
-    private processTelegramUpdates(updates: Update[]) {
+    public processTelegramUpdates(updates: Update[]) {
         const processorPromises: Promise<any>[] = [];
 
         this.dev.log("processTelegramUpdates", updates.length);
@@ -267,11 +295,7 @@ export class TeleBot extends TeleBotEvents {
             }
         });
 
-        return Promise.all(processorPromises).then(() => {
-            if (updates.length > 0) {
-                this.setOffset(++updates[updates.length - 1].update_id);
-            }
-        });
+        return Promise.all(processorPromises);
     }
 
     private telegramRequest<Request = {}, Response = {}>(endpoint: string, payload: Request) {
@@ -295,6 +319,7 @@ export class TeleBot extends TeleBotEvents {
         optional?: any;
     }): Promise<Response> {
         const data = Object.assign({}, required, optional);
+        this.dev.log("telegramMethod", method, data);
         const response = await this.telegramRequest<any, Response>(method, data);
         return response.data.result;
     }

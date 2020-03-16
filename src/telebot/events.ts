@@ -1,5 +1,5 @@
-import { convertToArray } from "./utils";
-import { TeleBotEventNames, TeleBotEventProcessor } from "./types/telebot";
+import { convertToArray } from "../utils";
+import { TeleBotEventNames, TeleBotEventProcessor } from "../types/telebot";
 
 type TeleBotEvent = {
     processors: Set<any>;

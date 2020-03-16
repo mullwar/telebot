@@ -1,25 +1,35 @@
-import { TeleBot } from "./telebot";
-import { BotInputFile, ChatId, Message, TelegramMessageOptional, User } from "./types/telegram";
+import { TeleBot } from "../telebot";
+import {
+    BotInputFile,
+    ChatId,
+    InputFile,
+    Message,
+    TelegramMessageOptional,
+    UpdateTypes,
+    User,
+    WebhookInfo
+} from "../types/telegram";
 
 type MethodResponse<T = Message> = Promise<T>;
 
-declare module "./telebot" {
+declare module "../telebot" {
+
     interface TeleBot {
         getMe(): MethodResponse<User>;
 
         sendMessage(
             chat_id: ChatId,
             text: string,
-            optional?: TelegramMessageOptional
+            optional?: {
+                disable_web_page_preview?: boolean;
+            } & TelegramMessageOptional
         ): MethodResponse;
 
         forwardMessage(
             chat_id: ChatId,
             from_chat_id: ChatId,
             message_id: number,
-            optional?: {
-                disable_web_page_preview?: boolean;
-            } & Pick<TelegramMessageOptional, "disable_notification">
+            optional?: Pick<TelegramMessageOptional, "disable_notification">
         ): MethodResponse;
 
         sendPhoto(
@@ -50,6 +60,19 @@ declare module "./telebot" {
                 thumb?: BotInputFile;
             } & TelegramMessageOptional
         ): MethodResponse;
+
+        setWebhook(
+            url: string,
+            optional?: {
+                certificate?: InputFile;
+                max_connections?: number;
+                allowed_updates?: UpdateTypes;
+            }
+        ): MethodResponse<true>;
+
+        deleteWebhook(): MethodResponse<true>;
+
+        getWebhookInfo(): MethodResponse<WebhookInfo>;
     }
 }
 
@@ -67,11 +90,31 @@ TeleBot.prototype.sendMessage = function (chat_id, text, optional) {
     });
 };
 
-TeleBot.prototype.forwardMessage = function (chat_id, from_chat_id, message_id, ...optional) {
+TeleBot.prototype.forwardMessage = function (chat_id, from_chat_id, message_id, optional) {
     return this.telegramMethod<Message>({
         method: "forwardMessage",
         required: { chat_id, from_chat_id, message_id },
         optional
+    });
+};
+
+TeleBot.prototype.setWebhook = function (url, optional) {
+    return this.telegramMethod<true>({
+        method: "setWebhook",
+        required: { url },
+        optional
+    });
+};
+
+TeleBot.prototype.deleteWebhook = function () {
+    return this.telegramMethod<true>({
+        method: "deleteWebhook"
+    });
+};
+
+TeleBot.prototype.getWebhookInfo = function () {
+    return this.telegramMethod<WebhookInfo>({
+        method: "getWebhookInfo"
     });
 };
 

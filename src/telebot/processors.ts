@@ -1,5 +1,5 @@
-import { TeleBot } from "./telebot";
-import { Message } from "./types/telegram";
+import { TeleBot } from "../telebot";
+import { Message } from "../types/telegram";
 
 const messageTypes = [
     "text",
