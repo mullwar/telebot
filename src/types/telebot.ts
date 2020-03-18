@@ -15,10 +15,14 @@ export type TeleBotOptions = {
 
 export type WebhookOptions = {
     url: string;
-    host: string;
-    port: number;
+    host?: string;
+    port?: number;
     key?: string;
     cert?: string;
+};
+
+export type TeleBotDebugOptions = boolean | {
+    debug: boolean;
 };
 
 export type TeleBotFlags = {

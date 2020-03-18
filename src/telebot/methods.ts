@@ -7,7 +7,8 @@ import {
     TelegramMessageOptional,
     UpdateTypes,
     User,
-    WebhookInfo
+    WebhookInfo,
+    WebhookResponse
 } from "../types/telegram";
 
 type MethodResponse<T = Message> = Promise<T>;
@@ -78,7 +79,7 @@ declare module "../telebot" {
 
 TeleBot.prototype.getMe = function () {
     return this.telegramMethod<User>({
-        method: "getME"
+        method: "getMe"
     });
 };
 
@@ -99,7 +100,7 @@ TeleBot.prototype.forwardMessage = function (chat_id, from_chat_id, message_id, 
 };
 
 TeleBot.prototype.setWebhook = function (url, optional) {
-    return this.telegramMethod<true>({
+    return this.telegramMethod<WebhookResponse>({
         method: "setWebhook",
         required: { url },
         optional
@@ -107,7 +108,7 @@ TeleBot.prototype.setWebhook = function (url, optional) {
 };
 
 TeleBot.prototype.deleteWebhook = function () {
-    return this.telegramMethod<true>({
+    return this.telegramMethod<WebhookResponse>({
         method: "deleteWebhook"
     });
 };

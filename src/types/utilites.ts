@@ -10,3 +10,4 @@ export type OptionalKeys<T> = {
     [K in keyof T]-?: {} extends Pick<T, K> ? K : never;
 }[keyof T];
 
+export type PropertyType<T, K extends keyof T> = T[K];

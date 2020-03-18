@@ -1,19 +1,8 @@
-import axios from "axios";
-import MockAdapter from "axios-mock-adapter";
 import { TeleBot } from "../src";
-import { ERROR_TELEBOT_ALREADY_RUNNING, TeleBotError } from "../src/errors";
 import { TeleBotFlags, TeleBotOptions, TeleBotScenario } from "../src/types/telebot";
-import { TelegramResponse, Update } from "../src/types/telegram";
 import { DEFAULT_POLLING } from "../src/telebot";
-
-const MOCK_URL = "/mock";
-
-const mock = new MockAdapter(axios);
-
-mock.onPost(`${MOCK_URL}/getUpdates`).reply(200, {
-    ok: true,
-    result: [{ update_id: 0 }]
-} as TelegramResponse<Update[]>);
+import { MOCK_URL, MOCK_WEBHOOK } from "./mock/server";
+import { ERROR_TELEBOT_ALREADY_RUNNING, TeleBotError } from "../src/errors";
 
 type TestCase = {
     name: string;
@@ -28,23 +17,34 @@ function createNewBot(options: Partial<TeleBotOptions>): TeleBot {
     });
 }
 
-([{
-    name: "TeleBot using lifeCycle",
-    options: {
-        polling: {
-            interval: false,
-            limit: 100
-        }
-    } as TeleBotOptions
-}, {
-    name: "TeleBot using lifeInterval",
-    options: {
-        polling: {
-            interval: 100
-        },
-        allowedUpdates: ["text"]
-    } as TeleBotOptions
-}] as Array<TestCase>).forEach((testCase) => {
+([
+    {
+        name: "TeleBot using lifeCycle",
+        options: {
+            polling: {
+                interval: false,
+                limit: 10
+            }
+        } as TeleBotOptions
+    },
+    {
+        name: "TeleBot using lifeInterval",
+        options: {
+            polling: {
+                interval: 100
+            },
+            allowedUpdates: ["message"]
+        } as TeleBotOptions
+    },
+    {
+        name: "TeleBot using webhook",
+        options: {
+            webhook: {
+                url: MOCK_WEBHOOK
+            }
+        } as TeleBotOptions
+    }
+] as Array<TestCase>).forEach((testCase) => {
     const { name, options } = testCase;
 
     describe(name, () => {
@@ -61,11 +61,11 @@ function createNewBot(options: Partial<TeleBotOptions>): TeleBot {
 
         test("validate bot instance options", () => {
             const botOptions = bot.getOptions();
-            expect(botOptions).toEqual({
+            expect(botOptions).toMatchObject({
                 polling: {
-                    ...DEFAULT_POLLING,
-                    ...options.polling
-                }
+                    ...DEFAULT_POLLING
+                },
+                ...options
             });
         });
 
@@ -77,7 +77,7 @@ function createNewBot(options: Partial<TeleBotOptions>): TeleBot {
                 waitEvents: false
             } as TeleBotFlags);
 
-            bot.start();
+            await bot.start();
 
             expect(bot.hasFlag("isRunning")).toBe(true);
 
@@ -88,14 +88,15 @@ function createNewBot(options: Partial<TeleBotOptions>): TeleBot {
 
         test("multiple instance resolution scenarios", async () => {
 
-            bot.start();
+            await bot.start();
 
             expect(bot.hasFlag("isRunning")).toBe(true);
 
             // TeleBotScenario.Restart
 
             bot.runningInstanceScenario = TeleBotScenario.Restart;
-            bot.start();
+
+            await bot.start();
 
             expect(bot.hasFlag("isRunning")).toBe(true);
 
@@ -103,7 +104,7 @@ function createNewBot(options: Partial<TeleBotOptions>): TeleBot {
 
             try {
                 bot.runningInstanceScenario = TeleBotScenario.Terminate;
-                bot.start();
+                await bot.start();
             } catch (error) {
                 expect(bot.hasFlag("isRunning")).toBe(false);
                 expect(error).toEqual(new TeleBotError(ERROR_TELEBOT_ALREADY_RUNNING));
@@ -112,11 +113,12 @@ function createNewBot(options: Partial<TeleBotOptions>): TeleBot {
             // TeleBotScenario.Pass
 
             bot.runningInstanceScenario = TeleBotScenario.Pass;
-            bot.start();
+
+            await bot.start();
 
             expect(bot.hasFlag("isRunning")).toBe(true);
 
-            bot.start();
+            await bot.start();
 
             expect(bot.hasFlag("isRunning")).toBe(true);
         });

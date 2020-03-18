@@ -4,10 +4,12 @@ import http, { IncomingMessage, ServerResponse } from "http";
 import https from "https";
 import { TeleBot } from "../telebot";
 import { WebhookOptions } from "../types/telebot";
-import { TeleBotError } from "../errors";
 import { Update } from "../types/telegram";
+import { convertToArray } from "../utils";
 
-export function webhookServer(bot: TeleBot, options: WebhookOptions) {
+export const allowedWebhookPorts = [80, 88, 443, 8443];
+
+export async function webhookServer(bot: TeleBot, options: WebhookOptions) {
 
     const { host, port } = options;
 
@@ -25,19 +27,24 @@ export function webhookServer(bot: TeleBot, options: WebhookOptions) {
 
             request.on("data", (chunk) => body.push(chunk));
             request.on("end", () => {
-                let update: Update;
+                let update: Update[];
 
                 try {
-                    update = JSON.parse(body.join(""));
+                    update = convertToArray<Update>(JSON.parse(body.join()));
                 } catch (error) {
                     response.writeHead(415);
                     response.end();
-                    throw new TeleBotError(error);
+                    bot.dev.log("webhook parse error", error);
+                    return error;
                 }
 
-                bot.processTelegramUpdates([update])
-                    .catch(() => {
+                bot.dev.log("webhook update", update);
+
+                bot.processTelegramUpdates(update)
+                    .catch((error) => {
+                        bot.dev.log("webhook process error", error);
                         response.writeHead(500);
+                        return error;
                     })
                     .finally(() => {
                         response.end();
@@ -50,7 +57,8 @@ export function webhookServer(bot: TeleBot, options: WebhookOptions) {
     const server = key && cert ? https.createServer({ key, cert }, listener) : http.createServer(listener);
 
     server.listen(port, host, () => {
-        bot.dev.log("webhook", `started${key ? " secure" : ""} server on "${host}:${port}"`);
+        // eslint-disable-next-line no-console
+        console.log(`TeleBot started${key ? " secure" : ""} webhook server on "${host}:${port}"`);
     });
 
 }

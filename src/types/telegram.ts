@@ -1,13 +1,16 @@
 export type TelegramBotToken = string;
 
-export type TelegramResponse<T> = {
+export type TelegramResponse<T = undefined> = {
     ok: boolean;
     result: T;
-    error?: string;
-    error_code?: string;
+    error_code?: number;
     description?: string;
     parameters?: ResponseParameters;
 };
+
+export type TelegramErrorResponse =
+    Pick<TelegramResponse, "ok" | "parameters"> &
+    Required<Pick<TelegramResponse, "error_code" | "description">>;
 
 export type Update = {
     update_id: number;
@@ -27,7 +30,7 @@ export type Update = {
 export type WebhookInfo = {
     url: string;
     has_custom_certificate: boolean;
-    pending_update_count: boolean;
+    pending_update_count: number;
     last_error_date?: boolean;
     last_error_message?: string;
     max_connections?: number;
@@ -79,6 +82,8 @@ export type MessageEntity = {
     user?: User;
     language?: string;
 };
+
+export type WebhookResponse = true;
 
 export type Message = {
     message_id: number;

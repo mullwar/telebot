@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
     TeleBotFlags,
     TeleBotOptions,
@@ -7,13 +8,13 @@ import {
     TelegramFetchErrorScenario,
     WebhookOptions
 } from "./types/telebot";
-import { Message, TelegramBotToken, TelegramResponse, Update, UpdateTypes } from "./types/telegram";
-import { ERROR_TELEBOT_ALREADY_RUNNING, TeleBotError } from "./errors";
+import { Message, TelegramBotToken, TelegramResponse, Update, UpdateTypes, User } from "./types/telegram";
+import { ERROR_TELEBOT_ALREADY_RUNNING, handleTelegramResponse, TeleBotError, TeleBotRequestError } from "./errors";
 import { TeleBotDevkit } from "./telebot/devkit";
-import axios from "axios";
 import { TeleBotEvents } from "./telebot/events";
 import { updateProcessors } from "./telebot/processors";
-import { webhookServer } from "./telebot/webhook";
+import { allowedWebhookPorts, webhookServer } from "./telebot/webhook";
+import { parseUrl } from "./utils";
 
 const TELEGRAM_BOT_API = (botToken: string) => `https://api.telegram.org/bot${botToken}`;
 
@@ -30,11 +31,11 @@ export class TeleBot extends TeleBotEvents {
     private readonly botAPI: string;
     private readonly botToken: TelegramBotToken;
 
-    public runningInstanceScenario: TeleBotRunningInstanceScenario = TeleBotScenario.Pass;
-    public telegramFetchErrorScenario: TelegramFetchErrorScenario = TeleBotScenario.Reconnect;
-
     private polling: TeleBotPolling = DEFAULT_POLLING;
     private readonly webhook?: WebhookOptions;
+
+    private lifeIntervalFn: NodeJS.Timeout | undefined;
+    private readonly allowedUpdates: UpdateTypes = [];
 
     private flags: TeleBotFlags = {
         isRunning: false,
@@ -42,9 +43,10 @@ export class TeleBot extends TeleBotEvents {
         waitEvents: false
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private lifeIntervalFn: any;
-    private allowedUpdates: UpdateTypes = [];
+    public me: User | undefined;
+
+    public runningInstanceScenario: TeleBotRunningInstanceScenario = TeleBotScenario.Pass;
+    public telegramFetchErrorScenario: TelegramFetchErrorScenario = TeleBotScenario.Reconnect;
 
     public dev = new TeleBotDevkit("telebot");
 
@@ -68,7 +70,7 @@ export class TeleBot extends TeleBotEvents {
         this.botToken = token;
 
         if (!this.botToken) {
-            throw new TeleBotError("Invalid Telegram bot token.");
+            throw new TeleBotError("Telegram bot token is not provided.");
         }
 
         this.botAPI = botAPI || TELEGRAM_BOT_API(this.botToken);
@@ -109,9 +111,33 @@ export class TeleBot extends TeleBotEvents {
                 this.polling.retryTimeout = retryTimeout;
             }
 
-            if (allowedUpdates !== undefined && Array.isArray(allowedUpdates) && allowedUpdates.length) {
-                this.allowedUpdates = allowedUpdates;
+        } else if (webhook) {
+
+            const { url } = webhook;
+            const { port: urlPort, protocol } = parseUrl(url);
+            const webhookPort = urlPort ? parseInt(urlPort) : 80;
+            const isHttps = protocol?.toLowerCase().startsWith("https");
+
+            if (!isHttps) {
+                throw new TeleBotError(`Webhook '${url}' must be HTTPS secured.`);
             }
+
+            if (!allowedWebhookPorts.includes(webhookPort)) {
+                throw new TeleBotError(`Webhook port of '${webhookPort}' is not supported by Telegram Bot API. Use allowed webhook ports: ${allowedWebhookPorts.join(", ")}`);
+            }
+
+            // if (host) {
+            //     throw new TeleBotError("Webhook host is required.");
+            // }
+            //
+            // if (!port || !Number.isInteger(port) || port <= 0) {
+            //     throw new TeleBotError(`Invalid webhook port: '${port}'`);
+            // }
+
+        }
+
+        if (allowedUpdates !== undefined && Array.isArray(allowedUpdates) && allowedUpdates.length) {
+            this.allowedUpdates = allowedUpdates;
         }
 
     }
@@ -120,51 +146,77 @@ export class TeleBot extends TeleBotEvents {
         return this.botToken;
     }
 
-    public getOptions() {
+    public getOptions(): TeleBotOptions {
         return {
-            polling: this.polling
+            token: this.botToken,
+            botAPI: this.botAPI,
+            polling: this.polling,
+            webhook: this.webhook,
+            allowedUpdates: this.allowedUpdates
         };
     }
 
-    public start() {
+    public async start() {
         const {
             interval
         } = this.polling;
 
         const webhook = this.webhook;
 
-        if (webhook) {
-            const url = `${webhook.url}/${this.getToken()}`;
-
-            return this.setWebhook(url, {
-                certificate: webhook.cert
-            }).then(() => {
-                this.dev.log("webhook", `set to "${url}"`);
-                return webhookServer(this, webhook);
-            });
-
+        try {
+            this.me = await this.getMe();
+        } catch (error) {
+            if (error instanceof TeleBotRequestError) {
+                if (error.response.error_code === 401) {
+                    return new TeleBotError("Incorrect Telegram Bot token.");
+                }
+            }
+            return error;
         }
-
-        // TODO: validate bot token by getMe() method
 
         if (!this.hasFlag("isRunning")) {
             this.setFlag("isRunning");
             try {
-                if (interval && interval > 0) {
+                const deleteWebhook = async () => await this.deleteWebhook();
+                if (webhook) {
+                    const url = `${webhook.url}/${this.getToken()}`;
+                    await this.setWebhook(url, {
+                        certificate: webhook.cert
+                    });
+                    if (webhook.host && webhook.port) {
+                        webhookServer(this, webhook);
+                    }
+                    // this.setWebhook(url, {
+                    //     certificate: webhook.cert
+                    // }).then((re) => {
+                    //     this.dev.log("webhook", `set to "${url}"`, re);
+                    //     return webhookServer(this, webhook);
+                    // }).finally(() => {
+                    //     this.dev.log("STOP WEBHOOK");
+                    //     this.stop();
+                    // });
+                } else if (interval && interval > 0) {
+                    await deleteWebhook();
                     this.startLifeInterval(interval);
-                } else {
+                } else if (interval === false) {
+                    await deleteWebhook();
                     this.startLifeCycle();
                 }
+
             } catch (error) {
-                throw new TeleBotError(error);
+                const e = error;
+                // eslint-disable-next-line no-console
+                console.error("==== TELEBOT GLOBAL ERROR ====", e);
+                return e;
             }
+
         } else {
             switch (this.runningInstanceScenario) {
                 case TeleBotScenario.Restart:
-                    this.restart();
+                    await this.restart();
                     break;
                 case TeleBotScenario.Terminate:
-                    this.stop();
+                    await this.stop();
                     throw new TeleBotError(ERROR_TELEBOT_ALREADY_RUNNING);
                 case TeleBotScenario.Pass:
                 default:
@@ -174,12 +226,12 @@ export class TeleBot extends TeleBotEvents {
 
     }
 
-    public restart(): void {
-        this.stop();
-        this.start();
+    public async restart(): Promise<void> {
+        await this.stop();
+        return await this.start();
     }
 
-    public stop(): void {
+    public async stop(): Promise<void> {
         this.unsetFlag("isRunning");
         if (this.lifeIntervalFn) {
             clearInterval(this.lifeIntervalFn);
@@ -212,7 +264,7 @@ export class TeleBot extends TeleBotEvents {
 
     private startLifeCycle(): void {
         this.dev.log("startLifeCycle");
-        this.lifeCycle(false);
+        return this.lifeCycle(false);
     }
 
     // TODO: WIP
@@ -239,7 +291,7 @@ export class TeleBot extends TeleBotEvents {
                 this.dev.log("PROMISE OK", data);
                 return liveOnce ? Promise.resolve() : this.lifeCycle(false);
             }).catch((error: any) => {
-                this.dev.log("PROMISE ERROR", error.message);
+                this.dev.log("PROMISE ERROR", error);
                 return Promise.reject(error);
             });
         } else {
@@ -257,25 +309,22 @@ export class TeleBot extends TeleBotEvents {
 
         const promise = this.telegramRequest<any, Update[]>("getUpdates", { offset, limit, timeout });
 
-        return promise.then((response) => {
+        return promise.then((updates) => {
             let processPromise: Promise<any> = Promise.resolve();
 
-            this.dev.log("DONE", response.data);
+            this.dev.log("UPDATES", updates);
 
-            const { ok, result: updates } = response.data;
-
-            if (ok && updates) {
-                this.dev.log("OK");
+            if (updates) {
                 processPromise = this.processTelegramUpdates(updates);
             }
 
             return processPromise.then(() => {
-                if (updates.length > 0) {
+                if (updates && updates.length > 0) {
                     this.setOffset(++updates[updates.length - 1].update_id);
                 }
             });
         }).catch((error: any) => {
-            this.dev.log("ERROR", error.response.data);
+            this.dev.log("ERROR", error);
             return Promise.reject(error);
         });
     }
@@ -298,15 +347,29 @@ export class TeleBot extends TeleBotEvents {
         return Promise.all(processorPromises);
     }
 
-    private telegramRequest<Request = {}, Response = {}>(endpoint: string, payload: Request) {
+    private telegramRequest<Request = {}, Response = {}>(endpoint: string, payload: Request): Promise<Response> {
         const url = `${this.botAPI}/${endpoint}`;
-        this.dev.log("telegramRequest", url, payload);
+        this.dev.log("telegramRequest --->", url, payload);
         return axios.request<TelegramResponse<Response>>({
             url,
             data: payload,
             method: "post",
             responseType: "json"
-        });
+        })
+            .then((response) => {
+                const { ok, result } = response.data;
+                this.dev.log("telegramRequest <---", response.data);
+                if (!ok || result === undefined) {
+                    return Promise.reject(response.data);
+                }
+                return result;
+            })
+            .catch((error) => {
+                const e = handleTelegramResponse(error);
+                this.dev.log("telegramRequest <-/-", e);
+                return Promise.reject(e);
+            });
+
     }
 
     public async telegramMethod<Response = Message>({
@@ -319,9 +382,8 @@ export class TeleBot extends TeleBotEvents {
         optional?: any;
     }): Promise<Response> {
         const data = Object.assign({}, required, optional);
-        this.dev.log("telegramMethod", method, data);
-        const response = await this.telegramRequest<any, Response>(method, data);
-        return response.data.result;
+        // this.dev.log("telegramMethod", method, data);
+        return this.telegramRequest<any, Response>(method, data);
     }
 
 }
