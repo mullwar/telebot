@@ -22,7 +22,7 @@ The easy way to write Telegram bots.
 ## 🔨 Installation
 
 ```
-npm install telebot --save
+npm install telebot
 ```
 
 Or using [yarn](https://yarnpkg.com) package manager:
@@ -39,7 +39,7 @@ Import `telebot` module and create a new bot object:
 const TeleBot = require('telebot');
 
 const bot = new TeleBot({
-    token: 'TELEGRAM_BOT_TOKEN', // Required. Telegram Bot API token.
+    token: TELEGRAM_BOT_TOKEN, // Required. Telegram Bot API token.
     polling: { // Optional. Use polling.
         interval: 1000, // Optional. How often check updates (in ms).
         timeout: 0, // Optional. Update polling timeout (0 - short polling).
@@ -70,12 +70,12 @@ Or just:
 
 ```js
 const TeleBot = require('telebot');
-const bot = new TeleBot('TELEGRAM_BOT_TOKEN');
+const bot = new TeleBot(TELEGRAM_BOT_TOKEN);
 ```
 
 *Don't forget to insert your [Telegram Bot API](https://core.telegram.org/bots#create-a-new-bot) token key.*
 
-To start polling updates, use ```bot.start()```.
+To start polling updates, use `bot.start()`.
 
 ```js
 bot.on('text', (msg) => msg.reply.text(msg.text));
@@ -132,7 +132,7 @@ bot.on('edit', (msg) => {
 
 ## ⏰ Events
 
-Use ```bot.on(<event>, <function>)``` to handle all possible TeleBot events.
+Use `bot.on(<event>, <function>)` to handle all possible TeleBot events.
 
 For example, to catch a command, just add a slash:
 
@@ -243,7 +243,7 @@ const bot = new TeleBot({
 });
 ```
 
-Or use ```plug(require(<plugin_path>))``` to plug an external plugin.
+Or use `plug(require(<plugin_path>))` to plug an external plugin.
 
 ***[Check out build-in plugin folder!](/plugins)***
 
