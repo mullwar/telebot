@@ -565,3 +565,7 @@ Use this method to get current webhook status.
 ##### `deleteWebhook()`
 
 Use this method to remove webhook integration if you decide to switch back to getUpdates. Returns `True` on success.
+
+##### `sendDice(<chatId>, <emoji>)`
+
+Use this method to send a dynamic emoji. Examples: 🎲 (default), 🎯 or 🏀.
