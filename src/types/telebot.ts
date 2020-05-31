@@ -1,12 +1,14 @@
 import { Message, TelegramBotToken, UpdateTypes } from "./telegram";
 import { RequireFields } from "./utilites";
+import { TeleBotDevOptions } from "../telebot/devkit";
 
 export type TeleBotOptions = {
     token: TelegramBotToken;
-    botAPI?: string;
+    botAPI?: string; // TODO: remove from options
     polling?: Partial<TeleBotPolling>;
     webhook?: WebhookOptions;
     allowedUpdates?: UpdateTypes | undefined;
+    debug?: boolean | TeleBotDevOptions;
     // scenarios?: {
     //     onRunningInstanceStart?: TeleBotRunningInstanceScenario;
     //     onTelegramFetchError?: TelegramFetchErrorScenario;
@@ -19,10 +21,6 @@ export type WebhookOptions = {
     port?: number;
     key?: string;
     cert?: string;
-};
-
-export type TeleBotDebugOptions = boolean | {
-    debug: boolean;
 };
 
 export type TeleBotFlags = {

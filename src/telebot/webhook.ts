@@ -34,15 +34,15 @@ export async function webhookServer(bot: TeleBot, options: WebhookOptions) {
                 } catch (error) {
                     response.writeHead(415);
                     response.end();
-                    bot.dev.log("webhook parse error", error);
+                    bot.dev.error("webhook.parse", { error });
                     return error;
                 }
 
-                bot.dev.log("webhook update", update);
+                bot.dev.debug("webhook.update", { data: update });
 
                 bot.processTelegramUpdates(update)
                     .catch((error) => {
-                        bot.dev.log("webhook process error", error);
+                        bot.dev.error("webhook.processTelegramUpdates", { error });
                         response.writeHead(500);
                         return error;
                     })
@@ -57,6 +57,7 @@ export async function webhookServer(bot: TeleBot, options: WebhookOptions) {
     const server = key && cert ? https.createServer({ key, cert }, listener) : http.createServer(listener);
 
     server.listen(port, host, () => {
+        bot.dev.info("webhook.listen", { data: { port, host } });
         // eslint-disable-next-line no-console
         console.log(`TeleBot started${key ? " secure" : ""} webhook server on "${host}:${port}"`);
     });

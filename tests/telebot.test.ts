@@ -13,6 +13,7 @@ function createNewBot(options: Partial<TeleBotOptions>): TeleBot {
     return new TeleBot({
         token: "__test__",
         botAPI: MOCK_URL,
+        debug: false,
         ...options
     });
 }

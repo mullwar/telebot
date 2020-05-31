@@ -10,11 +10,12 @@ import {
 } from "./types/telebot";
 import { Message, TelegramBotToken, TelegramResponse, Update, UpdateTypes, User } from "./types/telegram";
 import { ERROR_TELEBOT_ALREADY_RUNNING, handleTelegramResponse, TeleBotError, TeleBotRequestError } from "./errors";
-import { TeleBotDevkit } from "./telebot/devkit";
+import { Levels, TeleBotDev, TeleBotDevOptions } from "./telebot/devkit";
 import { TeleBotEvents } from "./telebot/events";
 import { updateProcessors } from "./telebot/processors";
 import { allowedWebhookPorts, webhookServer } from "./telebot/webhook";
-import { parseUrl } from "./utils";
+import { parseUrl, toString } from "./utils";
+import { PropertyType } from "./types/utilites";
 
 const TELEGRAM_BOT_API = (botToken: string) => `https://api.telegram.org/bot${botToken}`;
 
@@ -27,6 +28,10 @@ export const DEFAULT_POLLING: TeleBotPolling = {
     retryTimes: Infinity
 };
 
+export const DEFAULT_DEBUG: TeleBotDevOptions = {
+    levels: Object.values(Levels).filter(value => typeof value === "number") as Levels[]
+};
+
 export class TeleBot extends TeleBotEvents {
     private readonly botAPI: string;
     private readonly botToken: TelegramBotToken;
@@ -36,6 +41,8 @@ export class TeleBot extends TeleBotEvents {
 
     private lifeIntervalFn: NodeJS.Timeout | undefined;
     private readonly allowedUpdates: UpdateTypes = [];
+
+    private readonly debug: PropertyType<TeleBotOptions, "debug"> = false;
 
     private flags: TeleBotFlags = {
         isRunning: false,
@@ -48,7 +55,7 @@ export class TeleBot extends TeleBotEvents {
     public runningInstanceScenario: TeleBotRunningInstanceScenario = TeleBotScenario.Pass;
     public telegramFetchErrorScenario: TelegramFetchErrorScenario = TeleBotScenario.Reconnect;
 
-    public dev = new TeleBotDevkit("telebot");
+    public dev: TeleBotDev;
 
     constructor(options: TeleBotOptions | TelegramBotToken) {
         super();
@@ -64,7 +71,8 @@ export class TeleBot extends TeleBotEvents {
             botAPI,
             polling,
             webhook,
-            allowedUpdates
+            allowedUpdates,
+            debug
         } = options;
 
         this.botToken = token;
@@ -140,6 +148,14 @@ export class TeleBot extends TeleBotEvents {
             this.allowedUpdates = allowedUpdates;
         }
 
+        if (debug) {
+            this.debug = this.debug !== true ? debug : DEFAULT_DEBUG;
+        } else if (debug === false) {
+            this.debug = false;
+        }
+
+        this.dev = new TeleBotDev("telebot", this, this.debug as TeleBotDevOptions);
+
     }
 
     public getToken(): TelegramBotToken {
@@ -184,17 +200,8 @@ export class TeleBot extends TeleBotEvents {
                         certificate: webhook.cert
                     });
                     if (webhook.host && webhook.port) {
-                        webhookServer(this, webhook);
+                        await webhookServer(this, webhook);
                     }
-                    // this.setWebhook(url, {
-                    //     certificate: webhook.cert
-                    // }).then((re) => {
-                    //     this.dev.log("webhook", `set to "${url}"`, re);
-                    //     return webhookServer(this, webhook);
-                    // }).finally(() => {
-                    //     this.dev.log("STOP WEBHOOK");
-                    //     this.stop();
-                    // });
                 } else if (interval && interval > 0) {
                     await deleteWebhook();
                     this.startLifeInterval(interval);
@@ -205,6 +212,9 @@ export class TeleBot extends TeleBotEvents {
 
             } catch (error) {
                 const e = error;
+                this.dev.error("telebot", {
+                    error: e
+                });
                 // eslint-disable-next-line no-console
                 console.error("==== TELEBOT GLOBAL ERROR ====", e);
                 return e;
@@ -227,11 +237,13 @@ export class TeleBot extends TeleBotEvents {
     }
 
     public async restart(): Promise<void> {
+        this.dev.info("restart");
         await this.stop();
         return await this.start();
     }
 
     public async stop(): Promise<void> {
+        this.dev.info("stop");
         this.unsetFlag("isRunning");
         if (this.lifeIntervalFn) {
             clearInterval(this.lifeIntervalFn);
@@ -248,54 +260,62 @@ export class TeleBot extends TeleBotEvents {
     }
 
     public setFlag<T extends keyof TeleBotFlags>(name: T): void {
-        this.dev.log("setFlag", name, "true");
+        this.dev.debug("setFlag", `${name} = true`);
         this.flags[name] = true;
     }
 
     public unsetFlag<T extends keyof TeleBotFlags>(name: T): void {
-        this.dev.log("unsetFlag", name, "false");
+        this.dev.debug("unsetFlag", `${name} = false`);
         this.flags[name] = false;
     }
 
     private setOffset(offset: number): void {
-        this.dev.log("setOffset", offset);
+        this.dev.debug("setOffset", offset);
         this.polling.offset = offset;
     }
 
     private startLifeCycle(): void {
-        this.dev.log("startLifeCycle");
-        return this.lifeCycle(false);
+        this.dev.info("startLifeCycle");
+        this.lifeCycle(false);
     }
 
     // TODO: WIP
     private startLifeInterval(interval: number): void {
-        this.dev.log("startLifeInterval", interval);
+        this.dev.info("startLifeInterval", {
+            message: { interval }
+        });
         this.lifeIntervalFn = setInterval(() => {
-            this.dev.log("interval cycle");
+            this.dev.debug("lifeInterval");
             if (this.hasFlag("isRunning") && this.hasFlag("canFetch")) {
                 this.unsetFlag("canFetch");
                 this.lifeCycle(true).then(() => {
                     this.setFlag("canFetch");
                 }).catch((error: any) => {
-                    this.dev.log("INTERVAL ERROR", error.message);
+                    this.dev.error("startLifeInterval", {
+                        error
+                    });
                 });
             }
         }, interval);
     }
 
-    private lifeCycle(liveOnce = true): any {
-        this.dev.log("lifeCycle", { liveOnce });
+    private lifeCycle(liveOnce = true): Promise<void> {
+        this.dev.debug("lifeCycle", `liveOnce = ${liveOnce}`);
         if (this.hasFlag("isRunning")) {
             const promise = this.fetchTelegramUpdates();
             return promise.then((data) => {
-                this.dev.log("PROMISE OK", data);
+                this.dev.debug("lifeCycle.ok", {
+                    message: data
+                });
                 return liveOnce ? Promise.resolve() : this.lifeCycle(false);
             }).catch((error: any) => {
-                this.dev.log("PROMISE ERROR", error);
+                this.dev.error("lifeCycle", {
+                    error
+                });
                 return Promise.reject(error);
             });
         } else {
-            this.dev.log("lifeCycle", "not running");
+            this.dev.debug("lifeCycle", "not running");
             return Promise.resolve();
         }
     }
@@ -305,14 +325,16 @@ export class TeleBot extends TeleBotEvents {
         limit: number = this.polling.limit,
         timeout: number = this.polling.timeout
     ) {
-        this.dev.log("fetchTelegramUpdates");
+        this.dev.debug("fetchTelegramUpdates");
 
         const promise = this.telegramRequest<any, Update[]>("getUpdates", { offset, limit, timeout });
 
         return promise.then((updates) => {
             let processPromise: Promise<any> = Promise.resolve();
 
-            this.dev.log("UPDATES", updates);
+            this.dev.debug("fetchTelegramUpdates.updates", {
+                message: updates
+            });
 
             if (updates) {
                 processPromise = this.processTelegramUpdates(updates);
@@ -324,7 +346,9 @@ export class TeleBot extends TeleBotEvents {
                 }
             });
         }).catch((error: any) => {
-            this.dev.log("ERROR", error);
+            this.dev.error("fetchTelegramUpdates", {
+                error
+            });
             return Promise.reject(error);
         });
     }
@@ -332,7 +356,9 @@ export class TeleBot extends TeleBotEvents {
     public processTelegramUpdates(updates: Update[]) {
         const processorPromises: Promise<any>[] = [];
 
-        this.dev.log("processTelegramUpdates", updates.length);
+        this.dev.info("processTelegramUpdates", {
+            data: updates
+        });
 
         updates.forEach((update) => {
             for (const processorName in updateProcessors) {
@@ -349,7 +375,9 @@ export class TeleBot extends TeleBotEvents {
 
     private telegramRequest<Request = {}, Response = {}>(endpoint: string, payload: Request): Promise<Response> {
         const url = `${this.botAPI}/${endpoint}`;
-        this.dev.log("telegramRequest --->", url, payload);
+        this.dev.info("telegramRequest", {
+            data: { url, payload }
+        });
         return axios.request<TelegramResponse<Response>>({
             url,
             data: payload,
@@ -358,7 +386,9 @@ export class TeleBot extends TeleBotEvents {
         })
             .then((response) => {
                 const { ok, result } = response.data;
-                this.dev.log("telegramRequest <---", response.data);
+                this.dev.info("telegramRequest.response", {
+                    data: response.data
+                });
                 if (!ok || result === undefined) {
                     return Promise.reject(response.data);
                 }
@@ -366,7 +396,9 @@ export class TeleBot extends TeleBotEvents {
             })
             .catch((error) => {
                 const e = handleTelegramResponse(error);
-                this.dev.log("telegramRequest <-/-", e);
+                this.dev.error("telegramRequest.response", {
+                    error: e
+                });
                 return Promise.reject(e);
             });
 
@@ -382,7 +414,7 @@ export class TeleBot extends TeleBotEvents {
         optional?: any;
     }): Promise<Response> {
         const data = Object.assign({}, required, optional);
-        // this.dev.log("telegramMethod", method, data);
+        this.dev.debug("telegramMethod", `${method} ${toString(data)}`);
         return this.telegramRequest<any, Response>(method, data);
     }
 
