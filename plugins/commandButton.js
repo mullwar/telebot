@@ -11,7 +11,7 @@ module.exports = {
 
     plugin(bot, pluginConfig) {
 
-        const { regExpEvents } = pluginConfig;
+        const {regExpEvents} = pluginConfig;
 
         bot.on('callbackQuery', (msg, props) => {
 

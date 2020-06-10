@@ -4,7 +4,7 @@ The easy way to write Telegram bots.
 
 [![Build Status](https://travis-ci.org/mullwar/telebot.svg)](https://travis-ci.org/mullwar/telebot) [![Dependency Status](https://david-dm.org/mullwar/telebot.svg)](https://david-dm.org/mullwar/telebot) ![Node.js Version](http://img.shields.io/node/v/telebot.svg)
 
-[![TeleBot 2.0](https://img.shields.io/badge/dev-TeleBot%202%2e0-ff0061.svg)](https://github.com/mullwar/telebot/tree/v2.0) [![TeleBot Examples](https://img.shields.io/badge/telebot-examples-blue.svg)](https://github.com/mullwar/telebot/tree/master/examples) [![TeleBot Bot](https://img.shields.io/badge/telebot-community%20bot-blue.svg)](https://github.com/mullwar/telebot-bot) [![TeleBot Group](https://img.shields.io/badge/telebot-community%20group-blue.svg)](https://goo.gl/gXvm12)
+[![TeleBot 2.0](https://img.shields.io/badge/dev-TeleBot%202%2e0-ff0061.svg)](https://github.com/mullwar/telebot/tree/version-2) [![TeleBot Examples](https://img.shields.io/badge/telebot-examples-blue.svg)](https://github.com/mullwar/telebot/tree/master/examples) [![TeleBot Bot](https://img.shields.io/badge/telebot-community%20bot-blue.svg)](https://github.com/mullwar/telebot-bot) [![TeleBot Group](https://img.shields.io/badge/telebot-community%20group-blue.svg)](https://goo.gl/gXvm12)
 
 
 **Library features:**
@@ -21,18 +21,14 @@ The easy way to write Telegram bots.
 
 ## 🔨 Installation
 
-Download and install via [npm package manager](https://www.npmjs.com/package/telebot) (stable):
-
 ```
-npm install telebot --save
+npm install telebot
 ```
 
-Or clone fresh code directly from git:
+Or using [yarn](https://yarnpkg.com) package manager:
 
 ```
-git clone https://github.com/mullwar/telebot.git
-cd telebot
-npm install
+yarn add telebot
 ```
 
 ## 🕹 Usage
@@ -43,7 +39,7 @@ Import `telebot` module and create a new bot object:
 const TeleBot = require('telebot');
 
 const bot = new TeleBot({
-    token: 'TELEGRAM_BOT_TOKEN', // Required. Telegram Bot API token.
+    token: TELEGRAM_BOT_TOKEN, // Required. Telegram Bot API token.
     polling: { // Optional. Use polling.
         interval: 1000, // Optional. How often check updates (in ms).
         timeout: 0, // Optional. Update polling timeout (0 - short polling).
@@ -74,12 +70,12 @@ Or just:
 
 ```js
 const TeleBot = require('telebot');
-const bot = new TeleBot('TELEGRAM_BOT_TOKEN');
+const bot = new TeleBot(TELEGRAM_BOT_TOKEN);
 ```
 
 *Don't forget to insert your [Telegram Bot API](https://core.telegram.org/bots#create-a-new-bot) token key.*
 
-To start polling updates, use ```bot.start()```.
+To start polling updates, use `bot.start()`.
 
 ```js
 bot.on('text', (msg) => msg.reply.text(msg.text));
@@ -136,7 +132,7 @@ bot.on('edit', (msg) => {
 
 ## ⏰ Events
 
-Use ```bot.on(<event>, <function>)``` to handle all possible TeleBot events.
+Use `bot.on(<event>, <function>)` to handle all possible TeleBot events.
 
 For example, to catch a command, just add a slash:
 
@@ -173,7 +169,7 @@ bot.on(['/start', 'audio', 'sticker'], msg => {
 
 #### Events:
 
-*keyboard*, *button*, *inlineKeyboard*, *inlineQueryKeyboard*, *inlineButton*, *answerList*, *getMe*, *sendMessage*, *deleteMessage*, *forwardMessage*, *sendPhoto*, *sendAudio*, *sendDocument*, *sendSticker*, *sendVideo*, *sendVideoNote*, *sendVoice*, *sendLocation*, *sendVenue*, *sendContact*, *sendChatAction*, *getUserProfilePhotos*, *getFile*, *kickChatMember*, *unbanChatMember*, *answerInlineQuery*, *answerCallbackQuery*, *answerShippingQuery*, *answerPreCheckoutQuery*, *editMessageText*, *editMessageCaption*, *editMessageReplyMarkup*, *setWebhook*
+*keyboard*, *button*, *inlineKeyboard*, *inlineQueryKeyboard*, *inlineButton*, *answerList*, *getMe*, *sendMessage*, *deleteMessage*, *forwardMessage*, *sendPhoto*, *sendAudio*, *sendDocument*, *sendSticker*, *sendVideo*, *sendVideoNote*, *sendVoice*, *sendLocation*, *sendVenue*, *sendContact*, *sendChatAction*, *getUserProfilePhotos*, *getFile*, *kickChatMember*, *unbanChatMember*, *answerInlineQuery*, *answerCallbackQuery*, *answerShippingQuery*, *answerPreCheckoutQuery*, *editMessageText*, *editMessageMedia*, *editMessageCaption*, *editMessageReplyMarkup*, *setWebhook*
 
 ### Telegram message events:
 
@@ -186,6 +182,7 @@ bot.on(['/start', 'audio', 'sticker'], msg => {
 - **sticker** – sticker
 - **video** – video file
 - **videoNote** - video note
+- **animation** – animation data
 - **contact** – contact data
 - **location** – location data
 - **venue** – venue data
@@ -204,6 +201,8 @@ bot.on(['/start', 'audio', 'sticker'], msg => {
 - **supergroupChatCreated** – supergroup has been created
 - **migrateToChat** – group has been migrated to a supergroup
 - **migrateFromChat** – supergroup has been migrated from a group
+- **successfulPayment** – message is a service message about a successful payment
+- **passportData** – Telegram Passport data
 
 *Read more about Telegram Bot API response types: https://core.telegram.org/bots/api#available-types*
 
@@ -244,7 +243,7 @@ const bot = new TeleBot({
 });
 ```
 
-Or use ```plug(require(<plugin_path>))``` to plug an external plugin.
+Or use `plug(require(<plugin_path>))` to plug an external plugin.
 
 ***[Check out build-in plugin folder!](/plugins)***
 
@@ -359,17 +358,25 @@ Use this method to send audio files, if you want Telegram clients to display the
 
 Use this method to send general files.
 
+##### `sendAnimation(<chat_id>, <animation>, {caption, fileName, serverDownload, replyToMessage, replyMarkup, notification})`
+
+Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without sound).
+
 ##### `sendSticker(<chat_id>, <file_id | path | url | buffer | stream>, {fileName, serverDownload, replyToMessage, replyMarkup, notification})`
 
 Use this method to send `.webp` stickers.
 
-##### `sendVideo(<chat_id>, <file_id | path | url | buffer | stream>, {duration, width, height, caption, fileName, serverDownload, replyToMessage, replyMarkup, notification})`
+##### `sendVideo(<chat_id>, <file_id | path | url | buffer | stream>, {duration, width, height, caption, fileName, serverDownload, replyToMessage, replyMarkup, notification, supportsStreaming})`
 
 Use this method to send video files, Telegram clients support `mp4` videos (other formats may be sent as `Document`).
 
 ##### `sendVideoNote(<chat_id>, <file_id | path | url | buffer | stream>, {duration, length, fileName, serverDownload, replyToMessage, replyMarkup, notification})`
 
 Use this method to send video messages.
+
+##### `sendMediaGroup(<chat_id>, <media: InputMedia>)`
+
+Use this method to send a group of photos or videos as an album.
 
 ##### `sendVoice(<chat_id>, <file_id | path | url | buffer | stream>, {duration, caption, fileName, serverDownload, replyToMessage, replyMarkup, notification})`
 
@@ -391,7 +398,7 @@ Use this method to edit live location messages sent by the bot or via the bot (f
 
 Use this method to stop updating a live location message sent by the bot or via the bot (for inline bots) before live_period expires.
 
-##### `sendVenue(<chat_id>, [<latitude>, <longitude>], <title>, <address>, {foursquareId, replyToMessage, replyMarkup, notification})`
+##### `sendVenue(<chat_id>, [<latitude>, <longitude>], <title>, <address>, {foursquareId, foursquareType, replyToMessage, replyMarkup, notification})`
 
 Use this method to send information about a venue.
 
@@ -455,7 +462,7 @@ Use this method to get a list of profile pictures for a user.
 
 Use this method to get basic info about a file and prepare it for downloading.
 
-##### `sendInvoice(<chat_id>, {title, description, payload, providerToken, startParameter, currency, prices, photo: {url, width, height}, need: {name, phoneNumber, email, shippingAddress}, isFlexible, notification, replyToMessage, replyMarkup})`
+##### `sendInvoice(<chat_id>, {title, description, payload, providerToken, startParameter, currency, sendPhoneNumberToProvider, sendEmailToProvider, prices, providerData, photo: {url, width, height}, need: {name, phoneNumber, email, shippingAddress}, isFlexible, notification, replyToMessage, replyMarkup})`
 
 Use this method to send invoices.
 
@@ -523,6 +530,10 @@ Use this method to pin a message in a supergroup. The bot must be an administrat
 
 Use this method to edit text messages sent by the bot or via the bot (for inline bots).
 
+##### `editMessageMedia({chatId | messageId | inlineMessageId, media: InputMedia, replyMarkup: inlineKeyboard})`
+
+Use this method to edit animation, audio, document, photo, or video messages.
+
 ##### `editMessageCaption({chatId & messageId | inlineMsgId}, <caption>)`
 
 Use this method to edit captions of messages sent by the bot or via the bot (for inline bots).
@@ -554,3 +565,7 @@ Use this method to get current webhook status.
 ##### `deleteWebhook()`
 
 Use this method to remove webhook integration if you decide to switch back to getUpdates. Returns `True` on success.
+
+##### `sendDice(<chatId>, <emoji>)`
+
+Use this method to send a dynamic emoji. Examples: 🎲 (default), 🎯 or 🏀.

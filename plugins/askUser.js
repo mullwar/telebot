@@ -18,7 +18,7 @@ module.exports = {
             console.error('ERROR using askUser plugin: type \'*\' is not allowed, it cause a bug. removing');
             pluginConfig.messageTypes.splice(indx, 1);
         }
-        if (pluginConfig.messageTypes.length===0) {
+        if (pluginConfig.messageTypes.length === 0) {
             console.error('ERROR using askUser plugin: you must specify at least one valid type. adding type \'text\'');
             pluginConfig.messageTypes.push('text');
         }

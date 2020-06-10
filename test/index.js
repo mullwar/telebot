@@ -203,7 +203,7 @@ const sendMethods = {
 
 for (let method in sendMethods) {
     let data = sendMethods[method];
-    test(`bot.${ method }`, t => {
+    test(`bot.${method}`, t => {
         let promise = Promise.resolve();
         for (let name in data) {
             promise = promise.then(() => {
