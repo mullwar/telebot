@@ -37,6 +37,15 @@ export type WebhookInfo = {
     allowed_updates?: UpdateTypes;
 };
 
+export type GameHighScore = {
+    position: number;
+    user: User;
+    score: number;
+};
+
+export type InlineQueryResult = any; // TODO
+export type PassportElementError = any; // TODO
+
 export type UpdateTypes = string[]; // TODO: keyof Update
 
 export type ChatId = number | string;
@@ -88,6 +97,7 @@ export type WebhookResponse = true;
 export type Message = {
     message_id: number;
     from?: User;
+    via_bot?: User;
     date: number;
     chat: Chat;
     forward_from?: User;
@@ -347,7 +357,7 @@ export type PollAnswer = {
     option_ids: number[] | "";
 };
 
-type PollType = "regular" | "quiz";
+export type PollType = "regular" | "quiz";
 
 export type Poll = {
     id: string;
@@ -369,6 +379,11 @@ export type UserProfilePhotos = {
 export type File = FileIdentifier & {
     file_size?: number;
     file_path?: string;
+};
+
+export type BotCommand = {
+    command: string;
+    description: string;
 };
 
 export type ReplyKeyboardMarkup = {
@@ -491,7 +506,7 @@ export type ResponseParameters = {
     retry_after?: number;
 };
 
-type InputMedia = {
+type InputMediaObject = {
     media: string;
     thumb?: InputFile;
     caption?: string;
@@ -500,11 +515,13 @@ type InputMedia = {
 
 export type ParseMode = "markdown" | "html";
 
-export type InputMediaPhoto = Omit<InputMedia, "thumb"> & {
+export type InputMedia = InputMediaAnimation | InputMediaDocument | InputMediaAudio | InputMediaPhoto | InputMediaVideo;
+
+export type InputMediaPhoto = Omit<InputMediaObject, "thumb"> & {
     type: "photo";
 };
 
-export type InputMediaVideo = InputMedia & {
+export type InputMediaVideo = InputMediaObject & {
     type: "video";
     width?: number;
     height?: number;
@@ -512,21 +529,21 @@ export type InputMediaVideo = InputMedia & {
     supports_streaming?: boolean;
 };
 
-export type InputMediaAnimation = InputMedia & {
+export type InputMediaAnimation = InputMediaObject & {
     type: "animation";
     width?: number;
     height?: number;
     duration?: number;
 };
 
-export type InputMediaAudio = InputMedia & {
+export type InputMediaAudio = InputMediaObject & {
     type: "audio";
     duration?: number;
     performer?: string;
     title?: string;
 };
 
-export type InputMediaDocument = InputMedia & {
+export type InputMediaDocument = InputMediaObject & {
     type: "document";
 };
 

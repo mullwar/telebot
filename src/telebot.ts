@@ -414,7 +414,10 @@ export class TeleBot extends TeleBotEvents {
         optional?: any;
     }): Promise<Response> {
         const data = Object.assign({}, required, optional);
-        this.dev.debug("telegramMethod", `${method} ${toString(data)}`);
+        this.dev.debug("telegramMethod", {
+            message: `${method} ${toString(data)}`,
+            data: { required, optional }
+        });
         return this.telegramRequest<any, Response>(method, data);
     }
 
