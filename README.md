@@ -374,9 +374,9 @@ Use this method to send video files, Telegram clients support `mp4` videos (othe
 
 Use this method to send video messages.
 
-##### `sendMediaGroup(<chat_id>, <media: InputMedia>)`
+##### `sendMediaGroup(<chat_id>, <mediaList: InputMedia[]>)`
 
-Use this method to send a group of photos or videos as an album.
+Use this method to send a group of photos or videos as an album. (Min. 2)
 
 ##### `sendVoice(<chat_id>, <file_id | path | url | buffer | stream>, {duration, caption, fileName, serverDownload, replyToMessage, replyMarkup, notification})`
 

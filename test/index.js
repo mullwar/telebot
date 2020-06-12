@@ -194,6 +194,12 @@ const sendMethods = {
     sendVoice: {
         'buffer': fs.readFileSync(`${__dirname}/data/voice.m4a`),
         'file system': `${__dirname}/data/voice.m4a`
+    },
+    sendMediaGroup: {
+        'mediaList': [
+            { type: 'photo', media: 'https://telegram.org/img/t_logo.png' },
+            { type: 'video', media: 'http://techslides.com/demos/sample-videos/small.mp4'}
+        ]
     }
 };
 
