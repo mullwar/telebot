@@ -17,9 +17,11 @@ import {
     PollType,
     ShippingOption,
     StickerSet,
-    TelegramMessageOptional, UpdateTypes,
+    TelegramMessageOptional,
+    UpdateTypes,
     User,
-    UserProfilePhotos, WebhookInfo
+    UserProfilePhotos,
+    WebhookInfo
 } from "../types/telegram";
 
 type MethodResponse<T = Message> = Promise<T>;
@@ -123,10 +125,10 @@ declare module "../telebot" {
         ): MethodResponse<Message>;
 
         sendLocation(
-            chat_id: ChatId,
-            latitude: number,
-            longitude: number,
-            optional?: {
+            props: {
+                chat_id: ChatId;
+                latitude: number;
+                longitude: number;
                 live_period?: number;
             } & Omit<TelegramMessageOptional, "parse_mode">
         ): MethodResponse<Message>;
@@ -346,6 +348,8 @@ declare module "../telebot" {
                 chat_id?: ChatId;
                 message_id?: number;
                 inline_message_id?: string;
+            } & {
+                disable_web_page_preview?: boolean;
             } & Omit<TelegramMessageOptional, "reply_to_message_id">
         ): MethodResponse<Message | true>;
 

@@ -100,7 +100,7 @@ TeleBot.prototype.sendMediaGroup = function (chat_id, media, optional) {
     });
 };
 
-TeleBot.prototype.sendLocation = function (chat_id, latitude, longitude, optional) {
+TeleBot.prototype.sendLocation = function ({ chat_id, latitude, longitude, ...optional }) {
     return this.telegramMethod<Message>({
         method: "sendLocation",
         required: { chat_id, latitude, longitude },
