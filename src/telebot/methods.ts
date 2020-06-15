@@ -38,7 +38,8 @@ TeleBot.prototype.forwardMessage = function (chat_id, from_chat_id, message_id, 
 TeleBot.prototype.sendPhoto = function (chat_id, photo, optional) {
     return this.telegramMethod<Message>({
         method: "sendPhoto",
-        required: { chat_id, photo },
+        required: { chat_id },
+        data: { photo },
         optional
     });
 };
@@ -46,7 +47,8 @@ TeleBot.prototype.sendPhoto = function (chat_id, photo, optional) {
 TeleBot.prototype.sendAudio = function (chat_id, audio, optional) {
     return this.telegramMethod<Message>({
         method: "sendAudio",
-        required: { chat_id, audio },
+        required: { chat_id },
+        data: { audio },
         optional
     });
 };
@@ -54,7 +56,8 @@ TeleBot.prototype.sendAudio = function (chat_id, audio, optional) {
 TeleBot.prototype.sendDocument = function (chat_id, document, optional) {
     return this.telegramMethod<Message>({
         method: "sendDocument",
-        required: { chat_id, document },
+        required: { chat_id },
+        data: { document },
         optional
     });
 };
@@ -62,7 +65,8 @@ TeleBot.prototype.sendDocument = function (chat_id, document, optional) {
 TeleBot.prototype.sendVideo = function (chat_id, video, optional) {
     return this.telegramMethod<Message>({
         method: "sendVideo",
-        required: { chat_id, video },
+        required: { chat_id },
+        data: { video },
         optional
     });
 };
@@ -70,7 +74,8 @@ TeleBot.prototype.sendVideo = function (chat_id, video, optional) {
 TeleBot.prototype.sendAnimation = function (chat_id, animation, optional) {
     return this.telegramMethod<Message>({
         method: "sendAnimation",
-        required: { chat_id, animation },
+        required: { chat_id },
+        data: { animation },
         optional
     });
 };
@@ -80,6 +85,7 @@ TeleBot.prototype.sendVoice = function (chat_id, voice, optional) {
     return this.telegramMethod<Message>({
         method: "sendVoice",
         required: { chat_id, voice },
+        data: { voice },
         optional
     });
 };
@@ -88,6 +94,7 @@ TeleBot.prototype.sendVideoNote = function (chat_id, video_note, optional) {
     return this.telegramMethod<Message>({
         method: "sendVideoNote",
         required: { chat_id, video_note },
+        data: { video_note },
         optional
     });
 };

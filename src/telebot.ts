@@ -1,4 +1,5 @@
 import axios from "axios";
+import FormData from "form-data";
 import {
     TeleBotFlags,
     TeleBotOptions,
@@ -16,6 +17,9 @@ import { updateProcessors } from "./telebot/processors";
 import { allowedWebhookPorts, webhookServer } from "./telebot/webhook";
 import { parseUrl, toString } from "./utils";
 import { PropertyType } from "./types/utilites";
+import { createReadStream, PathLike, ReadStream } from "fs";
+
+const REGEXP_URL = /^https?:\/\/|www\./;
 
 const TELEGRAM_BOT_API = (botToken: string) => `https://api.telegram.org/bot${botToken}`;
 
@@ -380,9 +384,12 @@ export class TeleBot extends TeleBotEvents {
         });
         return axios.request<TelegramResponse<Response>>({
             url,
+            headers: payload instanceof FormData ? payload.getHeaders() : undefined,
             data: payload,
             method: "post",
-            responseType: "json"
+            responseType: "json",
+            // https://github.com/axios/axios/issues/1362
+            maxContentLength: payload instanceof FormData ? Infinity : undefined
         })
             .then((response) => {
                 const { ok, result } = response.data;
@@ -397,6 +404,7 @@ export class TeleBot extends TeleBotEvents {
             .catch((error) => {
                 const e = handleTelegramResponse(error);
                 this.dev.error("telegramRequest.response", {
+                    message: toString(e),
                     error: e
                 });
                 return Promise.reject(e);
@@ -407,18 +415,31 @@ export class TeleBot extends TeleBotEvents {
     public async telegramMethod<Response = Message>({
         method,
         required,
+        data,
         optional
     }: {
         method: string;
+        data?: { [key: string]: PathLike | ReadStream };
         required?: any;
         optional?: any;
     }): Promise<Response> {
-        const data = Object.assign({}, required, optional);
+
+        let payload = Object.assign({}, required, optional);
+
+        if (data) {
+            const form = new FormData();
+            Object.keys(payload).forEach((key) => form.append(key, payload[key]));
+            Object.entries(data).forEach(([key, value]) => {
+                form.append(key, typeof value === "string" ? REGEXP_URL.test(value) ? value : createReadStream(value as string) : value);
+            });
+            payload = form;
+        }
+
         this.dev.debug("telegramMethod", {
             message: `${method} ${toString(data)}`,
             data: { required, optional }
         });
-        return this.telegramRequest<any, Response>(method, data);
+        return this.telegramRequest<any, Response>(method, payload);
     }
 
 }

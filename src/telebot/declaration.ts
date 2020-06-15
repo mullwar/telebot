@@ -1,14 +1,15 @@
 import {
     BotCommand,
-    BotInputFile,
+    MethodInputFile,
     Chat,
     ChatId,
     ChatMember,
     ChatPermissions,
     GameHighScore,
     InlineQueryResult,
-    InputFile,
     InputMedia,
+    InputMediaPhoto,
+    InputMediaVideo,
     LabeledPrice,
     MaskPosition,
     Message,
@@ -47,7 +48,7 @@ declare module "../telebot" {
 
         sendPhoto(
             chat_id: ChatId,
-            photo: BotInputFile,
+            photo: MethodInputFile,
             optional?: {
                 caption?: string;
             } & TelegramMessageOptional
@@ -55,33 +56,33 @@ declare module "../telebot" {
 
         sendAudio(
             chat_id: ChatId,
-            audio: BotInputFile,
+            audio: MethodInputFile,
             optional?: {
                 duration?: number;
                 performer?: string;
                 title?: string;
                 caption?: string;
-                thumb?: BotInputFile;
+                thumb?: MethodInputFile;
             } & TelegramMessageOptional
         ): MethodResponse<Message>;
 
         sendDocument(
             chat_id: ChatId,
-            document: BotInputFile,
+            document: MethodInputFile,
             optional?: {
                 caption?: string;
-                thumb?: BotInputFile;
+                thumb?: MethodInputFile;
             } & TelegramMessageOptional
         ): MethodResponse<Message>;
 
         sendVideo(
             chat_id: ChatId,
-            video: BotInputFile,
+            video: MethodInputFile,
             optional?: {
                 duration?: number;
                 width?: number;
                 height?: number;
-                thumb?: BotInputFile;
+                thumb?: MethodInputFile;
                 caption?: string;
                 supports_streaming?: boolean;
             } & TelegramMessageOptional
@@ -89,19 +90,19 @@ declare module "../telebot" {
 
         sendAnimation(
             chat_id: ChatId,
-            animation: BotInputFile,
+            animation: MethodInputFile,
             optional?: {
                 duration?: number;
                 width?: number;
                 height?: number;
-                thumb?: BotInputFile;
+                thumb?: MethodInputFile;
                 caption?: string;
             } & TelegramMessageOptional
         ): MethodResponse<Message>;
 
         sendVoice(
             chat_id: ChatId,
-            voice: BotInputFile,
+            voice: MethodInputFile,
             optional?: {
                 duration?: number;
                 caption?: string;
@@ -110,17 +111,17 @@ declare module "../telebot" {
 
         sendVideoNote(
             chat_id: ChatId,
-            video_note: BotInputFile,
+            video_note: MethodInputFile,
             optional?: {
                 duration?: number;
                 length?: number;
-                thumb?: BotInputFile;
+                thumb?: MethodInputFile;
             } & Omit<TelegramMessageOptional, "parse_mode">
         ): MethodResponse<Message>;
 
         sendMediaGroup(
             chat_id: ChatId,
-            media: BotInputFile,
+            media: Array<InputMediaPhoto | InputMediaVideo>,
             optional?: Omit<TelegramMessageOptional, "parse_mode" | "reply_markup">
         ): MethodResponse<Message>;
 
@@ -267,7 +268,7 @@ declare module "../telebot" {
 
         setChatPhoto(
             chat_id: ChatId,
-            photo: InputFile,
+            photo: MethodInputFile,
         ): MethodResponse<true>;
 
         deleteChatPhoto(
@@ -392,13 +393,13 @@ declare module "../telebot" {
 
         sendSticker(
             chat_id: ChatId,
-            sticker: InputFile | string,
+            sticker: MethodInputFile,
             optional?: Omit<TelegramMessageOptional, "parse_mode">
         ): MethodResponse<Message>;
 
         getStickerSet(name: string): MethodResponse<StickerSet>;
 
-        uploadStickerFile(user_id: number, png_sticker: InputFile): MethodResponse<File>;
+        uploadStickerFile(user_id: number, png_sticker: MethodInputFile): MethodResponse<File>;
 
         createNewStickerSet(
             props: {
@@ -406,8 +407,8 @@ declare module "../telebot" {
                 name: string;
                 title: string;
                 emojis: string;
-                png_sticker?: InputFile | string;
-                tgs_sticker?: InputFile;
+                png_sticker?: MethodInputFile;
+                tgs_sticker?: MethodInputFile;
                 contains_masks?: boolean;
                 mask_position?: MaskPosition;
             }
@@ -418,8 +419,8 @@ declare module "../telebot" {
             name: string,
             optional?: {
                 emojis: string;
-                png_sticker?: InputFile | string;
-                tgs_sticker?: InputFile;
+                png_sticker?: MethodInputFile;
+                tgs_sticker?: MethodInputFile;
                 mask_position?: MaskPosition;
             }
         ): MethodResponse<true>;
@@ -430,7 +431,7 @@ declare module "../telebot" {
             name: string,
             user_id: number,
             optional?: {
-                thumb: InputFile | string;
+                thumb: MethodInputFile;
             }
         ): MethodResponse<true>;
 
@@ -523,7 +524,7 @@ declare module "../telebot" {
         setWebhook(
             url: string,
             optional?: {
-                certificate?: InputFile;
+                certificate?: MethodInputFile;
                 max_connections?: number;
                 allowed_updates?: UpdateTypes;
             }

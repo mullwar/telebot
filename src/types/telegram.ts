@@ -1,3 +1,5 @@
+import { PathLike, ReadStream } from "fs";
+
 export type TelegramBotToken = string;
 
 export type TelegramResponse<T = undefined> = {
@@ -49,7 +51,7 @@ export type ChatId = number | string;
 
 export type InputFile = string;
 
-export type BotInputFile = InputFile | string;
+export type MethodInputFile = PathLike | ReadStream;
 
 export type PassportElementError =
     PassportElementErrorDataField |
