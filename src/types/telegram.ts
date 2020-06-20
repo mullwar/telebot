@@ -888,8 +888,8 @@ export type ResponseParameters = {
 };
 
 type InputMediaObject = {
-    media: string;
-    thumb?: InputFile;
+    media: MethodInputFile;
+    thumb?: MethodInputFile;
     caption?: string;
     parse_mode?: ParseMode;
 };

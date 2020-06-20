@@ -1,5 +1,6 @@
 import axios from "axios";
 import FormData from "form-data";
+import { createReadStream, PathLike } from "fs";
 import {
     TeleBotFlags,
     TeleBotOptions,
@@ -17,9 +18,6 @@ import { updateProcessors } from "./telebot/processors";
 import { allowedWebhookPorts, webhookServer } from "./telebot/webhook";
 import { parseUrl, toString } from "./utils";
 import { PropertyType } from "./types/utilites";
-import { createReadStream, PathLike, ReadStream } from "fs";
-
-const REGEXP_URL = /^https?:\/\/|www\./;
 
 const TELEGRAM_BOT_API = (botToken: string) => `https://api.telegram.org/bot${botToken}`;
 
@@ -415,31 +413,34 @@ export class TeleBot extends TeleBotEvents {
     public async telegramMethod<Response = Message>({
         method,
         required,
-        data,
-        optional
+        optional,
+        isDataForm
     }: {
         method: string;
-        data?: { [key: string]: PathLike | ReadStream };
         required?: any;
         optional?: any;
+        isDataForm?: boolean;
     }): Promise<Response> {
 
         let payload = Object.assign({}, required, optional);
 
-        if (data) {
+        if (isDataForm) {
             const form = new FormData();
-            Object.keys(payload).forEach((key) => form.append(key, payload[key]));
-            Object.entries(data).forEach(([key, value]) => {
-                form.append(key, typeof value === "string" ? REGEXP_URL.test(value) ? value : createReadStream(value as string) : value);
-            });
+            Object.entries(payload).forEach(
+                ([key, value]) => form.append(key, Array.isArray(value) ? JSON.stringify(value) : value)
+            );
             payload = form;
         }
 
         this.dev.debug("telegramMethod", {
-            message: `${method} ${toString(data)}`,
+            message: `${method} ${toString(payload)}`,
             data: { required, optional }
         });
         return this.telegramRequest<any, Response>(method, payload);
+    }
+
+    public uploadFile(value: PathLike) {
+        return createReadStream(value);
     }
 
 }
