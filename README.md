@@ -318,6 +318,10 @@ Start polling updates.
 
 Stop polling updates.
 
+##### `receiveUpdates([<update>])`
+
+Handle Telegram update
+
 ### Telegram methods:
 
 TeleBot use standard [Telegram Bot API](https://core.telegram.org/bots/api#available-methods) method names.
