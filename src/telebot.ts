@@ -365,8 +365,8 @@ export class TeleBot extends TeleBotEvents {
         updates.forEach((update) => {
             for (const processorName in updateProcessors) {
                 if (processorName in update) {
-                    const updateData = update[processorName as keyof Update];
-                    processorPromises.push((updateProcessors as any)[processorName].call(this, updateData, {}));
+                    const updatePayload = update[processorName as keyof Update];
+                    processorPromises.push((updateProcessors as any)[processorName].call(this, updatePayload, {}));
                     break;
                 }
             }

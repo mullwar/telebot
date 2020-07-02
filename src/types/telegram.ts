@@ -508,6 +508,7 @@ export type Message = {
     location?: Location;
     venue?: Venue;
     poll?: Poll;
+    dice?: Dice;
     new_chat_members?: User[];
     left_chat_member?: User;
     new_chat_title?: string;
@@ -664,6 +665,11 @@ export type VoiceNote = FileIdentifier & Pick<Document, "thumb" | "file_size"> &
     length: number;
 };
 
+export type Dice = {
+    emoji: string;
+    value: number;
+};
+
 export type Contact = {
     phone_number: string;
     first_name: string;
@@ -791,14 +797,14 @@ export type ReplyKeyboardRemove = {
 };
 
 export type InlineKeyboardMarkup = {
-    inline_keyboard: Array<InlineKeyboardButton>;
+    inline_keyboard: Array<InlineKeyboardButton[]>;
 };
 
 type CallbackGame = "";
 
 export type InlineKeyboardButton = {
     text: string;
-    url: string;
+    url?: string;
     login_url?: LoginUrl;
     callback_data?: string;
     switch_inline_query?: string;

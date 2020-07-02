@@ -3,9 +3,13 @@ import {
     BotCommand,
     Chat,
     ChatMember,
+    ForceReply,
     GameHighScore,
+    InlineKeyboardMarkup,
     Message,
     Poll,
+    ReplyKeyboardMarkup,
+    ReplyKeyboardRemove,
     StickerSet,
     User,
     UserProfilePhotos,
@@ -353,10 +357,10 @@ TeleBot.prototype.deleteChatStickerSet = function (chat_id) {
     });
 };
 
-TeleBot.prototype.answerCallbackQuery = function (callback_query_id, optional) {
+TeleBot.prototype.answerCallbackQuery = function (callback_query_id, results, optional) {
     return this.telegramMethod<true>({
         method: "answerCallbackQuery",
-        required: { callback_query_id },
+        required: { callback_query_id, results },
         optional
     });
 };
@@ -580,5 +584,32 @@ TeleBot.prototype.getWebhookInfo = function () {
     return this.telegramMethod<WebhookInfo>({
         method: "getWebhookInfo"
     });
+};
+
+TeleBot.prototype.inlineKeyboard = function (inline_keyboard) {
+    return {
+        inline_keyboard
+    } as InlineKeyboardMarkup;
+};
+
+TeleBot.prototype.replyKeyboard = function (keyboard, options) {
+    return {
+        keyboard,
+        ...options
+    } as ReplyKeyboardMarkup;
+};
+
+TeleBot.prototype.replyKeyboardRemove = function (selective) {
+    return {
+        remove_keyboard: true,
+        selective
+    } as ReplyKeyboardRemove;
+};
+
+TeleBot.prototype.forceReply = function (selective) {
+    return {
+        force_reply: true,
+        selective
+    } as ForceReply;
 };
 

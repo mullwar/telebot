@@ -1,11 +1,12 @@
 import {
     BotCommand,
-    MethodInputFile,
     Chat,
     ChatId,
     ChatMember,
     ChatPermissions,
+    ForceReply,
     GameHighScore,
+    InlineKeyboardMarkup,
     InlineQueryResult,
     InputMedia,
     InputMediaPhoto,
@@ -13,9 +14,12 @@ import {
     LabeledPrice,
     MaskPosition,
     Message,
+    MethodInputFile,
     PassportElementError,
     Poll,
     PollType,
+    ReplyKeyboardMarkup,
+    ReplyKeyboardRemove,
     ShippingOption,
     StickerSet,
     TelegramMessageOptional,
@@ -24,6 +28,7 @@ import {
     UserProfilePhotos,
     WebhookInfo
 } from "../types/telegram";
+import { PropertyType } from "../types/utilites";
 
 type MethodResponse<T = Message> = Promise<T>;
 
@@ -329,6 +334,7 @@ declare module "../telebot" {
 
         answerCallbackQuery(
             callback_query_id: string,
+            results: InlineQueryResult[],
             optional?: {
                 text?: string;
                 show_alert?: boolean;
@@ -533,5 +539,20 @@ declare module "../telebot" {
         deleteWebhook(): MethodResponse<true>;
 
         getWebhookInfo(): MethodResponse<WebhookInfo>;
+
+        inlineKeyboard(keyboard: PropertyType<InlineKeyboardMarkup, "inline_keyboard">): InlineKeyboardMarkup;
+
+        replyKeyboard(
+            keyboard: PropertyType<ReplyKeyboardMarkup, "keyboard">,
+            options?: Omit<ReplyKeyboardMarkup, "keyboard">
+        ): ReplyKeyboardMarkup;
+
+        replyKeyboardRemove(
+            selective: PropertyType<ReplyKeyboardRemove, "selective">,
+        ): ReplyKeyboardRemove;
+
+        forceReply(
+            selective: PropertyType<ForceReply, "selective">,
+        ): ForceReply;
     }
 }
