@@ -19,3 +19,7 @@ export function toString(data: any): string {
         return "";
     }
 }
+
+export function randomString(len = 16): string {
+    return Math.random().toString(20).substr(2, len);
+}

@@ -548,11 +548,11 @@ declare module "../telebot" {
         ): ReplyKeyboardMarkup;
 
         replyKeyboardRemove(
-            selective: PropertyType<ReplyKeyboardRemove, "selective">,
+            selective?: PropertyType<ReplyKeyboardRemove, "selective">,
         ): ReplyKeyboardRemove;
 
         forceReply(
-            selective: PropertyType<ForceReply, "selective">,
+            selective?: PropertyType<ForceReply, "selective">,
         ): ForceReply;
     }
 }

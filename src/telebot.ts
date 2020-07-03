@@ -1,6 +1,6 @@
 import axios from "axios";
 import FormData from "form-data";
-import { createReadStream, PathLike } from "fs";
+import { createReadStream, PathLike, ReadStream } from "fs";
 import {
     TeleBotFlags,
     TeleBotOptions,
@@ -10,13 +10,13 @@ import {
     TelegramFetchErrorScenario,
     WebhookOptions
 } from "./types/telebot";
-import { Message, TelegramBotToken, TelegramResponse, Update, UpdateTypes, User } from "./types/telegram";
+import { InputMedia, Message, TelegramBotToken, TelegramResponse, Update, UpdateTypes, User } from "./types/telegram";
 import { ERROR_TELEBOT_ALREADY_RUNNING, handleTelegramResponse, TeleBotError, TeleBotRequestError } from "./errors";
 import { Levels, TeleBotDev, TeleBotDevOptions } from "./telebot/devkit";
 import { TeleBotEvents } from "./telebot/events";
 import { updateProcessors } from "./telebot/processors";
 import { allowedWebhookPorts, webhookServer } from "./telebot/webhook";
-import { parseUrl, toString } from "./utils";
+import { parseUrl, randomString, toString } from "./utils";
 import { PropertyType } from "./types/utilites";
 
 const TELEGRAM_BOT_API = (botToken: string) => `https://api.telegram.org/bot${botToken}`;
@@ -426,9 +426,23 @@ export class TeleBot extends TeleBotEvents {
 
         if (isDataForm) {
             const form = new FormData();
-            Object.entries(payload).forEach(
-                ([key, value]) => form.append(key, Array.isArray(value) ? JSON.stringify(value) : value)
-            );
+
+            Object.entries(payload).forEach(([key, value]) => {
+                let payload = value;
+                if (Array.isArray(value)) {
+                    const data = value.map((inputMedia: InputMedia) => {
+                        if (inputMedia.media instanceof ReadStream) {
+                            const fileId = randomString();
+                            form.append(fileId, inputMedia.media);
+                            inputMedia.media = `attach://${fileId}`;
+                        }
+                        return inputMedia;
+                    });
+                    payload = JSON.stringify(data);
+                }
+                form.append(key, payload);
+            });
+
             payload = form;
         }
 
@@ -436,6 +450,7 @@ export class TeleBot extends TeleBotEvents {
             message: `${method} ${toString(payload)}`,
             data: { required, optional }
         });
+
         return this.telegramRequest<any, Response>(method, payload);
     }
 
