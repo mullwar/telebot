@@ -7,7 +7,7 @@ const bot = new TeleBot(TOKEN);
 bot.on("text", (msg) => {
     bot.sendDocument(
         msg.chat.id,
-        bot.uploadFile("data/telegram.png"),
+        bot.uploadFile(__dirname + "/data/telegram.png"),
         {
             caption: "Document example 🗂 *(uploaded)*",
             parse_mode: "markdown"
@@ -31,6 +31,28 @@ bot.on("text", (msg) => {
             parse_mode: "markdown"
         }
     );
+
+    bot.sendMediaGroup(msg.chat.id, [
+        {
+            type: "photo",
+            media: bot.uploadFile(__dirname + "/data/image.jpg"),
+            caption: "400 million Telegram users!"
+        },
+        {
+            type: "photo",
+            media: bot.uploadFile(__dirname + "/data/image2.jpg"),
+            caption: "Video Editor, Animated Photos..."
+        },
+        {
+            type: "photo",
+            media: bot.uploadFile(__dirname + "/data/image3.jpg")
+        },
+        {
+            type: "video",
+            media: bot.uploadFile(__dirname + "/data/video.mp4")
+        }
+    ]);
+
 });
 
 bot.start();
