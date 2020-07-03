@@ -103,7 +103,6 @@ TeleBot.prototype.sendVideoNote = function (chat_id, video_note, optional) {
     });
 };
 
-// TODO: fix media group upload
 TeleBot.prototype.sendMediaGroup = function (chat_id, media, optional) {
     return this.telegramMethod<Message>({
         method: "sendMediaGroup",

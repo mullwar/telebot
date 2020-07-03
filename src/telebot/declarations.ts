@@ -1,6 +1,7 @@
 import {
     BotCommand,
     Chat,
+    ChatAction,
     ChatId,
     ChatMember,
     ChatPermissions,
@@ -204,7 +205,7 @@ declare module "../telebot" {
 
         sendChatAction(
             chat_id: ChatId,
-            action: string
+            action: ChatAction
         ): MethodResponse<true>;
 
         getUserProfilePhotos(
