@@ -3,6 +3,7 @@ import {
     BotCommand,
     Chat,
     ChatMember,
+    File,
     ForceReply,
     GameHighScore,
     InlineKeyboardMarkup,
@@ -197,6 +198,11 @@ TeleBot.prototype.getFile = function (chat_id) {
         required: { chat_id },
         optional: {}
     });
+};
+
+TeleBot.prototype.getFileUrl = async function (chat_id) {
+    const { file_path } = await this.getFile(chat_id);
+    return `https://api.telegram.org/file/bot${this.getToken()}/${file_path}`;
 };
 
 TeleBot.prototype.kickChatMember = function (chat_id, user_id, optional) {

@@ -9,6 +9,7 @@ import {
     PreCheckoutQuery,
     ShippingQuery
 } from "../types/telegram";
+import { ContextPayload } from "../types/telebot";
 
 const messageTypes = [
     "text",
@@ -43,42 +44,42 @@ const messageTypes = [
 ];
 
 export const updateProcessors = {
-    edited_message(this: TeleBot, messageUpdate: Message): Promise<any> {
-        return this.dispatch("edited_message", messageUpdate);
+    edited_message(this: TeleBot, messageUpdate: Message, context: ContextPayload): Promise<any> {
+        return this.dispatch("edited_message", messageUpdate, context);
     },
-    channel_post(this: TeleBot, messageUpdate: Message): Promise<any> {
-        return this.dispatch("channel_post", messageUpdate);
+    channel_post(this: TeleBot, messageUpdate: Message, context: ContextPayload): Promise<any> {
+        return this.dispatch("channel_post", messageUpdate, context);
     },
-    edited_channel_post(this: TeleBot, messageUpdate: Message): Promise<any> {
-        return this.dispatch("edited_channel_post", messageUpdate);
+    edited_channel_post(this: TeleBot, messageUpdate: Message, context: ContextPayload): Promise<any> {
+        return this.dispatch("edited_channel_post", messageUpdate, context);
     },
-    inline_query(this: TeleBot, inlineQueryUpdate: InlineQuery): Promise<any> {
-        return this.dispatch("inline_query", inlineQueryUpdate);
+    inline_query(this: TeleBot, inlineQueryUpdate: InlineQuery, context: ContextPayload): Promise<any> {
+        return this.dispatch("inline_query", inlineQueryUpdate, context);
     },
-    chosen_inline_result(this: TeleBot, chosenInlineUpdate: ChosenInlineResult): Promise<any> {
-        return this.dispatch("chosen_inline_result", chosenInlineUpdate);
+    chosen_inline_result(this: TeleBot, chosenInlineUpdate: ChosenInlineResult, context: ContextPayload): Promise<any> {
+        return this.dispatch("chosen_inline_result", chosenInlineUpdate, context);
     },
-    callback_query(this: TeleBot, callbackQueryUpdate: CallbackQuery): Promise<any> {
-        return this.dispatch("callback_query", callbackQueryUpdate);
+    callback_query(this: TeleBot, callbackQueryUpdate: CallbackQuery, context: ContextPayload): Promise<any> {
+        return this.dispatch("callback_query", callbackQueryUpdate, context);
     },
-    shipping_query(this: TeleBot, shippingQueryUpdate: ShippingQuery): Promise<any> {
-        return this.dispatch("shipping_query", shippingQueryUpdate);
+    shipping_query(this: TeleBot, shippingQueryUpdate: ShippingQuery, context: ContextPayload): Promise<any> {
+        return this.dispatch("shipping_query", shippingQueryUpdate, context);
     },
-    pre_checkout_query(this: TeleBot, preCheckoutQueryUpdate: PreCheckoutQuery): Promise<any> {
-        return this.dispatch("pre_checkout_query", preCheckoutQueryUpdate);
+    pre_checkout_query(this: TeleBot, preCheckoutQueryUpdate: PreCheckoutQuery, context: ContextPayload): Promise<any> {
+        return this.dispatch("pre_checkout_query", preCheckoutQueryUpdate, context);
     },
-    poll(this: TeleBot, pollUpdate: Poll): Promise<any> {
-        return this.dispatch("poll_update", pollUpdate);
+    poll(this: TeleBot, pollUpdate: Poll, context: ContextPayload): Promise<any> {
+        return this.dispatch("poll_update", pollUpdate, context);
     },
-    poll_answer(this: TeleBot, pollAnswerUpdate: PollAnswer): Promise<any> {
-        return this.dispatch("poll_answer", pollAnswerUpdate);
+    poll_answer(this: TeleBot, pollAnswerUpdate: PollAnswer, context: ContextPayload): Promise<any> {
+        return this.dispatch("poll_answer", pollAnswerUpdate, context);
     },
-    message(this: TeleBot, messageUpdate: Message): Promise<any> {
+    message(this: TeleBot, messageUpdate: Message, context: ContextPayload): Promise<any> {
         const processorPromises: Promise<any>[] = [];
-        processorPromises.push(this.dispatch("message", messageUpdate));
+        processorPromises.push(this.dispatch("message", messageUpdate, context));
         for (const messageType of messageTypes) {
             if (messageType in messageUpdate) {
-                processorPromises.push(this.dispatch(messageType, messageUpdate));
+                processorPromises.push(this.dispatch(messageType, messageUpdate, context));
                 break;
             }
         }

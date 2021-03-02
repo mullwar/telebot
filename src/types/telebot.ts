@@ -12,6 +12,7 @@ import {
 } from "./telegram";
 import { RequireFields } from "./utilites";
 import { TeleBotDevOptions } from "../telebot/devkit";
+import { TeleBotError, TelegramError } from "../errors";
 
 export type TeleBotOptions = {
     token: TelegramBotToken;
@@ -105,11 +106,24 @@ export type TeleBotEventNames = {
     pre_checkout_query: PreCheckoutQuery;
     poll_update: Poll;
     poll_answer: PollAnswer;
+
+    error: TeleBotError | TelegramError | Error;
 };
 
 export type TeleBotEventProcessorContext = {
-    unsubscribe: Function;
+    unsubscribe: any;
 };
 
+export type ContextPayload = Record<string, any>;
+
 export type TeleBotEventProcessor<T extends keyof TeleBotEventNames> = (data: TeleBotEventNames[T], context: TeleBotEventProcessorContext) => any;
+
+export type TeleBotEvent = {
+    processors: Set<TeleBotEventProcessor<any>>;
+};
+
+export type EventType = string;
+export type EventTypes = EventType | EventType[];
+export type ComplexEventType = EventType;
+export type ComplexEvents = ComplexEventType | ComplexEventType[];
 

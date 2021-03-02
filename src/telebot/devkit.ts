@@ -11,8 +11,8 @@ export type TeleBotDevLog = {
     level?: Levels;
     code?: number | string;
     message?: number | string;
-    data?: object;
-    error?: object;
+    data?: Record<string, any>;
+    error?: Record<string, unknown>;
 };
 
 export enum Levels {
@@ -35,13 +35,13 @@ export enum Levels {
 
 export class TeleBotDev {
     private readonly id: string;
-    private readonly instance: object;
+    private readonly instance: Record<string, unknown>;
     private readonly options: TeleBotDevOptions;
 
     private logs: TeleBotDevLog[] = [];
     private logLimit = 1024;
 
-    constructor(id: string, instance: object, options: TeleBotDevOptions) {
+    constructor(id: string, instance: Record<string, any>, options: TeleBotDevOptions) {
         this.id = id;
         this.instance = instance;
         this.options = options;

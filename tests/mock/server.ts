@@ -29,7 +29,7 @@ mock.onPost(`${MOCK_URL}/getUpdates`).reply(200, {
 mock.onPost(`${MOCK_URL}/getMe`).reply(200, {
     ok: true,
     result: {
-        id: "-0",
+        id: 0,
         is_bot: true,
         first_name: "MockBot"
     }

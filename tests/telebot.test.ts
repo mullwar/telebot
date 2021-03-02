@@ -126,4 +126,3 @@ function createNewBot(options: Partial<TeleBotOptions>): TeleBot {
 
     });
 });
-

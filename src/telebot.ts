@@ -2,6 +2,12 @@ import axios from "axios";
 import FormData from "form-data";
 import { createReadStream, PathLike, ReadStream } from "fs";
 import {
+    ComplexEvents,
+    ContextPayload,
+    EventTypes,
+    TeleBotEvent,
+    TeleBotEventNames,
+    TeleBotEventProcessor,
     TeleBotFlags,
     TeleBotOptions,
     TeleBotPolling,
@@ -11,12 +17,11 @@ import {
     WebhookOptions
 } from "./types/telebot";
 import { InputMedia, Message, TelegramBotToken, TelegramResponse, Update, UpdateTypes, User } from "./types/telegram";
-import { ERROR_TELEBOT_ALREADY_RUNNING, handleTelegramResponse, TeleBotError, TeleBotRequestError } from "./errors";
+import { ERROR_TELEBOT_ALREADY_RUNNING, handleTelegramResponse, TeleBotError } from "./errors";
 import { Levels, TeleBotDev, TeleBotDevOptions } from "./telebot/devkit";
-import { TeleBotEvents } from "./telebot/events";
 import { updateProcessors } from "./telebot/processors";
 import { allowedWebhookPorts, webhookServer } from "./telebot/webhook";
-import { parseUrl, randomString, toString } from "./utils";
+import { convertToArray, parseUrl, randomString, toString } from "./utils";
 import { PropertyType } from "./types/utilites";
 
 const TELEGRAM_BOT_API = (botToken: string) => `https://api.telegram.org/bot${botToken}`;
@@ -34,7 +39,7 @@ export const DEFAULT_DEBUG: TeleBotDevOptions = {
     levels: Object.values(Levels).filter(value => typeof value === "number") as Levels[]
 };
 
-export class TeleBot extends TeleBotEvents {
+export class TeleBot {
     private readonly botAPI: string;
     private readonly botToken: TelegramBotToken;
 
@@ -59,9 +64,9 @@ export class TeleBot extends TeleBotEvents {
 
     public dev: TeleBotDev;
 
-    constructor(options: TeleBotOptions | TelegramBotToken) {
-        super();
+    private events = new Map<string, TeleBotEvent>();
 
+    constructor(options: TeleBotOptions | TelegramBotToken) {
         if (typeof options === "string") {
             options = {
                 token: options
@@ -181,20 +186,10 @@ export class TeleBot extends TeleBotEvents {
 
         const webhook = this.webhook;
 
-        try {
-            this.me = await this.getMe();
-        } catch (error) {
-            if (error instanceof TeleBotRequestError) {
-                if (error.response.error_code === 401) {
-                    return new TeleBotError("Incorrect Telegram Bot token.");
-                }
-            }
-            return error;
-        }
-
         if (!this.hasFlag("isRunning")) {
             this.setFlag("isRunning");
             try {
+                this.me = await this.getMe();
                 const deleteWebhook = async () => await this.deleteWebhook();
                 if (webhook) {
                     const url = `${webhook.url}/${this.getToken()}`;
@@ -213,13 +208,13 @@ export class TeleBot extends TeleBotEvents {
                 }
 
             } catch (error) {
-                const e = error;
+                this.dispatch("error", error);
                 this.dev.error("telebot", {
-                    error: e
+                    error
                 });
                 // eslint-disable-next-line no-console
-                console.error("==== TELEBOT GLOBAL ERROR ====", e);
-                return e;
+                console.error("==== TELEBOT GLOBAL ERROR ====", error);
+                return error;
             }
 
         } else {
@@ -232,6 +227,7 @@ export class TeleBot extends TeleBotEvents {
                     throw new TeleBotError(ERROR_TELEBOT_ALREADY_RUNNING);
                 case TeleBotScenario.Pass:
                 default:
+                    this.dev.info("pass");
                     break;
             }
         }
@@ -241,7 +237,7 @@ export class TeleBot extends TeleBotEvents {
     public async restart(): Promise<void> {
         this.dev.info("restart");
         await this.stop();
-        return await this.start();
+        return this.start();
     }
 
     public async stop(): Promise<void> {
@@ -278,10 +274,15 @@ export class TeleBot extends TeleBotEvents {
 
     private startLifeCycle(): void {
         this.dev.info("startLifeCycle");
-        this.lifeCycle(false);
+        this.lifeCycle(false)
+            .catch((error) => {
+                this.dispatch("error", error);
+                this.dev.error("startLifeCycle", {
+                    error
+                });
+            });
     }
 
-    // TODO: WIP
     private startLifeInterval(interval: number): void {
         this.dev.info("startLifeInterval", {
             message: { interval }
@@ -292,7 +293,8 @@ export class TeleBot extends TeleBotEvents {
                 this.unsetFlag("canFetch");
                 this.lifeCycle(true).then(() => {
                     this.setFlag("canFetch");
-                }).catch((error: any) => {
+                }).catch((error) => {
+                    this.dispatch("error", error);
                     this.dev.error("startLifeInterval", {
                         error
                     });
@@ -362,7 +364,7 @@ export class TeleBot extends TeleBotEvents {
             data: updates
         });
 
-        updates.forEach((update) => {
+        updates.forEach((update: Update) => {
             for (const processorName in updateProcessors) {
                 if (processorName in update) {
                     const updatePayload = update[processorName as keyof Update];
@@ -375,10 +377,10 @@ export class TeleBot extends TeleBotEvents {
         return Promise.all(processorPromises);
     }
 
-    private telegramRequest<Request = {}, Response = {}>(endpoint: string, payload: Request): Promise<Response> {
+    public telegramRequest<Request = Record<string, unknown>, Response = Record<string, unknown>>(endpoint: string, payload: Request): Promise<Response> {
         const url = `${this.botAPI}/${endpoint}`;
         this.dev.info("telegramRequest", {
-            data: { url, payload }
+            data: { endpoint, payload }
         });
         return axios.request<TelegramResponse<Response>>({
             url,
@@ -386,7 +388,6 @@ export class TeleBot extends TeleBotEvents {
             data: payload,
             method: "post",
             responseType: "json",
-            // https://github.com/axios/axios/issues/1362
             maxContentLength: payload instanceof FormData ? Infinity : undefined
         })
             .then((response) => {
@@ -422,6 +423,8 @@ export class TeleBot extends TeleBotEvents {
         isDataForm?: boolean;
     }): Promise<Response> {
 
+        this.dispatch(method, { required, optional });
+
         let payload = Object.assign({}, required, optional);
 
         if (isDataForm) {
@@ -454,8 +457,68 @@ export class TeleBot extends TeleBotEvents {
         return this.telegramRequest<any, Response>(method, payload);
     }
 
-    public uploadFile(value: PathLike) {
-        return createReadStream(value);
+    public uploadFile(path: PathLike): ReadStream {
+        return createReadStream(path);
+    }
+
+    public on<T extends keyof TeleBotEventNames>(event: T | T[], processor: TeleBotEventProcessor<T>): TeleBotEventProcessor<T> {
+        const events = convertToArray<T>(event);
+        events.forEach((key) => {
+            const eventHandler = this.events.get(key);
+            if (eventHandler) {
+                eventHandler.processors.add(processor);
+            } else {
+                this.events.set(key, {
+                    processors: new Set([processor])
+                });
+            }
+        });
+        return processor;
+    }
+
+    public dispatch<T>(event: EventTypes, data?: Record<string, unknown>, context?: ContextPayload) {
+        return this._dispatch<T>("", event, data, context);
+    }
+
+    public off(processor: TeleBotEventProcessor<any>): void {
+        return undefined;
+    }
+
+    private _dispatch<T>(storageId: string, events: ComplexEvents, payload?: Record<string, unknown>, context: ContextPayload = {}) {
+        const storage = this.events;
+        const promise: Promise<any>[] = [];
+
+        events = convertToArray<any>(events);
+
+        events.forEach((name) => {
+            const handler = storage.get(name);
+            if (handler) {
+                for (const processor of handler.processors) {
+                    promise.push(new Promise<void>((resolve, reject) => {
+                        const output = processor.call(this, payload, {
+                            unsubscribe: this.off.bind(this, processor),
+                            ...context
+                        });
+                        if (output instanceof Promise) {
+                            output.then(resolve)
+                                .catch((error) => {
+                                    error.payload = payload;
+                                    if (name !== "error") {
+                                        this.dispatch("error", error);
+                                    } else {
+                                        reject(error);
+                                    }
+                                    resolve();
+                                });
+                        } else {
+                            resolve(output);
+                        }
+                    }));
+                }
+            }
+        });
+
+        return Promise.all(promise);
     }
 
 }

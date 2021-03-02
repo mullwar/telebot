@@ -452,7 +452,7 @@ export type ChosenInlineResult = {
 };
 
 export type User = {
-    id: string;
+    id: number;
     is_bot: boolean;
     first_name: string;
     last_name?: string;

@@ -1,4 +1,5 @@
 import {
+    File,
     BotCommand,
     Chat,
     ChatAction,
@@ -219,6 +220,10 @@ declare module "../telebot" {
         getFile(
             file_id: string,
         ): MethodResponse<File>;
+
+        getFileUrl(
+            file_id: string,
+        ): MethodResponse<string>;
 
         kickChatMember(
             chat_id: ChatId,
