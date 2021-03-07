@@ -1,16 +1,16 @@
 import {
-    File,
     BotCommand,
     Chat,
     ChatAction,
     ChatId,
     ChatMember,
-    ChatPermissions,
+    ChatPermissions, DiceType,
+    File,
     ForceReply,
     GameHighScore,
     InlineKeyboardMarkup,
     InlineQueryResult,
-    InputMedia,
+    InputMedia, InputMediaAudio, InputMediaDocument,
     InputMediaPhoto,
     InputMediaVideo,
     LabeledPrice,
@@ -38,6 +38,10 @@ declare module "../telebot" {
     interface TeleBot {
         getMe(): MethodResponse<User>;
 
+        logOut(): MethodResponse<true>;
+
+        close(): MethodResponse<true>;
+
         sendMessage(
             chat_id: ChatId,
             text: string,
@@ -47,6 +51,13 @@ declare module "../telebot" {
         ): MethodResponse<Message>;
 
         forwardMessage(
+            chat_id: ChatId,
+            from_chat_id: ChatId,
+            message_id: number,
+            optional?: Pick<TelegramMessageOptional, "disable_notification">
+        ): MethodResponse<Message>;
+
+        copyMessage(
             chat_id: ChatId,
             from_chat_id: ChatId,
             message_id: number,
@@ -79,6 +90,7 @@ declare module "../telebot" {
             optional?: {
                 caption?: string;
                 thumb?: MethodInputFile;
+                disable_content_type_detection?: boolean;
             } & TelegramMessageOptional
         ): MethodResponse<Message>;
 
@@ -128,7 +140,7 @@ declare module "../telebot" {
 
         sendMediaGroup(
             chat_id: ChatId,
-            media: Array<InputMediaPhoto | InputMediaVideo>,
+            media: Array<InputMediaAudio | InputMediaDocument | InputMediaPhoto | InputMediaVideo>,
             optional?: Omit<TelegramMessageOptional, "parse_mode" | "reply_markup">
         ): MethodResponse<Message>;
 
@@ -138,6 +150,9 @@ declare module "../telebot" {
                 latitude: number;
                 longitude: number;
                 live_period?: number;
+                heading?: number;
+                horizontal_accuracy?: number;
+                proximity_alert_radius?: number;
             } & Omit<TelegramMessageOptional, "parse_mode">
         ): MethodResponse<Message>;
 
@@ -148,6 +163,9 @@ declare module "../telebot" {
                 chat_id?: ChatId;
                 message_id?: number;
                 inline_message_id?: number;
+                heading?: number;
+                proximity_alert_radius?: number;
+                horizontal_accuracy?: number;
             } & Pick<TelegramMessageOptional, "reply_markup">
         ): MethodResponse<Message | true>;
 
@@ -168,6 +186,8 @@ declare module "../telebot" {
                 address: string;
                 foursquare_id?: string;
                 foursquare_type?: string;
+                google_place_id?: string;
+                google_place_type?: string;
             } & Omit<TelegramMessageOptional, "parse_mode">
         ): MethodResponse<Message>;
 
@@ -200,7 +220,7 @@ declare module "../telebot" {
 
         sendDice(
             chat_id: ChatId,
-            emoji: string,
+            emoji: DiceType,
             optional?: Omit<TelegramMessageOptional, "parse_mode">
         ): MethodResponse<Message>;
 
@@ -236,6 +256,9 @@ declare module "../telebot" {
         unbanChatMember(
             chat_id: ChatId,
             user_id: number,
+            optional?: {
+                only_if_banned?: boolean
+            }
         ): MethodResponse<true>;
 
         restrictChatMember(
@@ -259,6 +282,7 @@ declare module "../telebot" {
                 can_restrict_members?: boolean;
                 can_pin_messages?: boolean;
                 can_promote_members?: boolean;
+                is_anonymous?: boolean;
             }
         ): MethodResponse<true>;
 
@@ -306,6 +330,13 @@ declare module "../telebot" {
 
         unpinChatMessage(
             chat_id: ChatId,
+            optional?: {
+                message_id?: string;
+            }
+        ): MethodResponse<true>;
+
+        unpinAllChatMessages(
+            chat_id: ChatId
         ): MethodResponse<true>;
 
         leaveChat(
@@ -537,12 +568,16 @@ declare module "../telebot" {
             url: string,
             optional?: {
                 certificate?: MethodInputFile;
+                ip_address?: string;
                 max_connections?: number;
                 allowed_updates?: UpdateTypes;
+                drop_pending_updates?: boolean;
             }
         ): MethodResponse<true>;
 
-        deleteWebhook(): MethodResponse<true>;
+        deleteWebhook(optional?: {
+            drop_pending_updates?: string;
+        }): MethodResponse<true>;
 
         getWebhookInfo(): MethodResponse<WebhookInfo>;
 

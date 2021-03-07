@@ -33,6 +33,7 @@ export type WebhookInfo = {
     url: string;
     has_custom_certificate: boolean;
     pending_update_count: number;
+    ip_address?: string;
     last_error_date?: boolean;
     last_error_message?: string;
     max_connections?: number;
@@ -145,9 +146,7 @@ export type InputTextMessageContent = {
     disable_web_page_preview?: boolean;
 };
 
-export type InputLocationMessageContent = Location & {
-    live_period?: number;
-};
+export type InputLocationMessageContent = Location;
 
 export type InputVenueMessageContent = {
     latitude: number;
@@ -311,6 +310,9 @@ export type InlineQueryResultLocation = {
     title: string;
     latitude: number;
     longitude: number;
+    heading?: number;
+    horizontal_accuracy?: number;
+    proximity_alert_radius?: number;
     live_period?: number;
     thumb_url?: string;
     thumb_width?: number;
@@ -333,6 +335,8 @@ export type InlineQueryResultVenue = {
     thumb_height?: number;
     reply_markup?: InlineKeyboardMarkup;
     input_message_content?: InputMessageContent;
+    google_place_id?: string;
+    google_place_type?: string;
 };
 
 export type InlineQueryResultContact = {
@@ -478,6 +482,7 @@ export type WebhookResponse = true;
 export type Message = {
     message_id: number;
     from?: User;
+    sender_chat?: Chat;
     via_bot?: User;
     date: number;
     chat: Chat;
@@ -524,6 +529,7 @@ export type Message = {
     successful_payment?: SuccessfulPayment;
     connected_website?: string;
     passport_data?: PassportData;
+    proximity_alert_triggered?: ProximityAlertTriggered;
     reply_markup?: InlineKeyboardMarkup;
 };
 
@@ -638,13 +644,13 @@ export type Document = FileIdentifier & {
     file_size?: number;
 };
 
-export type Audio = Omit<Document, "file_name"> & {
+export type Audio = Document & {
     duration: number;
     performer?: string;
     title?: string;
 };
 
-export type Video = Omit<Document, "file_name"> & {
+export type Video = Document & {
     width: number;
     height: number;
     duration: number;
@@ -665,6 +671,8 @@ export type VoiceNote = FileIdentifier & Pick<Document, "thumb" | "file_size"> &
     length: number;
 };
 
+export type DiceType = "🎲" | "🎯" | "🏀" | "⚽" | "🎰";
+
 export type Dice = {
     emoji: string;
     value: number;
@@ -681,6 +689,10 @@ export type Contact = {
 export type Location = {
     longitude: number;
     latitude: number;
+    horizontal_accuracy?: number;
+    live_period?: number;
+    heading?: number;
+    proximity_alert_radius?: number;
 };
 
 export type Venue = {
@@ -689,6 +701,14 @@ export type Venue = {
     address: string;
     foursquare_id?: string;
     foursquare_type?: string;
+    google_place_id?: string;
+    google_place_type?: string;
+};
+
+export type ProximityAlertTriggered = {
+    traveler: User;
+    watcher: User;
+    distance: User;
 };
 
 export type Game = {
@@ -848,6 +868,7 @@ export type Chat = {
     first_name?: string;
     last_name?: string;
     photo?: ChatPhoto;
+    bio?: string;
     description?: string;
     invite_link?: string;
     pinned_message?: Message;
@@ -855,6 +876,8 @@ export type Chat = {
     slow_mode_delay?: number;
     sticker_set_name?: string;
     can_set_sticker_set?: boolean;
+    linked_chat_id?: string;
+    location?: ChatLocation;
 };
 
 export type ChatPhoto = {
@@ -878,6 +901,7 @@ export type ChatMember = {
     can_restrict_members?: boolean;
     can_promote_members?: boolean;
     is_member?: boolean;
+    is_anonymous?: boolean;
 } & ChatPermissions;
 
 export type ChatPermissions = {
@@ -889,6 +913,11 @@ export type ChatPermissions = {
     can_change_info?: boolean;
     can_invite_users?: boolean;
     can_pin_messages?: boolean;
+};
+
+export type ChatLocation = {
+    location: Location;
+    address: string;
 };
 
 export type ResponseParameters = {
@@ -935,6 +964,7 @@ export type InputMediaAudio = InputMediaObject & {
 
 export type InputMediaDocument = InputMediaObject & {
     type: "document";
+    disable_content_type_detection?: boolean;
 };
 
 export type ReplyMarkup = InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply;
@@ -944,4 +974,5 @@ export type TelegramMessageOptional = {
     disable_notification?: boolean;
     reply_to_message_id?: number;
     reply_markup?: ReplyMarkup;
+    allow_sending_without_reply?: boolean;
 };

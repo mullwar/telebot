@@ -413,13 +413,13 @@ export class TeleBot {
 
     public async telegramMethod<Response = Message>({
         method,
-        required,
-        optional,
+        required = {},
+        optional = {},
         isDataForm
     }: {
         method: string;
-        required?: any;
-        optional?: any;
+        required?: Record<string, any>;
+        optional?: Record<string, any>;
         isDataForm?: boolean;
     }): Promise<Response> {
 
