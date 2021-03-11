@@ -27,6 +27,8 @@ export type Update = {
     pre_checkout_query?: PreCheckoutQuery;
     poll?: Poll;
     poll_answer?: PollAnswer;
+    my_chat_member?: ChatMemberUpdated;
+    chat_member?: ChatMemberUpdated;
 };
 
 export type WebhookInfo = {
@@ -522,6 +524,7 @@ export type Message = {
     group_chat_created?: boolean;
     supergroup_chat_created?: boolean;
     channel_chat_created?: boolean;
+    message_auto_delete_timer_changed?: MessageAutoDeleteTimerChanged;
     migrate_to_chat_id?: number;
     migrate_from_chat_id?: number;
     pinned_message?: Message;
@@ -530,6 +533,9 @@ export type Message = {
     connected_website?: string;
     passport_data?: PassportData;
     proximity_alert_triggered?: ProximityAlertTriggered;
+    voice_chat_started?: VoiceChatStarted;
+    voice_chat_ended?: VoiceChatEnded;
+    voice_chat_participants_invited?: VoiceChatParticipantsInvited;
     reply_markup?: InlineKeyboardMarkup;
 };
 
@@ -671,7 +677,7 @@ export type VoiceNote = FileIdentifier & Pick<Document, "thumb" | "file_size"> &
     length: number;
 };
 
-export type DiceType = "🎲" | "🎯" | "🏀" | "⚽" | "🎰";
+export type DiceEmoji = "🎲" | "🎯" | "🎳" | "🏀" | "⚽" | "🎰";
 
 export type Dice = {
     emoji: string;
@@ -709,6 +715,21 @@ export type ProximityAlertTriggered = {
     traveler: User;
     watcher: User;
     distance: User;
+};
+
+export type MessageAutoDeleteTimerChanged = {
+    message_auto_delete_time: number;
+};
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type VoiceChatStarted = {};
+
+export type VoiceChatEnded = {
+    duration: number;
+};
+
+export type VoiceChatParticipantsInvited = {
+    users?: User[]
 };
 
 export type Game = {
@@ -895,14 +916,34 @@ export type ChatMember = {
     custom_title?: string;
     until_date?: number;
     can_be_edited?: boolean;
+    can_manage_chat?: boolean;
     can_post_messages?: boolean;
     can_edit_messages?: boolean;
     can_delete_messages?: boolean;
+    can_manage_voice_chats?: boolean;
     can_restrict_members?: boolean;
     can_promote_members?: boolean;
     is_member?: boolean;
     is_anonymous?: boolean;
 } & ChatPermissions;
+
+export type ChatInviteLink = {
+    invite_link: string;
+    creator: User;
+    is_primary: boolean;
+    is_revoked: boolean;
+    expire_date?: number;
+    member_limit?: number;
+};
+
+export type ChatMemberUpdated = {
+    chat: Chat;
+    from: User;
+    date: string;
+    old_chat_member: ChatMember;
+    new_chat_member: ChatMember;
+    invite_link?: ChatInviteLink;
+};
 
 export type ChatPermissions = {
     can_send_messages?: boolean;

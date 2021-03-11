@@ -3,14 +3,18 @@ import {
     Chat,
     ChatAction,
     ChatId,
+    ChatInviteLink,
     ChatMember,
-    ChatPermissions, DiceType,
+    ChatPermissions,
+    DiceEmoji,
     File,
     ForceReply,
     GameHighScore,
     InlineKeyboardMarkup,
     InlineQueryResult,
-    InputMedia, InputMediaAudio, InputMediaDocument,
+    InputMedia,
+    InputMediaAudio,
+    InputMediaDocument,
     InputMediaPhoto,
     InputMediaVideo,
     LabeledPrice,
@@ -32,7 +36,7 @@ import {
 } from "../types/telegram";
 import { PropertyType } from "../types/utilites";
 
-type MethodResponse<T = Message> = Promise<T>;
+type MethodResponse<T> = Promise<T>;
 
 declare module "../telebot" {
     interface TeleBot {
@@ -220,7 +224,7 @@ declare module "../telebot" {
 
         sendDice(
             chat_id: ChatId,
-            emoji: DiceType,
+            emoji: DiceEmoji,
             optional?: Omit<TelegramMessageOptional, "parse_mode">
         ): MethodResponse<Message>;
 
@@ -250,6 +254,7 @@ declare module "../telebot" {
             user_id: number,
             optional?: {
                 until_date?: number;
+                revoke_messages?: boolean;
             }
         ): MethodResponse<true>;
 
@@ -279,6 +284,8 @@ declare module "../telebot" {
                 can_edit_messages?: boolean;
                 can_delete_messages?: boolean;
                 can_invite_users?: boolean;
+                can_manage_chat?: boolean;
+                can_manage_voice_chats?: boolean;
                 can_restrict_members?: boolean;
                 can_pin_messages?: boolean;
                 can_promote_members?: boolean;
@@ -300,6 +307,28 @@ declare module "../telebot" {
         exportChatInviteLink(
             chat_id: ChatId,
         ): MethodResponse<string>;
+
+        createChatInviteLink(
+            chat_id: ChatId,
+            optional?: {
+                expire_date?: number;
+                member_limit?: number;
+            }
+        ): MethodResponse<ChatInviteLink>;
+
+        editChatInviteLink(
+            chat_id: ChatId,
+            invite_link: string,
+            optional?: {
+                expire_date?: number;
+                member_limit?: number;
+            }
+        ): MethodResponse<ChatInviteLink>;
+
+        revokeChatInviteLink(
+            chat_id: ChatId,
+            invite_link: string
+        ): MethodResponse<ChatInviteLink>;
 
         setChatPhoto(
             chat_id: ChatId,

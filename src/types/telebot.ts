@@ -1,5 +1,6 @@
 import {
     CallbackQuery,
+    ChatMemberUpdated,
     ChosenInlineResult,
     InlineQuery,
     Message,
@@ -106,6 +107,8 @@ export type TeleBotEventNames = {
     pre_checkout_query: PreCheckoutQuery;
     poll_update: Poll;
     poll_answer: PollAnswer;
+    my_chat_member: ChatMemberUpdated;
+    chat_member: ChatMemberUpdated;
 
     error: TeleBotError | TelegramError | Error;
 };

@@ -2,6 +2,7 @@ import { TeleBot } from "../telebot";
 import {
     BotCommand,
     Chat,
+    ChatInviteLink,
     ChatMember,
     File,
     ForceReply,
@@ -275,6 +276,29 @@ TeleBot.prototype.exportChatInviteLink = function(chat_id) {
         method: "exportChatInviteLink",
         required: { chat_id },
         optional: {}
+    });
+};
+
+TeleBot.prototype.createChatInviteLink = function(chat_id, optional) {
+    return this.telegramMethod<ChatInviteLink>({
+        method: "createChatInviteLink",
+        required: { chat_id },
+        optional
+    });
+};
+
+TeleBot.prototype.editChatInviteLink = function(chat_id, invite_link, optional) {
+    return this.telegramMethod<ChatInviteLink>({
+        method: "editChatInviteLink",
+        required: { chat_id, invite_link },
+        optional
+    });
+};
+
+TeleBot.prototype.revokeChatInviteLink = function(chat_id, invite_link) {
+    return this.telegramMethod<ChatInviteLink>({
+        method: "revokeChatInviteLink",
+        required: { chat_id, invite_link }
     });
 };
 
