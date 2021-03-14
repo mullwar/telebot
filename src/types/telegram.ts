@@ -39,7 +39,7 @@ export type WebhookInfo = {
     last_error_date?: boolean;
     last_error_message?: string;
     max_connections?: number;
-    allowed_updates?: UpdateTypes;
+    allowed_updates?: TelegramUpdateNames;
 };
 
 export type GameHighScore = {
@@ -48,7 +48,11 @@ export type GameHighScore = {
     score: number;
 };
 
-export type UpdateTypes = string[]; // TODO: keyof Update
+export type TelegramUpdateNames = keyof Omit<Update, "update_id">;
+export type TelegramMessageNames = keyof Omit<Message,
+    "message_id" | "from" | "sender_chat" | "via_bot" | "date" | "chat" | "forward_from" | "forward_from_chat" |
+    "forward_from_message_id" | "forward_signature" | "forward_sender_name" | "forward_date" | "reply_to_message" |
+    "edit_date" | "media_group_id" | "author_signature" | "entities" | "caption_entities" | "reply_markup">; // TODO
 
 export type ChatId = number | string;
 

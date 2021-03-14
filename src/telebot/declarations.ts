@@ -29,7 +29,7 @@ import {
     ShippingOption,
     StickerSet,
     TelegramMessageOptional,
-    UpdateTypes,
+    TelegramUpdateNames,
     User,
     UserProfilePhotos,
     WebhookInfo
@@ -599,7 +599,7 @@ declare module "../telebot" {
                 certificate?: MethodInputFile;
                 ip_address?: string;
                 max_connections?: number;
-                allowed_updates?: UpdateTypes;
+                allowed_updates?: TelegramUpdateNames;
                 drop_pending_updates?: boolean;
             }
         ): MethodResponse<true>;

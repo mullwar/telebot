@@ -16,10 +16,10 @@ import {
     TelegramFetchErrorScenario,
     WebhookOptions
 } from "./types/telebot";
-import { InputMedia, Message, TelegramBotToken, TelegramResponse, Update, UpdateTypes, User } from "./types/telegram";
+import { InputMedia, TelegramBotToken, TelegramResponse, TelegramUpdateNames, Update, User } from "./types/telegram";
 import { ERROR_TELEBOT_ALREADY_RUNNING, handleTelegramResponse, TeleBotError } from "./errors";
 import { Levels, TeleBotDev, TeleBotDevOptions } from "./telebot/devkit";
-import { updateProcessors } from "./telebot/processors";
+import { TELEGRAM_UPDATE_PROCESSORS, TelegramUpdateProcessors } from "./telebot/processors";
 import { allowedWebhookPorts, webhookServer } from "./telebot/webhook";
 import { convertToArray, parseUrl, randomString, toString } from "./utils";
 import { PropertyType } from "./types/utilites";
@@ -47,7 +47,7 @@ export class TeleBot {
     private readonly webhook?: WebhookOptions;
 
     private lifeIntervalFn: NodeJS.Timeout | undefined;
-    private readonly allowedUpdates: UpdateTypes = [];
+    private readonly allowedUpdates: TelegramUpdateNames | never[] = [];
 
     private readonly debug: PropertyType<TeleBotOptions, "debug"> = false;
 
@@ -365,10 +365,11 @@ export class TeleBot {
         });
 
         updates.forEach((update: Update) => {
-            for (const processorName in updateProcessors) {
-                if (processorName in update) {
-                    const updatePayload = update[processorName as keyof Update];
-                    processorPromises.push((updateProcessors as any)[processorName].call(this, updatePayload, {}));
+            for (const processorName of Object.keys(TELEGRAM_UPDATE_PROCESSORS)) {
+                const name = processorName as TelegramUpdateProcessors;
+                if (name in update) {
+                    const updatePayload = update[name];
+                    processorPromises.push(TELEGRAM_UPDATE_PROCESSORS[name].call(this, updatePayload, {}));
                     break;
                 }
             }
@@ -402,6 +403,7 @@ export class TeleBot {
             })
             .catch((error) => {
                 const e = handleTelegramResponse(error);
+                this.dispatch("error", e);
                 this.dev.error("telegramRequest.response", {
                     message: toString(e),
                     error: e
@@ -411,7 +413,7 @@ export class TeleBot {
 
     }
 
-    public async telegramMethod<Response = Message>({
+    public async telegramMethod<T>({
         method,
         required = {},
         optional = {},
@@ -421,9 +423,7 @@ export class TeleBot {
         required?: Record<string, any>;
         optional?: Record<string, any>;
         isDataForm?: boolean;
-    }): Promise<Response> {
-
-        this.dispatch(method, { required, optional });
+    }): Promise<T> {
 
         let payload = Object.assign({}, required, optional);
 
@@ -454,11 +454,15 @@ export class TeleBot {
             data: { required, optional }
         });
 
-        return this.telegramRequest<any, Response>(method, payload);
+        return this.telegramRequest<any, T>(method, payload);
     }
 
     public uploadFile(path: PathLike): ReadStream {
         return createReadStream(path);
+    }
+
+    public parallel<T = unknown>(tasks: Promise<T>[]): Promise<T[]> {
+        return Promise.all(tasks);
     }
 
     public on<T extends keyof TeleBotEventNames>(event: T | T[], processor: TeleBotEventProcessor<T>): TeleBotEventProcessor<T> {
