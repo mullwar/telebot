@@ -1,9 +1,4 @@
-import { TeleBot } from "../../src";
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore: express library required (yarn add express @types/express OR npm install express @types/express)
-import { Request, Response } from "express";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { TeleBot } = require("../");
 const express = require("express");
 
 const app = express();
@@ -21,12 +16,12 @@ bot2.on("text", (msg) => bot2.sendMessage(msg.chat.id, "BOT-2"));
 bot1.setWebhook(`https://YOUR_HOST/bot1/${BOT1_TOKEN}`);
 bot2.setWebhook(`https://YOUR_HOST/bot2/${BOT2_TOKEN}`);
 
-app.post(`/bot1/${BOT1_TOKEN}`, (request: Request, response: Response) => {
+app.post(`/bot1/${BOT1_TOKEN}`, (request, response) => {
     bot1.processTelegramUpdates([request.body]);
     response.sendStatus(200);
 });
 
-app.post(`/bot2/${BOT1_TOKEN}`, (request: Request, response: Response) => {
+app.post(`/bot2/${BOT1_TOKEN}`, (request, response) => {
     bot2.processTelegramUpdates([request.body]);
     response.sendStatus(200);
 });

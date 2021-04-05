@@ -149,8 +149,8 @@ declare module "../telebot" {
         ): MethodResponse<Message>;
 
         sendLocation(
+            chat_id: ChatId,
             props: {
-                chat_id: ChatId;
                 latitude: number;
                 longitude: number;
                 live_period?: number;
@@ -182,8 +182,8 @@ declare module "../telebot" {
         ): MethodResponse<Message | true>;
 
         sendVenue(
+            chat_id: ChatId,
             props: {
-                chat_id: ChatId;
                 latitude: number;
                 longitude: number;
                 title: string;
@@ -520,8 +520,8 @@ declare module "../telebot" {
         ): MethodResponse<true>;
 
         sendInvoice(
+            chat_id: ChatId,
             props: {
-                chat_id: ChatId;
                 title: string;
                 description: string;
                 payload: string;

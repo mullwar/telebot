@@ -5,7 +5,7 @@ const TOKEN = process.env.TELEBOT_TOKEN || "YOUR_TELEGRAM_BOT_TOKEN";
 const bot = new TeleBot(TOKEN);
 
 bot.on("text", (msg) => {
-    bot.sendDocument(
+    const task1 = bot.sendDocument(
         msg.chat.id,
         bot.uploadFile(__dirname + "/data/telegram.png"),
         {
@@ -14,7 +14,7 @@ bot.on("text", (msg) => {
         }
     );
 
-    bot.sendPhoto(
+    const task2 = bot.sendPhoto(
         msg.chat.id,
         "AgACAgQAAxkDAAJ35V7wzLulQ5rufl9v1X0I8-8F4EQcAAKsqjEbcEQ8Ug7IyuiDPODzj2b0Il0AAwEAAwIAA3kAA5roAQABGgQ",
         {
@@ -23,7 +23,7 @@ bot.on("text", (msg) => {
         }
     );
 
-    bot.sendAudio(
+    const task3 = bot.sendAudio(
         msg.chat.id,
         "https://file-examples.com/wp-content/uploads/2017/11/file_example_MP3_700KB.mp3",
         {
@@ -32,7 +32,7 @@ bot.on("text", (msg) => {
         }
     );
 
-    bot.sendMediaGroup(msg.chat.id, [
+    const task4 = bot.sendMediaGroup(msg.chat.id, [
         {
             type: "photo",
             media: bot.uploadFile(__dirname + "/data/image.jpg"),
@@ -53,6 +53,9 @@ bot.on("text", (msg) => {
         }
     ]);
 
+    return bot.parallel([task1, task2, task3, task3, task4]);
 });
 
-bot.start();
+bot.start().then(() => {
+    console.log("Bot started");
+});

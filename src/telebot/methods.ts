@@ -134,7 +134,7 @@ TeleBot.prototype.sendMediaGroup = function(chat_id, media, optional) {
     });
 };
 
-TeleBot.prototype.sendLocation = function({ chat_id, latitude, longitude, ...optional }) {
+TeleBot.prototype.sendLocation = function(chat_id, { latitude, longitude, ...optional }) {
     return this.telegramMethod<Message>({
         method: "sendLocation",
         required: { chat_id, latitude, longitude },
@@ -158,8 +158,7 @@ TeleBot.prototype.stopMessageLiveLocation = function({ ...optional }) {
     });
 };
 
-TeleBot.prototype.sendVenue = function({
-    chat_id,
+TeleBot.prototype.sendVenue = function(chat_id, {
     latitude,
     longitude,
     title,
@@ -550,8 +549,7 @@ TeleBot.prototype.answerInlineQuery = function(inline_query_id, results, optiona
     });
 };
 
-TeleBot.prototype.sendInvoice = function({
-    chat_id,
+TeleBot.prototype.sendInvoice = function(chat_id, {
     title,
     description,
     payload,
@@ -561,7 +559,7 @@ TeleBot.prototype.sendInvoice = function({
     ...optional
 }) {
     return this.telegramMethod<Message>({
-        method: "answerInlineQuery",
+        method: "sendInvoice",
         required: {
             chat_id,
             title,
