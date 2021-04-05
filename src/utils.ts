@@ -1,7 +1,7 @@
 import { parse as nodeParseUrl, UrlWithStringQuery } from "url";
 
 export function convertToArray<T>(data: T | T[]): Array<T> {
-    return (Array.isArray(data)) ? data : [data];
+    return Array.isArray(data) ? data : [data];
 }
 
 export function parseUrl(url: string): UrlWithStringQuery {
@@ -20,6 +20,6 @@ export function toString(data: any): string {
     }
 }
 
-export function randomString(len = 16): string {
-    return Math.random().toString(20).substr(2, len);
+export function randomString(): string {
+    return Math.random().toString(20).substr(2, 14);
 }

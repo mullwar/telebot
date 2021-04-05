@@ -1,8 +1,7 @@
 import { TeleBot } from "../src";
-import { TeleBotFlags, TeleBotOptions, TeleBotScenario } from "../src/types/telebot";
+import { TeleBotFlags, TeleBotOptions } from "../src/types/telebot";
 import { DEFAULT_POLLING } from "../src/telebot";
 import { MOCK_URL, MOCK_WEBHOOK } from "./mock/server";
-import { ERROR_TELEBOT_ALREADY_RUNNING, TeleBotError } from "../src/errors";
 
 type TestCase = {
     name: string;
@@ -12,8 +11,8 @@ type TestCase = {
 function createNewBot(options: Partial<TeleBotOptions>): TeleBot {
     return new TeleBot({
         token: "__test__",
-        botAPI: MOCK_URL,
-        debug: false,
+        botAPI: () => MOCK_URL,
+        log: false,
         ...options
     });
 }
@@ -85,43 +84,6 @@ function createNewBot(options: Partial<TeleBotOptions>): TeleBot {
             bot.stop();
 
             expect(bot.hasFlag("isRunning")).toBe(false);
-        });
-
-        test("multiple instance resolution scenarios", async () => {
-
-            await bot.start();
-
-            expect(bot.hasFlag("isRunning")).toBe(true);
-
-            // TeleBotScenario.Restart
-
-            bot.runningInstanceScenario = TeleBotScenario.Restart;
-
-            await bot.start();
-
-            expect(bot.hasFlag("isRunning")).toBe(true);
-
-            // TeleBotScenario.Terminate
-
-            try {
-                bot.runningInstanceScenario = TeleBotScenario.Terminate;
-                await bot.start();
-            } catch (error) {
-                expect(bot.hasFlag("isRunning")).toBe(false);
-                expect(error).toEqual(new TeleBotError(ERROR_TELEBOT_ALREADY_RUNNING));
-            }
-
-            // TeleBotScenario.Pass
-
-            bot.runningInstanceScenario = TeleBotScenario.Pass;
-
-            await bot.start();
-
-            expect(bot.hasFlag("isRunning")).toBe(true);
-
-            await bot.start();
-
-            expect(bot.hasFlag("isRunning")).toBe(true);
         });
 
     });

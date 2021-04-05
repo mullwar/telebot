@@ -56,8 +56,6 @@ export type TelegramMessageNames = keyof Omit<Message,
 
 export type ChatId = number | string;
 
-export type InputFile = string;
-
 export type MethodInputFile = PathLike | ReadStream;
 
 export type PassportElementError =
@@ -674,11 +672,6 @@ export type Animation = Document & {
 
 export type Voice = FileIdentifier & Pick<Document, "mime_type" | "file_size"> & {
     duration: number;
-};
-
-export type VoiceNote = FileIdentifier & Pick<Document, "thumb" | "file_size"> & {
-    duration: number;
-    length: number;
 };
 
 export type DiceEmoji = "🎲" | "🎯" | "🎳" | "🏀" | "⚽" | "🎰";

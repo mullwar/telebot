@@ -6,11 +6,12 @@ import { TeleBot } from "../telebot";
 import { WebhookOptions } from "../types/telebot";
 import { Update } from "../types/telegram";
 import { convertToArray } from "../utils";
+import { LID } from "./logger";
+import { normalizeError } from "../errors";
 
-export const allowedWebhookPorts = [80, 88, 443, 8443];
+export const ALLOWED_WEBHOOK_PORTS = [80, 88, 443, 8443];
 
-export async function webhookServer(bot: TeleBot, options: WebhookOptions) {
-
+export async function webhookServer(bot: TeleBot, options: WebhookOptions): Promise<void> {
     const { host, port } = options;
 
     const key = options.key && fs.readFileSync(options.key);
@@ -32,23 +33,22 @@ export async function webhookServer(bot: TeleBot, options: WebhookOptions) {
                 try {
                     update = convertToArray<Update>(JSON.parse(body.join()));
                 } catch (error) {
+                    bot.logger.error(LID.Webhook, { error });
                     response.writeHead(415);
                     response.end();
-                    bot.dev.error("webhook.parse", { error });
                     return error;
                 }
 
-                bot.dev.debug("webhook.update", { data: update });
+                bot.logger.debug(LID.Webhook, { meta: { update } });
 
-                bot.processTelegramUpdates(update)
-                    .catch((error) => {
-                        bot.dev.error("webhook.processTelegramUpdates", { error });
-                        response.writeHead(500);
-                        return error;
-                    })
-                    .finally(() => {
-                        response.end();
-                    });
+                bot.processTelegramUpdates(update).catch((e) => {
+                    const error = normalizeError(e);
+                    bot.logger.error(LID.Webhook, { error });
+                    response.writeHead(500);
+                    return error;
+                }).finally(() => {
+                    response.end();
+                });
             });
         }
 
@@ -57,7 +57,7 @@ export async function webhookServer(bot: TeleBot, options: WebhookOptions) {
     const server = key && cert ? https.createServer({ key, cert }, listener) : http.createServer(listener);
 
     server.listen(port, host, () => {
-        bot.dev.info("webhook.listen", { data: { port, host } });
+        bot.logger.info(LID.Webhook, { meta: { port, host } });
         // eslint-disable-next-line no-console
         console.log(`TeleBot started${key ? " secure" : ""} webhook server on "${host}:${port}"`);
     });

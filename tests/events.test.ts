@@ -40,8 +40,8 @@ describe("TeleBot events", () => {
 
     const bot = new TeleBot({
         token: "__test__",
-        botAPI: MOCK_URL,
-        debug: false
+        botAPI: () => MOCK_URL,
+        log: false
     });
 
     EVENTS.forEach((event) => bot.on(event.on, event.processor));

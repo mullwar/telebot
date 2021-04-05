@@ -12,8 +12,8 @@ import {
     TelegramMessageNames,
     Update
 } from "../types/telegram";
-import { ContextPayload } from "../types/telebot";
 import { TypeValues } from "../types/utilites";
+import { TeleBotEventContext, TeleBotEventNames } from "../types/telebot";
 
 const MESSAGE_TYPES: Array<TelegramMessageNames> = [
     "text",
@@ -54,55 +54,62 @@ const MESSAGE_TYPES: Array<TelegramMessageNames> = [
     "voice_chat_participants_invited"
 ];
 
-type TelegramUpdateKeys = Omit<Update, "update_id">;
+export type TelegramUpdateKeys = Omit<Update, "update_id">;
+
 type TelegramUpdateType = Exclude<TypeValues<TelegramUpdateKeys>, undefined> & any; // TODO: fix union problem:
-type TelegramUpdateFunction = (this: TeleBot, update: TelegramUpdateType, context: ContextPayload) => Promise<unknown>;
+type TelegramUpdateFunction = (this: TeleBot, update: TelegramUpdateType, context: TeleBotEventContext) => Promise<unknown>;
 
 export type TelegramUpdateProcessors = keyof Required<TelegramUpdateKeys>;
 
 export const TELEGRAM_UPDATE_PROCESSORS: Record<TelegramUpdateProcessors, TelegramUpdateFunction> = {
-    edited_message(this: TeleBot, messageUpdate: Message, context: ContextPayload): Promise<unknown> {
+    edited_message(this: TeleBot, messageUpdate: Message, context: TeleBotEventContext): Promise<unknown> {
         return this.dispatch("edited_message", messageUpdate, context);
     },
-    channel_post(this: TeleBot, messageUpdate: Message, context: ContextPayload): Promise<unknown> {
+    channel_post(this: TeleBot, messageUpdate: Message, context: TeleBotEventContext): Promise<unknown> {
         return this.dispatch("channel_post", messageUpdate, context);
     },
-    edited_channel_post(this: TeleBot, messageUpdate: Message, context: ContextPayload): Promise<unknown> {
+    edited_channel_post(this: TeleBot, messageUpdate: Message, context: TeleBotEventContext): Promise<unknown> {
         return this.dispatch("edited_channel_post", messageUpdate, context);
     },
-    inline_query(this: TeleBot, inlineQueryUpdate: InlineQuery, context: ContextPayload): Promise<unknown> {
+    inline_query(this: TeleBot, inlineQueryUpdate: InlineQuery, context: TeleBotEventContext): Promise<unknown> {
         return this.dispatch("inline_query", inlineQueryUpdate, context);
     },
-    chosen_inline_result(this: TeleBot, chosenInlineUpdate: ChosenInlineResult, context: ContextPayload): Promise<unknown> {
+    chosen_inline_result(this: TeleBot, chosenInlineUpdate: ChosenInlineResult, context: TeleBotEventContext): Promise<unknown> {
         return this.dispatch("chosen_inline_result", chosenInlineUpdate, context);
     },
-    callback_query(this: TeleBot, callbackQueryUpdate: CallbackQuery, context: ContextPayload): Promise<unknown> {
+    callback_query(this: TeleBot, callbackQueryUpdate: CallbackQuery, context: TeleBotEventContext): Promise<unknown> {
         return this.dispatch("callback_query", callbackQueryUpdate, context);
     },
-    shipping_query(this: TeleBot, shippingQueryUpdate: ShippingQuery, context: ContextPayload): Promise<unknown> {
+    shipping_query(this: TeleBot, shippingQueryUpdate: ShippingQuery, context: TeleBotEventContext): Promise<unknown> {
         return this.dispatch("shipping_query", shippingQueryUpdate, context);
     },
-    pre_checkout_query(this: TeleBot, preCheckoutQueryUpdate: PreCheckoutQuery, context: ContextPayload): Promise<unknown> {
+    pre_checkout_query(this: TeleBot, preCheckoutQueryUpdate: PreCheckoutQuery, context: TeleBotEventContext): Promise<unknown> {
         return this.dispatch("pre_checkout_query", preCheckoutQueryUpdate, context);
     },
-    poll(this: TeleBot, pollUpdate: Poll, context: ContextPayload): Promise<unknown> {
-        return this.dispatch("poll", pollUpdate, context);
+    poll(this: TeleBot, pollUpdate: Poll, context: TeleBotEventContext): Promise<unknown> {
+        return this.dispatch<"poll", Poll>("poll", pollUpdate, context);
     },
-    poll_answer(this: TeleBot, pollAnswerUpdate: PollAnswer, context: ContextPayload): Promise<unknown> {
+    poll_answer(this: TeleBot, pollAnswerUpdate: PollAnswer, context: TeleBotEventContext): Promise<unknown> {
         return this.dispatch("poll_answer", pollAnswerUpdate, context);
     },
-    my_chat_member(this: TeleBot, myChatMember: ChatMemberUpdated, context: ContextPayload): Promise<unknown> {
+    my_chat_member(this: TeleBot, myChatMember: ChatMemberUpdated, context: TeleBotEventContext): Promise<unknown> {
         return this.dispatch("my_chat_member", myChatMember, context);
     },
-    chat_member(this: TeleBot, chatMember: ChatMemberUpdated, context: ContextPayload): Promise<unknown> {
+    chat_member(this: TeleBot, chatMember: ChatMemberUpdated, context: TeleBotEventContext): Promise<unknown> {
         return this.dispatch("chat_member", chatMember, context);
     },
-    message(this: TeleBot, messageUpdate: Message, context: ContextPayload): Promise<unknown> {
+    async message(this: TeleBot, messageUpdate: Message, context: TeleBotEventContext): Promise<unknown> {
         const processorPromises: Promise<unknown>[] = [];
         processorPromises.push(this.dispatch("message", messageUpdate, context));
         for (const messageType of MESSAGE_TYPES) {
             if (messageType in messageUpdate) {
-                processorPromises.push(this.dispatch(messageType, messageUpdate, context));
+                const modifiedMessageUpdate = await this.run(messageType, { ...messageUpdate });
+                processorPromises.push(this.dispatch(messageType, modifiedMessageUpdate, context));
+                if (messageType === "text") {
+                    processorPromises.push(
+                        this.dispatchHears(messageUpdate.text!, modifiedMessageUpdate as TeleBotEventNames["text"])
+                    );
+                }
                 break;
             }
         }

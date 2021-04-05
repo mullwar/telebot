@@ -4,26 +4,27 @@ import { AxiosError, AxiosResponse, Method } from "axios";
 export const ERROR_TELEBOT_ALREADY_RUNNING = "Telebot is already running. Terminate instance for safety.";
 export const ERROR_TELEBOT_MAXIMUM_RETRY = "Maximum retries exceeded. Terminate instance for safety.";
 
-export class TeleBotError<T = Record<string, unknown>> extends Error {
-    name = "TeleBotError";
-    payload: T;
+export type SomeKindOfError = TeleBotError | TelegramError | Error | EvalError | RangeError | ReferenceError |
+    SyntaxError | TypeError | URIError;
 
-    constructor(error: string, payload?: T) {
-        super(error);
-        this.message = error;
-        this.payload = payload || {} as T;
+export class TeleBotError<T = unknown> extends Error {
+    name = "TeleBotError";
+    payload?: T;
+
+    constructor(message: string, payload?: T) {
+        super(message);
+        this.payload = payload;
     }
 }
 
-export class TelegramError extends Error {
+export class TelegramError<T = unknown> extends Error {
     name = "TelegramError";
     request: {
         url?: string;
         method?: Method;
-        data?: any;
+        data?: T;
     };
     response: TelegramErrorResponse;
-    payload: Record<string, unknown> = {};
 
     constructor(response: AxiosResponse<TelegramErrorResponse>) {
         super(`${response.status} - ${response.statusText}`);
@@ -34,12 +35,22 @@ export class TelegramError extends Error {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function handleTelegramResponse(error: any) {
+export function handleTelegramResponse(error: any): SomeKindOfError {
     if (error.isAxiosError) {
         const { response } = (error as AxiosError<TelegramErrorResponse>);
         if (response) {
             return new TelegramError(response);
         }
+    }
+    return error;
+}
+
+export function normalizeError(error: any, payload?: unknown): SomeKindOfError {
+    if (!(error instanceof Error)) {
+        error = new TeleBotError(error);
+    }
+    if (payload) {
+        error.payload = payload;
     }
     return error;
 }

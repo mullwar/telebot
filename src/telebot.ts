@@ -2,26 +2,39 @@ import axios from "axios";
 import FormData from "form-data";
 import { createReadStream, PathLike, ReadStream } from "fs";
 import {
-    ComplexEvents,
-    ContextPayload,
-    EventTypes,
     TeleBotEvent,
-    TeleBotEventNames,
+    TeleBotEventContext,
+    TeleBotEventName,
+    TeleBotEventPayload,
     TeleBotEventProcessor,
     TeleBotFlags,
+    TeleBotHears,
+    TeleBotHearsContext,
+    TeleBotHearsName,
+    TeleBotHearsPayload,
+    TeleBotHearsProcessor,
+    TeleBotMethodName,
+    TeleBotModifier,
+    TeleBotModifierContext,
+    TeleBotModifierName,
+    TeleBotModifierPayload,
+    TeleBotModifierProcessor,
     TeleBotOptions,
     TeleBotPolling,
-    TeleBotRunningInstanceScenario,
-    TeleBotScenario,
-    TelegramFetchErrorScenario,
     WebhookOptions
 } from "./types/telebot";
 import { InputMedia, TelegramBotToken, TelegramResponse, TelegramUpdateNames, Update, User } from "./types/telegram";
-import { ERROR_TELEBOT_ALREADY_RUNNING, handleTelegramResponse, TeleBotError } from "./errors";
-import { Levels, TeleBotDev, TeleBotDevOptions } from "./telebot/devkit";
+import {
+    ERROR_TELEBOT_ALREADY_RUNNING,
+    handleTelegramResponse,
+    normalizeError,
+    SomeKindOfError,
+    TeleBotError
+} from "./errors";
+import { Levels, LID, TeleBotLogger, TeleBotLogOptions } from "./telebot/logger";
 import { TELEGRAM_UPDATE_PROCESSORS, TelegramUpdateProcessors } from "./telebot/processors";
-import { allowedWebhookPorts, webhookServer } from "./telebot/webhook";
-import { convertToArray, parseUrl, randomString, toString } from "./utils";
+import { ALLOWED_WEBHOOK_PORTS, webhookServer } from "./telebot/webhook";
+import { convertToArray, parseUrl, randomString } from "./utils";
 import { PropertyType } from "./types/utilites";
 
 const TELEGRAM_BOT_API = (botToken: string) => `https://api.telegram.org/bot${botToken}`;
@@ -35,7 +48,7 @@ export const DEFAULT_POLLING: TeleBotPolling = {
     retryTimes: Infinity
 };
 
-export const DEFAULT_DEBUG: TeleBotDevOptions = {
+export const DEFAULT_DEBUG: TeleBotLogOptions = {
     levels: Object.values(Levels).filter(value => typeof value === "number") as Levels[]
 };
 
@@ -45,11 +58,12 @@ export class TeleBot {
 
     private polling: TeleBotPolling = DEFAULT_POLLING;
     private readonly webhook?: WebhookOptions;
+    private readonly proxy?: PropertyType<TeleBotOptions, "proxy">;
 
     private lifeIntervalFn: NodeJS.Timeout | undefined;
-    private readonly allowedUpdates: TelegramUpdateNames | never[] = [];
+    private readonly allowedUpdates?: TelegramUpdateNames[];
 
-    private readonly debug: PropertyType<TeleBotOptions, "debug"> = false;
+    private readonly debug: PropertyType<TeleBotOptions, "log"> = false;
 
     private flags: TeleBotFlags = {
         isRunning: false,
@@ -57,14 +71,12 @@ export class TeleBot {
         waitEvents: false
     };
 
-    public me: User | undefined;
+    public me?: User;
+    public logger: TeleBotLogger;
 
-    public runningInstanceScenario: TeleBotRunningInstanceScenario = TeleBotScenario.Pass;
-    public telegramFetchErrorScenario: TelegramFetchErrorScenario = TeleBotScenario.Reconnect;
-
-    public dev: TeleBotDev;
-
-    private events = new Map<string, TeleBotEvent>();
+    private events = new Map<TeleBotEventName, TeleBotEvent>();
+    private hearsEvents = new Map<TeleBotHearsName, TeleBotHears>();
+    private modifiers = new Map<TeleBotModifierName, TeleBotModifier>();
 
     constructor(options: TeleBotOptions | TelegramBotToken) {
         if (typeof options === "string") {
@@ -79,7 +91,7 @@ export class TeleBot {
             polling,
             webhook,
             allowedUpdates,
-            debug
+            log
         } = options;
 
         this.botToken = token;
@@ -88,7 +100,7 @@ export class TeleBot {
             throw new TeleBotError("Telegram bot token is not provided.");
         }
 
-        this.botAPI = botAPI || TELEGRAM_BOT_API(this.botToken);
+        this.botAPI = botAPI ? botAPI(this.botToken) : TELEGRAM_BOT_API(this.botToken);
 
         this.webhook = webhook;
 
@@ -131,14 +143,13 @@ export class TeleBot {
             const { url } = webhook;
             const { port: urlPort, protocol } = parseUrl(url);
             const webhookPort = urlPort ? parseInt(urlPort) : 80;
-            const isHttps = protocol?.toLowerCase().startsWith("https");
 
-            if (!isHttps) {
+            if (!protocol?.toLowerCase().startsWith("https")) {
                 throw new TeleBotError(`Webhook '${url}' must be HTTPS secured.`);
             }
 
-            if (!allowedWebhookPorts.includes(webhookPort)) {
-                throw new TeleBotError(`Webhook port of '${webhookPort}' is not supported by Telegram Bot API. Use allowed webhook ports: ${allowedWebhookPorts.join(", ")}`);
+            if (!ALLOWED_WEBHOOK_PORTS.includes(webhookPort)) {
+                throw new TeleBotError(`Webhook port '${webhookPort}' is not supported by Telegram Bot API. Use allowed webhook ports: ${ALLOWED_WEBHOOK_PORTS.join(", ")}`);
             }
 
             // if (host) {
@@ -155,13 +166,19 @@ export class TeleBot {
             this.allowedUpdates = allowedUpdates;
         }
 
-        if (debug) {
-            this.debug = this.debug !== true ? debug : DEFAULT_DEBUG;
-        } else if (debug === false) {
+        if (log) {
+            this.debug = this.debug !== true ? log : DEFAULT_DEBUG;
+        } else if (log === false) {
             this.debug = false;
         }
 
-        this.dev = new TeleBotDev("telebot", this, this.debug as TeleBotDevOptions);
+        this.logger = new TeleBotLogger("telebot", this.debug as TeleBotLogOptions);
+
+        this.logger.debug(LID.Initial, {
+            meta: {
+                options: this.getOptions()
+            }
+        });
 
     }
 
@@ -169,7 +186,7 @@ export class TeleBot {
         return this.botToken;
     }
 
-    public getOptions(): TeleBotOptions {
+    public getOptions(): Omit<TeleBotOptions, "botAPI"> & { botAPI: string } {
         return {
             token: this.botToken,
             botAPI: this.botAPI,
@@ -179,7 +196,7 @@ export class TeleBot {
         };
     }
 
-    public async start() {
+    public async start(): Promise<void> {
         const {
             interval
         } = this.polling;
@@ -189,8 +206,8 @@ export class TeleBot {
         if (!this.hasFlag("isRunning")) {
             this.setFlag("isRunning");
             try {
-                this.me = await this.getMe();
                 const deleteWebhook = async () => await this.deleteWebhook();
+                this.me = await this.getMe();
                 if (webhook) {
                     const url = `${webhook.url}/${this.getToken()}`;
                     await this.setWebhook(url, {
@@ -206,42 +223,29 @@ export class TeleBot {
                     await deleteWebhook();
                     this.startLifeCycle();
                 }
-
-            } catch (error) {
+            } catch (e) {
+                const error = normalizeError(e);
                 this.dispatch("error", error);
-                this.dev.error("telebot", {
-                    error
-                });
+                this.logger.error(LID.TeleBot, { error });
                 // eslint-disable-next-line no-console
                 console.error("==== TELEBOT GLOBAL ERROR ====", error);
-                return error;
+                return Promise.reject(error);
             }
-
         } else {
-            switch (this.runningInstanceScenario) {
-                case TeleBotScenario.Restart:
-                    await this.restart();
-                    break;
-                case TeleBotScenario.Terminate:
-                    await this.stop();
-                    throw new TeleBotError(ERROR_TELEBOT_ALREADY_RUNNING);
-                case TeleBotScenario.Pass:
-                default:
-                    this.dev.info("pass");
-                    break;
-            }
+            await this.stop();
+            throw new TeleBotError(ERROR_TELEBOT_ALREADY_RUNNING);
         }
 
     }
 
-    public async restart(): Promise<void> {
-        this.dev.info("restart");
+    public async restart(): Promise<unknown> {
+        this.logger.info(LID.Restart);
         await this.stop();
         return this.start();
     }
 
     public async stop(): Promise<void> {
-        this.dev.info("stop");
+        this.logger.info(LID.Stop);
         this.unsetFlag("isRunning");
         if (this.lifeIntervalFn) {
             clearInterval(this.lifeIntervalFn);
@@ -258,68 +262,58 @@ export class TeleBot {
     }
 
     public setFlag<T extends keyof TeleBotFlags>(name: T): void {
-        this.dev.debug("setFlag", `${name} = true`);
+        this.logger.debug(LID.SetFlag, { meta: { flag: name } });
         this.flags[name] = true;
     }
 
     public unsetFlag<T extends keyof TeleBotFlags>(name: T): void {
-        this.dev.debug("unsetFlag", `${name} = false`);
+        this.logger.debug(LID.UnsetFlag, { meta: { flag: name } });
         this.flags[name] = false;
     }
 
     private setOffset(offset: number): void {
-        this.dev.debug("setOffset", offset);
+        this.logger.debug(LID.SetOffset, { meta: { offset } });
         this.polling.offset = offset;
     }
 
     private startLifeCycle(): void {
-        this.dev.info("startLifeCycle");
-        this.lifeCycle(false)
-            .catch((error) => {
-                this.dispatch("error", error);
-                this.dev.error("startLifeCycle", {
-                    error
-                });
-            });
+        this.logger.info(LID.StartLifeCycle);
+        this.lifeCycle(false).catch((error: SomeKindOfError) => {
+            this.logger.error(LID.StartLifeCycle, { error });
+            this.dispatch("error", error);
+        });
     }
 
     private startLifeInterval(interval: number): void {
-        this.dev.info("startLifeInterval", {
-            message: { interval }
+        this.logger.info(LID.StartLifeInterval, {
+            meta: { interval }
         });
         this.lifeIntervalFn = setInterval(() => {
-            this.dev.debug("lifeInterval");
+            this.logger.debug(LID.LiveInterval);
             if (this.hasFlag("isRunning") && this.hasFlag("canFetch")) {
                 this.unsetFlag("canFetch");
                 this.lifeCycle(true).then(() => {
                     this.setFlag("canFetch");
-                }).catch((error) => {
+                }).catch((error: SomeKindOfError) => {
                     this.dispatch("error", error);
-                    this.dev.error("startLifeInterval", {
-                        error
-                    });
+                    this.logger.error(LID.StartLifeInterval, { error });
                 });
             }
         }, interval);
     }
 
     private lifeCycle(liveOnce = true): Promise<void> {
-        this.dev.debug("lifeCycle", `liveOnce = ${liveOnce}`);
+        this.logger.debug(LID.Tick);
         if (this.hasFlag("isRunning")) {
-            const promise = this.fetchTelegramUpdates();
-            return promise.then((data) => {
-                this.dev.debug("lifeCycle.ok", {
-                    message: data
-                });
+            return this.fetchTelegramUpdates().then(() => {
                 return liveOnce ? Promise.resolve() : this.lifeCycle(false);
-            }).catch((error: any) => {
-                this.dev.error("lifeCycle", {
-                    error
-                });
+            }).catch((e) => {
+                const error = handleTelegramResponse(e);
+                this.logger.error(LID.LifeCycle, { error });
                 return Promise.reject(error);
             });
         } else {
-            this.dev.debug("lifeCycle", "not running");
+            this.logger.debug(LID.LifeCycle, "not running");
             return Promise.resolve();
         }
     }
@@ -329,59 +323,55 @@ export class TeleBot {
         limit: number = this.polling.limit,
         timeout: number = this.polling.timeout
     ) {
-        this.dev.debug("fetchTelegramUpdates");
-
-        const promise = this.telegramRequest<any, Update[]>("getUpdates", { offset, limit, timeout });
-
-        return promise.then((updates) => {
-            let processPromise: Promise<any> = Promise.resolve();
-
-            this.dev.debug("fetchTelegramUpdates.updates", {
-                message: updates
+        this.logger.debug(LID.FetchTelegramUpdates, {
+            meta: { offset, limit, timeout }
+        });
+        const promise = this.telegramRequest<unknown, Update[]>("getUpdates", { offset, limit, timeout });
+        return promise.then((updates: Update[]) => {
+            let processPromise: Promise<unknown> = Promise.resolve();
+            this.logger.debug(LID.FetchTelegramUpdates, {
+                meta: { updates }
             });
-
             if (updates) {
                 processPromise = this.processTelegramUpdates(updates);
             }
-
             return processPromise.then(() => {
                 if (updates && updates.length > 0) {
                     this.setOffset(++updates[updates.length - 1].update_id);
                 }
             });
-        }).catch((error: any) => {
-            this.dev.error("fetchTelegramUpdates", {
-                error
-            });
+        }).catch((e) => {
+            const error = normalizeError(e);
+            this.logger.error(LID.FetchTelegramUpdates, { error });
             return Promise.reject(error);
         });
     }
 
-    public processTelegramUpdates(updates: Update[]) {
-        const processorPromises: Promise<any>[] = [];
-
-        this.dev.info("processTelegramUpdates", {
-            data: updates
+    public async processTelegramUpdates(updates: Update[]): Promise<unknown> {
+        const processorPromises: Promise<unknown>[] = [];
+        this.logger.info(LID.ProcessTelegramUpdates, {
+            meta: { updates }
         });
-
-        updates.forEach((update: Update) => {
-            for (const processorName of Object.keys(TELEGRAM_UPDATE_PROCESSORS)) {
-                const name = processorName as TelegramUpdateProcessors;
-                if (name in update) {
-                    const updatePayload = update[name];
-                    processorPromises.push(TELEGRAM_UPDATE_PROCESSORS[name].call(this, updatePayload, {}));
+        for (const update of updates) {
+            for (const name of Object.keys(TELEGRAM_UPDATE_PROCESSORS)) {
+                const processorName = name as TelegramUpdateProcessors;
+                if (processorName in update) {
+                    const updatePayload = await this.run(processorName, update[processorName]);
+                    if (updatePayload) {
+                        processorPromises.push(TELEGRAM_UPDATE_PROCESSORS[processorName].call(this, updatePayload, {}));
+                    }
                     break;
                 }
             }
-        });
+        }
 
-        return Promise.all(processorPromises);
+        return this.flags.waitEvents ? Promise.all(processorPromises) : Promise.resolve(processorPromises);
     }
 
     public telegramRequest<Request = Record<string, unknown>, Response = Record<string, unknown>>(endpoint: string, payload: Request): Promise<Response> {
         const url = `${this.botAPI}/${endpoint}`;
-        this.dev.info("telegramRequest", {
-            data: { endpoint, payload }
+        this.logger.info(LID.TelegramRequest, {
+            meta: { endpoint, payload }
         });
         return axios.request<TelegramResponse<Response>>({
             url,
@@ -389,26 +379,23 @@ export class TeleBot {
             data: payload,
             method: "post",
             responseType: "json",
-            maxContentLength: payload instanceof FormData ? Infinity : undefined
+            maxContentLength: payload instanceof FormData ? Infinity : undefined,
+            proxy: this.proxy
         })
             .then((response) => {
                 const { ok, result } = response.data;
-                this.dev.info("telegramRequest.response", {
-                    data: response.data
+                this.logger.http(LID.TelegramRequest, {
+                    meta: { response: response.data }
                 });
                 if (!ok || result === undefined) {
                     return Promise.reject(response.data);
                 }
                 return result;
             })
-            .catch((error) => {
-                const e = handleTelegramResponse(error);
-                this.dispatch("error", e);
-                this.dev.error("telegramRequest.response", {
-                    message: toString(e),
-                    error: e
-                });
-                return Promise.reject(e);
+            .catch((e) => {
+                const error = handleTelegramResponse(e);
+                this.logger.error(LID.TelegramRequest, { error });
+                return Promise.reject(error);
             });
 
     }
@@ -419,18 +406,19 @@ export class TeleBot {
         optional = {},
         isDataForm
     }: {
-        method: string;
+        method: TeleBotMethodName;
         required?: Record<string, any>;
         optional?: Record<string, any>;
         isDataForm?: boolean;
     }): Promise<T> {
 
-        let payload = Object.assign({}, required, optional);
-
+        const { required: modifiedRequired, optional: modifiedOptional } = await this.run(
+            method, { required, optional }, { method, required, optional, isDataForm }
+        );
+        let payload = Object.assign({}, modifiedRequired, modifiedOptional);
         if (isDataForm) {
             const form = new FormData();
-
-            Object.entries(payload).forEach(([key, value]) => {
+            for (const [key, value] of Object.entries(payload)) {
                 let payload = value;
                 if (Array.isArray(value)) {
                     const data = value.map((inputMedia: InputMedia) => {
@@ -444,14 +432,12 @@ export class TeleBot {
                     payload = JSON.stringify(data);
                 }
                 form.append(key, payload);
-            });
-
+            }
             payload = form;
         }
 
-        this.dev.debug("telegramMethod", {
-            message: `${method} ${toString(payload)}`,
-            data: { required, optional }
+        this.logger.debug(LID.TelegramMethod, {
+            meta: { method, required, optional }
         });
 
         return this.telegramRequest<any, T>(method, payload);
@@ -465,64 +451,154 @@ export class TeleBot {
         return Promise.all(tasks);
     }
 
-    public on<T extends keyof TeleBotEventNames>(event: T | T[], processor: TeleBotEventProcessor<T>): TeleBotEventProcessor<T> {
-        const events = convertToArray<T>(event);
-        events.forEach((key) => {
-            const eventHandler = this.events.get(key);
-            if (eventHandler) {
-                eventHandler.processors.add(processor);
+    public hears<T extends TeleBotHearsName>(text: T | T[], processor: TeleBotHearsProcessor<T>): void {
+        this.logger.debug(LID.Hears, {
+            meta: { on: text }
+        });
+        for (const value of convertToArray(text)) {
+            const handler = this.hearsEvents.get(value);
+            if (handler) {
+                handler.processors.add(processor);
             } else {
-                this.events.set(key, {
+                this.hearsEvents.set(value, {
                     processors: new Set([processor])
                 });
             }
+        }
+    }
+
+    public dispatchHears(text: string, payload: TeleBotHearsPayload): Promise<unknown[]> {
+        this.logger.debug(LID.Hears, {
+            meta: { dispatch: text }
         });
-        return processor;
-    }
-
-    public dispatch<T>(event: EventTypes, data?: Record<string, unknown>, context?: ContextPayload) {
-        return this._dispatch<T>("", event, data, context);
-    }
-
-    public off(processor: TeleBotEventProcessor<any>): void {
-        return undefined;
-    }
-
-    private _dispatch<T>(storageId: string, events: ComplexEvents, payload?: Record<string, unknown>, context: ContextPayload = {}) {
-        const storage = this.events;
-        const promise: Promise<any>[] = [];
-
-        events = convertToArray<any>(events);
-
-        events.forEach((name) => {
-            const handler = storage.get(name);
-            if (handler) {
-                for (const processor of handler.processors) {
-                    promise.push(new Promise<void>((resolve, reject) => {
-                        const output = processor.call(this, payload, {
-                            unsubscribe: this.off.bind(this, processor),
-                            ...context
-                        });
-                        if (output instanceof Promise) {
-                            output.then(resolve)
-                                .catch((error) => {
-                                    error.payload = payload;
-                                    if (name !== "error") {
-                                        this.dispatch("error", error);
-                                    } else {
-                                        reject(error);
-                                    }
-                                    resolve();
+        const eventPromise: Promise<unknown>[] = [];
+        for (const textValue of convertToArray(text)) {
+            for (const hearsEvent of this.hearsEvents.keys()) {
+                let match: PropertyType<TeleBotHearsContext<TeleBotHearsName>, "match"> | null = textValue;
+                if (hearsEvent instanceof RegExp) {
+                    match = textValue.match(hearsEvent);
+                    if (!match) {
+                        continue;
+                    }
+                } else if (hearsEvent !== textValue) {
+                    continue;
+                }
+                const eventHandler = this.hearsEvents.get(hearsEvent)!;
+                for (const processor of eventHandler.processors) {
+                    eventPromise.push(new Promise<unknown>((resolve) => {
+                        try {
+                            const processorOutput = processor.call(this, payload, { match: match! });
+                            if (processorOutput instanceof Promise) {
+                                processorOutput.then(resolve).catch((e) => {
+                                    const error = normalizeError(e, payload);
+                                    this.logger.error(LID.DispatchHears, { error });
+                                    this.dispatch("error", error, { methodName: textValue });
+                                    resolve(error);
                                 });
-                        } else {
-                            resolve(output);
+                            } else {
+                                resolve(processorOutput);
+                            }
+                        } catch (e) {
+                            const error = normalizeError(e, payload);
+                            this.logger.error(LID.DispatchHears, { error });
+                            this.dispatch("error", error, { methodName: textValue });
+                            resolve(error);
                         }
                     }));
                 }
             }
-        });
+        }
+        return this.flags.waitEvents ? Promise.all(eventPromise) : Promise.resolve(eventPromise);
+    }
 
-        return Promise.all(promise);
+    public mod<T extends TeleBotModifierName>(name: T, processor: TeleBotModifierProcessor<T>): void {
+        this.logger.debug(LID.Modifier, {
+            meta: { name }
+        });
+        const eventHandler = this.modifiers.get(name);
+        if (eventHandler) {
+            eventHandler.processors.add(processor);
+        } else {
+            this.modifiers.set(name, {
+                processors: new Set([processor])
+            });
+        }
+    }
+
+    public async run<T extends TeleBotModifierName, P = TeleBotModifierPayload>(event: T, payload: P, context?: TeleBotModifierContext): Promise<P> {
+        this.logger.debug(LID.Modifier, {
+            meta: { run: event }
+        });
+        const handler = this.modifiers.get(event);
+        if (handler) {
+            for (const processor of handler.processors) {
+                payload = await processor.call(this, payload, context);
+            }
+        }
+        return payload;
+    }
+
+    public on<T extends TeleBotEventName>(event: T | T[], processor: TeleBotEventProcessor<T>): void {
+        this.logger.debug(LID.Event, {
+            meta: { on: event }
+        });
+        for (const eventName of convertToArray(event)) {
+            const eventHandler = this.events.get(eventName);
+            if (eventHandler) {
+                eventHandler.processors.add(processor);
+            } else {
+                this.events.set(eventName, {
+                    processors: new Set([processor])
+                });
+            }
+        }
+    }
+
+    public dispatch<T extends TeleBotEventName, P = TeleBotEventPayload<T>>(event: T | T[], payload?: P, context: TeleBotEventContext = {}): Promise<unknown> {
+        this.logger.debug(LID.Event, {
+            meta: { dispatch: event }
+        });
+        const eventPromise: Promise<unknown>[] = [];
+        for (const eventName of convertToArray(event)) {
+            const eventHandler = this.events.get(eventName);
+            if (!eventHandler) {
+                continue;
+            }
+            const eventContext = { eventName, ...context };
+            for (const processor of eventHandler.processors) {
+                eventPromise.push(new Promise<unknown>((resolve) => {
+                    try {
+                        const processorOutput = processor.call(this, payload, eventContext);
+                        if (processorOutput instanceof Promise) {
+                            processorOutput.then(resolve).catch((e) => {
+                                const error = normalizeError(e, payload);
+                                this.logger.error(LID.Dispatch, { error });
+                                if (eventName !== "error") {
+                                    this.dispatch("error", error, eventContext);
+                                } else {
+                                    // TODO: Error in error processor
+                                    console.log("ASYNC EVENT ERROR", error, eventContext);
+                                }
+                                resolve(error);
+                            });
+                        } else {
+                            resolve(processorOutput);
+                        }
+                    } catch (e) {
+                        const error = normalizeError(e, payload);
+                        this.logger.error(LID.Dispatch, { error });
+                        if (eventName !== "error") {
+                            this.dispatch("error", error, eventContext);
+                        } else {
+                            // TODO: Error in error processor
+                            console.log("SYNC EVENT ERROR", error, eventContext);
+                        }
+                        resolve(error);
+                    }
+                }));
+            }
+        }
+        return this.flags.waitEvents ? Promise.all(eventPromise) : Promise.resolve(eventPromise);
     }
 
 }
