@@ -1,8 +1,10 @@
+.idea/
 node_modules/
 examples/
 resources/
 tests/
 src/
+temp/
 
 .travis.yml
 .eslintrc.js
