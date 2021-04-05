@@ -20,6 +20,8 @@ import {
     TeleBotModifierPayload,
     TeleBotModifierProcessor,
     TeleBotOptions,
+    TeleBotPlugin,
+    TeleBotPluginContext,
     TeleBotPolling,
     WebhookOptions
 } from "./types/telebot";
@@ -77,6 +79,7 @@ export class TeleBot {
     private events = new Map<TeleBotEventName, TeleBotEvent>();
     private hearsEvents = new Map<TeleBotHearsName, TeleBotHears>();
     private modifiers = new Map<TeleBotModifierName, TeleBotModifier>();
+    private plugins = new Map<string, Omit<TeleBotPlugin, "plugin">>();
 
     constructor(options: TeleBotOptions | TelegramBotToken) {
         if (typeof options === "string") {
@@ -449,6 +452,21 @@ export class TeleBot {
 
     public parallel<T = unknown>(tasks: Promise<T>[]): Promise<T[]> {
         return Promise.all(tasks);
+    }
+
+    public plugin<T extends TeleBotPluginContext>(plugin: TeleBotPlugin<T>, context: T): void {
+        this.logger.info(LID.Plugin, { meta: plugin });
+        if (!this.plugins.get(plugin.id)) {
+            this.plugins.set(plugin.id, {
+                id: plugin.id,
+                name: plugin.name,
+                version: plugin.version,
+                author: plugin.author,
+                description: plugin.description,
+                homepage: plugin.homepage
+            });
+            plugin.plugin.call(this, this, context);
+        }
     }
 
     public hears<T extends TeleBotHearsName>(text: T | T[], processor: TeleBotHearsProcessor<T>): void {

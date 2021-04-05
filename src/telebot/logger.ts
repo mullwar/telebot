@@ -20,6 +20,7 @@ export const LID = {
     ProcessTelegramUpdates: "ProcessTelegramUpdates",
     TelegramRequest: "TelegramRequest",
     TelegramMethod: "TelegramMethod",
+    Plugin: "Plugin",
     Event: "Event",
     Modifier: "Modifier",
     Dispatch: "Dispatch",

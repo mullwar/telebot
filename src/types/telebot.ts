@@ -16,6 +16,7 @@ import { TeleBotLogOptions } from "../telebot/logger";
 import { SomeKindOfError } from "../errors";
 import { TelegramUpdateKeys } from "../telebot/processors";
 import { AxiosProxyConfig } from "axios";
+import { TeleBot } from "../telebot";
 
 export type TeleBotOptions = {
     token: TelegramBotToken;
@@ -230,3 +231,15 @@ export type TeleBotMethodName =
     "replyKeyboard" |
     "replyKeyboardRemove" |
     "forceReply";
+
+export type TeleBotPluginContext = Record<string, unknown>;
+
+export type TeleBotPlugin<T = TeleBotPluginContext> = {
+    id: string;
+    name: string;
+    version: string;
+    author?: string;
+    description?: string;
+    homepage?: string;
+    plugin(this: TeleBot, bot: TeleBot, context: T): void;
+};
