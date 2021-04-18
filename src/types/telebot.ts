@@ -4,13 +4,15 @@ import {
     ChosenInlineResult,
     InlineQuery,
     Message,
+    MethodInputFile,
     Poll,
     PollAnswer,
     PreCheckoutQuery,
     ShippingQuery,
     TelegramBotToken,
     TelegramMessageNames,
-    TelegramUpdateNames
+    TelegramUpdateNames,
+    Update
 } from "./telegram";
 import { TeleBotLogOptions } from "../telebot/logger";
 import { SomeKindOfError } from "../errors";
@@ -28,13 +30,21 @@ export type TeleBotOptions = {
     log?: boolean | TeleBotLogOptions;
 };
 
-export type WebhookOptions = {
-    url: string;
-    host?: string;
-    port?: number;
-    key?: string;
-    cert?: string;
+export type WebhookServer = {
+    serverHost?: string;
+    serverPort?: number;
+    serverKey?: string;
+    serverCert?: string;
 };
+
+export type WebhookOptions = string | {
+    url: string;
+    certificate?: MethodInputFile;
+    ip_address?: string,
+    max_connections?: number,
+    allowed_updates?: TelegramUpdateNames[],
+    drop_pending_updates?: boolean
+} & WebhookServer;
 
 export type TeleBotFlags = {
     isRunning: boolean;
@@ -108,6 +118,7 @@ export type TeleBotEventNames = {
     voice_chat_ended: TeleBotEventMessageUpdate<"voice_chat_ended">;
     voice_chat_participants_invited: TeleBotEventMessageUpdate<"voice_chat_participants_invited">;
     // TelegramUpdateNames
+    update: Update;
     message: Message;
     edited_message: Message;
     channel_post: Message;

@@ -34,7 +34,6 @@ export class TelegramError<T = unknown> extends Error {
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function handleTelegramResponse(error: any): SomeKindOfError {
     if (error.isAxiosError) {
         const { response } = (error as AxiosError<TelegramErrorResponse>);
@@ -42,7 +41,7 @@ export function handleTelegramResponse(error: any): SomeKindOfError {
             return new TelegramError(response);
         }
     }
-    return error;
+    return normalizeError(error);
 }
 
 export function normalizeError(error: any, payload?: unknown): SomeKindOfError {

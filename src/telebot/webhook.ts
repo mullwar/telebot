@@ -1,65 +1,68 @@
 import fs from "fs";
-import url from "url";
 import http, { IncomingMessage, ServerResponse } from "http";
 import https from "https";
 import { TeleBot } from "../telebot";
-import { WebhookOptions } from "../types/telebot";
+import { WebhookServer } from "../types/telebot";
 import { Update } from "../types/telegram";
-import { convertToArray } from "../utils";
+import { convertToArray, getUrlPathname } from "../utils";
 import { LID } from "./logger";
 import { normalizeError } from "../errors";
 
 export const ALLOWED_WEBHOOK_PORTS = [80, 88, 443, 8443];
 
-export async function webhookServer(bot: TeleBot, options: WebhookOptions): Promise<void> {
-    const { host, port } = options;
+export function craftWebhookPath(url: string, token: string): string {
+    return `${getUrlPathname(url)}${token}`;
+}
 
-    const key = options.key && fs.readFileSync(options.key);
-    const cert = options.cert && fs.readFileSync(options.cert);
+const listener = (bot: TeleBot, path: string) => (request: IncomingMessage, response: ServerResponse) => {
+    if (request.url === path && request.method === "POST") {
+        const body: string[] = [];
 
-    const pathname = url.parse(options.url).pathname;
+        request.on("data", (chunk) => body.push(chunk));
+        request.on("end", () => {
+            let update: Update[];
 
-    function listener(request: IncomingMessage, response: ServerResponse) {
-        const path = pathname && pathname !== "/" ? pathname : "";
-        const endpoint = `${path}/${bot.getToken()}`;
+            try {
+                update = convertToArray<Update>(JSON.parse(body.join()));
+            } catch (error) {
+                bot.logger.error(LID.Webhook, { error });
+                response.writeHead(415);
+                response.end();
+                return error;
+            }
 
-        if (request.url === endpoint && request.method === "POST") {
-            const body: string[] = [];
+            bot.logger.debug(LID.Webhook, { meta: { update } });
 
-            request.on("data", (chunk) => body.push(chunk));
-            request.on("end", () => {
-                let update: Update[];
-
-                try {
-                    update = convertToArray<Update>(JSON.parse(body.join()));
-                } catch (error) {
-                    bot.logger.error(LID.Webhook, { error });
-                    response.writeHead(415);
-                    response.end();
-                    return error;
-                }
-
-                bot.logger.debug(LID.Webhook, { meta: { update } });
-
-                bot.processTelegramUpdates(update).catch((e) => {
-                    const error = normalizeError(e);
-                    bot.logger.error(LID.Webhook, { error });
-                    response.writeHead(500);
-                    return error;
-                }).finally(() => {
-                    response.end();
-                });
+            bot.processTelegramUpdates(update).catch((e) => {
+                const error = normalizeError(e);
+                bot.logger.error(LID.Webhook, { error });
+                response.writeHead(500);
+                return error;
+            }).finally(() => {
+                response.end();
             });
-        }
-
+        });
     }
 
-    const server = key && cert ? https.createServer({ key, cert }, listener) : http.createServer(listener);
+};
 
-    server.listen(port, host, () => {
-        bot.logger.info(LID.Webhook, { meta: { port, host } });
-        // eslint-disable-next-line no-console
-        console.log(`TeleBot started${key ? " secure" : ""} webhook server on "${host}:${port}"`);
+export function creteWebhookServer(bot: TeleBot, options: WebhookServer & { url: string }): Promise<void> {
+    const { serverHost, serverPort } = options;
+
+    const key = options.serverKey && fs.readFileSync(options.serverKey);
+    const cert = options.serverCert && fs.readFileSync(options.serverCert);
+
+    const isSecure = !!(key && cert);
+    const path = craftWebhookPath(options.url, bot.getToken());
+
+    const server = isSecure ?
+        https.createServer({ key, cert }, listener(bot, path)) :
+        http.createServer(listener(bot, path));
+
+    return new Promise((resolve) => {
+        server.listen(serverPort, serverHost, () => {
+            bot.logger.info(LID.Webhook, { meta: { serverHost, serverPort } });
+            resolve();
+        });
     });
-
 }

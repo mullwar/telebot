@@ -413,10 +413,10 @@ TeleBot.prototype.deleteChatStickerSet = function(chat_id) {
     });
 };
 
-TeleBot.prototype.answerCallbackQuery = function(callback_query_id, results, optional) {
+TeleBot.prototype.answerCallbackQuery = function(callback_query_id, optional) {
     return this.telegramMethod<true>({
         method: "answerCallbackQuery",
-        required: { callback_query_id, results },
+        required: { callback_query_id },
         optional
     });
 };
@@ -624,6 +624,7 @@ TeleBot.prototype.getGameHighScores = function(user_id, optional) {
 TeleBot.prototype.setWebhook = function(url, optional) {
     return this.telegramMethod<WebhookResponse>({
         method: "setWebhook",
+        isDataForm: false, // TODO
         required: { url },
         optional
     });

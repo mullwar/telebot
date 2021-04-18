@@ -400,7 +400,6 @@ declare module "../telebot" {
 
         answerCallbackQuery(
             callback_query_id: string,
-            results: InlineQueryResult[],
             optional?: {
                 text?: string;
                 show_alert?: boolean;
@@ -599,7 +598,7 @@ declare module "../telebot" {
                 certificate?: MethodInputFile;
                 ip_address?: string;
                 max_connections?: number;
-                allowed_updates?: TelegramUpdateNames;
+                allowed_updates?: TelegramUpdateNames[];
                 drop_pending_updates?: boolean;
             }
         ): MethodResponse<true>;

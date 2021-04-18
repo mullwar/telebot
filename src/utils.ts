@@ -1,15 +1,19 @@
-import { parse as nodeParseUrl, UrlWithStringQuery } from "url";
+import { URL } from "url";
 
 export function convertToArray<T>(data: T | T[]): Array<T> {
     return Array.isArray(data) ? data : [data];
 }
 
-export function parseUrl(url: string): UrlWithStringQuery {
-    return nodeParseUrl(url);
+export function parseUrl(url: string): URL {
+    return new URL(url);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function toString(data: any): string {
+export function getUrlPathname(url: string): string {
+    const pathname = parseUrl(url).pathname;
+    return pathname.endsWith("/") ? pathname : pathname + "/";
+}
+
+export function stringify(data: unknown): string {
     if (typeof data === "string") {
         return data;
     }
@@ -20,6 +24,6 @@ export function toString(data: any): string {
     }
 }
 
-export function randomString(): string {
+export function randomId(): string {
     return Math.random().toString(20).substr(2, 14);
 }

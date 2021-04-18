@@ -25,7 +25,15 @@ import {
     TeleBotPolling,
     WebhookOptions
 } from "./types/telebot";
-import { InputMedia, TelegramBotToken, TelegramResponse, TelegramUpdateNames, Update, User } from "./types/telegram";
+import {
+    InputMedia,
+    TelegramBotToken,
+    TelegramResponse,
+    TelegramUpdateNames,
+    Update,
+    User,
+    WebhookInfo
+} from "./types/telegram";
 import {
     ERROR_TELEBOT_ALREADY_RUNNING,
     handleTelegramResponse,
@@ -35,8 +43,8 @@ import {
 } from "./errors";
 import { Levels, LID, TeleBotLogger, TeleBotLogOptions } from "./telebot/logger";
 import { TELEGRAM_UPDATE_PROCESSORS, TelegramUpdateProcessors } from "./telebot/processors";
-import { ALLOWED_WEBHOOK_PORTS, webhookServer } from "./telebot/webhook";
-import { convertToArray, parseUrl, randomString } from "./utils";
+import { ALLOWED_WEBHOOK_PORTS, craftWebhookPath, creteWebhookServer } from "./telebot/webhook";
+import { convertToArray, parseUrl, randomId } from "./utils";
 import { PropertyType } from "./types/utilites";
 
 const TELEGRAM_BOT_API = (botToken: string) => `https://api.telegram.org/bot${botToken}`;
@@ -46,8 +54,8 @@ export const DEFAULT_POLLING: TeleBotPolling = {
     interval: false,
     timeout: 0,
     limit: 100,
-    retryTimeout: 3000,
-    retryTimes: Infinity
+    retryTimeout: 3000, // TODO
+    retryTimes: Infinity // TODO
 };
 
 export const DEFAULT_DEBUG: TeleBotLogOptions = {
@@ -97,6 +105,14 @@ export class TeleBot {
             log
         } = options;
 
+        if (log) {
+            this.debug = log !== true ? log : DEFAULT_DEBUG;
+        } else if (log === false) {
+            this.debug = false;
+        }
+
+        this.logger = new TeleBotLogger("telebot", this.debug as TeleBotLogOptions);
+
         this.botToken = token;
 
         if (!this.botToken) {
@@ -141,41 +157,23 @@ export class TeleBot {
                 this.polling.retryTimeout = retryTimeout;
             }
 
-        } else if (webhook) {
-
+        } else if (webhook && typeof webhook !== "string") {
             const { url } = webhook;
-            const { port: urlPort, protocol } = parseUrl(url);
-            const webhookPort = urlPort ? parseInt(urlPort) : 80;
+            const { port, protocol } = parseUrl(url);
+            const webhookPort = port ? parseInt(port) : 80;
 
             if (!protocol?.toLowerCase().startsWith("https")) {
-                throw new TeleBotError(`Webhook '${url}' must be HTTPS secured.`);
+                throw new TeleBotError(`Webhook "${url}" must be HTTPS secured.`);
             }
 
             if (!ALLOWED_WEBHOOK_PORTS.includes(webhookPort)) {
-                throw new TeleBotError(`Webhook port '${webhookPort}' is not supported by Telegram Bot API. Use allowed webhook ports: ${ALLOWED_WEBHOOK_PORTS.join(", ")}`);
+                throw new TeleBotError(`Webhook port "${webhookPort}" is not supported by Telegram Bot API. Use allowed webhook ports: ${ALLOWED_WEBHOOK_PORTS.join(", ")}`);
             }
-
-            // if (host) {
-            //     throw new TeleBotError("Webhook host is required.");
-            // }
-            //
-            // if (!port || !Number.isInteger(port) || port <= 0) {
-            //     throw new TeleBotError(`Invalid webhook port: '${port}'`);
-            // }
-
         }
 
         if (allowedUpdates !== undefined && Array.isArray(allowedUpdates) && allowedUpdates.length) {
             this.allowedUpdates = allowedUpdates;
         }
-
-        if (log) {
-            this.debug = this.debug !== true ? log : DEFAULT_DEBUG;
-        } else if (log === false) {
-            this.debug = false;
-        }
-
-        this.logger = new TeleBotLogger("telebot", this.debug as TeleBotLogOptions);
 
         this.logger.debug(LID.Initial, {
             meta: {
@@ -199,26 +197,38 @@ export class TeleBot {
         };
     }
 
-    public async start(): Promise<void> {
+    public async start(): Promise<void | WebhookInfo> {
         const {
             interval
         } = this.polling;
 
         const webhook = this.webhook;
+        const deleteWebhook = async () => await this.deleteWebhook();
 
         if (!this.hasFlag("isRunning")) {
             this.setFlag("isRunning");
             try {
-                const deleteWebhook = async () => await this.deleteWebhook();
                 this.me = await this.getMe();
                 if (webhook) {
-                    const url = `${webhook.url}/${this.getToken()}`;
-                    await this.setWebhook(url, {
-                        certificate: webhook.cert
-                    });
-                    if (webhook.host && webhook.port) {
-                        await webhookServer(this, webhook);
+                    if (typeof webhook === "string") {
+                        await this.setWebhook(webhook);
+                        return this.getWebhookInfo();
+                    } else {
+                        let url = webhook.url;
+                        if (webhook.serverHost && webhook.serverPort) {
+                            url = `https://${parseUrl(webhook.url).host}${craftWebhookPath(webhook.url, this.getToken())}`;
+                            await creteWebhookServer(this, webhook);
+                        }
+                        await this.setWebhook(url, {
+                            certificate: webhook.certificate,
+                            ip_address: webhook.ip_address,
+                            max_connections: webhook.max_connections,
+                            allowed_updates: webhook.allowed_updates || this.allowedUpdates,
+                            drop_pending_updates: webhook.drop_pending_updates
+                        });
+                        return this.getWebhookInfo();
                     }
+
                 } else if (interval && interval > 0) {
                     await deleteWebhook();
                     this.startLifeInterval(interval);
@@ -232,10 +242,11 @@ export class TeleBot {
                 this.logger.error(LID.TeleBot, { error });
                 // eslint-disable-next-line no-console
                 console.error("==== TELEBOT GLOBAL ERROR ====", error);
+                this.stop();
                 return Promise.reject(error);
             }
         } else {
-            await this.stop();
+            this.stop();
             throw new TeleBotError(ERROR_TELEBOT_ALREADY_RUNNING);
         }
 
@@ -243,11 +254,11 @@ export class TeleBot {
 
     public async restart(): Promise<unknown> {
         this.logger.info(LID.Restart);
-        await this.stop();
+        this.stop();
         return this.start();
     }
 
-    public async stop(): Promise<void> {
+    public stop(): void {
         this.logger.info(LID.Stop);
         this.unsetFlag("isRunning");
         if (this.lifeIntervalFn) {
@@ -311,7 +322,7 @@ export class TeleBot {
             return this.fetchTelegramUpdates().then(() => {
                 return liveOnce ? Promise.resolve() : this.lifeCycle(false);
             }).catch((e) => {
-                const error = handleTelegramResponse(e);
+                const error = normalizeError(e);
                 this.logger.error(LID.LifeCycle, { error });
                 return Promise.reject(error);
             });
@@ -356,12 +367,14 @@ export class TeleBot {
             meta: { updates }
         });
         for (const update of updates) {
+            const updatePayload = await this.run("update", update);
+            processorPromises.push(TELEGRAM_UPDATE_PROCESSORS["update"].call(this, updatePayload, {}));
             for (const name of Object.keys(TELEGRAM_UPDATE_PROCESSORS)) {
                 const processorName = name as TelegramUpdateProcessors;
-                if (processorName in update) {
-                    const updatePayload = await this.run(processorName, update[processorName]);
-                    if (updatePayload) {
-                        processorPromises.push(TELEGRAM_UPDATE_PROCESSORS[processorName].call(this, updatePayload, {}));
+                if (processorName !== "update" && processorName in update) {
+                    const payload = await this.run(processorName, updatePayload[processorName]);
+                    if (payload) {
+                        processorPromises.push(TELEGRAM_UPDATE_PROCESSORS[processorName].call(this, payload, {}));
                     }
                     break;
                 }
@@ -387,7 +400,7 @@ export class TeleBot {
         })
             .then((response) => {
                 const { ok, result } = response.data;
-                this.logger.http(LID.TelegramRequest, {
+                this.logger.http(LID.TelegramResponse, {
                     meta: { response: response.data }
                 });
                 if (!ok || result === undefined) {
@@ -426,7 +439,7 @@ export class TeleBot {
                 if (Array.isArray(value)) {
                     const data = value.map((inputMedia: InputMedia) => {
                         if (inputMedia.media instanceof ReadStream) {
-                            const fileId = randomString();
+                            const fileId = randomId();
                             form.append(fileId, inputMedia.media);
                             inputMedia.media = `attach://${fileId}`;
                         }

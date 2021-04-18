@@ -54,7 +54,7 @@ const MESSAGE_TYPES: Array<TelegramMessageNames> = [
     "voice_chat_participants_invited"
 ];
 
-export type TelegramUpdateKeys = Omit<Update, "update_id">;
+export type TelegramUpdateKeys = Omit<Update, "update_id"> & { update: Update };
 
 type TelegramUpdateType = Exclude<TypeValues<TelegramUpdateKeys>, undefined> & any; // TODO: fix union problem:
 type TelegramUpdateFunction = (this: TeleBot, update: TelegramUpdateType, context: TeleBotEventContext) => Promise<unknown>;
@@ -62,6 +62,9 @@ type TelegramUpdateFunction = (this: TeleBot, update: TelegramUpdateType, contex
 export type TelegramUpdateProcessors = keyof Required<TelegramUpdateKeys>;
 
 export const TELEGRAM_UPDATE_PROCESSORS: Record<TelegramUpdateProcessors, TelegramUpdateFunction> = {
+    update(this: TeleBot, update: Update, context: TeleBotEventContext): Promise<unknown> {
+        return this.dispatch("update", update, context);
+    },
     edited_message(this: TeleBot, messageUpdate: Message, context: TeleBotEventContext): Promise<unknown> {
         return this.dispatch("edited_message", messageUpdate, context);
     },

@@ -1,5 +1,5 @@
 import { PropertyType } from "../types/utilites";
-import { toString } from "../utils";
+import { stringify } from "../utils";
 import { SomeKindOfError } from "../errors";
 
 export const LID = {
@@ -19,6 +19,7 @@ export const LID = {
     FetchTelegramUpdates: "FetchTelegramUpdates",
     ProcessTelegramUpdates: "ProcessTelegramUpdates",
     TelegramRequest: "TelegramRequest",
+    TelegramResponse: "TelegramResponse",
     TelegramMethod: "TelegramMethod",
     Plugin: "Plugin",
     Event: "Event",
@@ -89,7 +90,7 @@ export class TeleBotLogger {
 
         const t = new Date();
         const logId = [id, code].filter(i => !!i && i !== 0).join(":");
-        const text = [message || toString(meta), error].filter(i => !!i).join(" ");
+        const text = [message || stringify(meta), error].filter(i => !!i).join(" ");
 
         // eslint-disable-next-line no-console
         console.log(`[${t.toLocaleString("en-GB")}] ${level}: ${logId} ${text}`);
@@ -104,7 +105,7 @@ export class TeleBotLogger {
             if (typeof props === "string") {
                 props = { message: props };
             } else if (props?.meta) {
-                props.message = toString(props?.meta);
+                props.message = stringify(props?.meta);
             }
             this.logger({
                 ...props,

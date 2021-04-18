@@ -1,10 +1,10 @@
-import { TeleBotEventNames, TeleBotEventProcessor } from "../src/types/telebot";
+import { TeleBotEventName, TeleBotEventProcessor } from "../src/types/telebot";
 import { Message, Update } from "../src/types/telegram";
 import { TeleBot } from "../src";
 import { MOCK_URL } from "./mock/server";
 
 type TestEvent = {
-    on: keyof TeleBotEventNames;
+    on: TeleBotEventName;
     update?: Update | Update[];
     processor: TeleBotEventProcessor<any>;
 };
@@ -25,6 +25,15 @@ function newUpdate(data: Record<string, any>) {
 }
 
 const EVENTS: TestEvent[] = [
+    {
+        on: "message",
+        update: newUpdate({
+            text: "any message event"
+        }),
+        processor(msg: Message) {
+            expect(msg.text).toBe("any message event");
+        }
+    },
     {
         on: "text",
         update: newUpdate({
