@@ -44,6 +44,8 @@ const listener = (bot: TeleBot, path: string) => (request: IncomingMessage, resp
         });
     }
 
+    response.writeHead(404);
+    response.end();
 };
 
 export function creteWebhookServer(bot: TeleBot, options: WebhookServer & { url: string }): Promise<void> {
