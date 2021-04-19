@@ -34,13 +34,7 @@ import {
     User,
     WebhookInfo
 } from "./types/telegram";
-import {
-    ERROR_TELEBOT_ALREADY_RUNNING,
-    handleTelegramResponse,
-    normalizeError,
-    SomeKindOfError,
-    TeleBotError
-} from "./errors";
+import { handleTelegramResponse, normalizeError, SomeKindOfError, TeleBotError } from "./errors";
 import { Levels, LID, TeleBotLogger, TeleBotLogOptions } from "./telebot/logger";
 import { TELEGRAM_UPDATE_PROCESSORS, TelegramUpdateProcessors } from "./telebot/processors";
 import { ALLOWED_WEBHOOK_PORTS, craftWebhookPath, creteWebhookServer } from "./telebot/webhook";
@@ -203,7 +197,6 @@ export class TeleBot {
         } = this.polling;
 
         const webhook = this.webhook;
-        const deleteWebhook = async () => await this.deleteWebhook();
 
         if (!this.hasFlag("isRunning")) {
             this.setFlag("isRunning");
@@ -230,24 +223,24 @@ export class TeleBot {
                     }
 
                 } else if (interval && interval > 0) {
-                    await deleteWebhook();
+                    await this.deleteWebhook();
                     this.startLifeInterval(interval);
                 } else if (interval === false) {
-                    await deleteWebhook();
+                    await this.deleteWebhook();
                     this.startLifeCycle();
                 }
             } catch (e) {
                 const error = normalizeError(e);
                 this.dispatch("error", error);
                 this.logger.error(LID.TeleBot, { error });
+                this.stop();
                 // eslint-disable-next-line no-console
                 console.error("==== TELEBOT GLOBAL ERROR ====", error);
-                this.stop();
                 return Promise.reject(error);
             }
         } else {
             this.stop();
-            throw new TeleBotError(ERROR_TELEBOT_ALREADY_RUNNING);
+            throw new TeleBotError("Telebot is already running. Terminate instance for safety.");
         }
 
     }

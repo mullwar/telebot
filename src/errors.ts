@@ -1,8 +1,7 @@
 import { TelegramErrorResponse } from "./types/telegram";
 import { AxiosError, AxiosResponse, Method } from "axios";
 
-export const ERROR_TELEBOT_ALREADY_RUNNING = "Telebot is already running. Terminate instance for safety.";
-export const ERROR_TELEBOT_MAXIMUM_RETRY = "Maximum retries exceeded. Terminate instance for safety.";
+export const ERROR_TELEBOT_MAXIMUM_RETRY = "Maximum retries exceeded. Terminate instance for safety."; // TODO
 
 export type SomeKindOfError = TeleBotError | TelegramError | Error | EvalError | RangeError | ReferenceError |
     SyntaxError | TypeError | URIError;

@@ -17,35 +17,31 @@ export function craftWebhookPath(url: string, token: string): string {
 const listener = (bot: TeleBot, path: string) => (request: IncomingMessage, response: ServerResponse) => {
     if (request.url === path && request.method === "POST") {
         const body: string[] = [];
-
         request.on("data", (chunk) => body.push(chunk));
         request.on("end", () => {
-            let update: Update[];
-
             try {
-                update = convertToArray<Update>(JSON.parse(body.join()));
+                const update = convertToArray<Update>(JSON.parse(body.join()));
+
+                bot.logger.debug(LID.Webhook, { meta: { update } });
+
+                bot.processTelegramUpdates(update).catch((e) => {
+                    const error = normalizeError(e);
+                    bot.logger.error(LID.Webhook, { error });
+                    response.writeHead(500);
+                    return error;
+                }).finally(() => {
+                    response.end();
+                });
             } catch (error) {
                 bot.logger.error(LID.Webhook, { error });
                 response.writeHead(415);
                 response.end();
-                return error;
             }
-
-            bot.logger.debug(LID.Webhook, { meta: { update } });
-
-            bot.processTelegramUpdates(update).catch((e) => {
-                const error = normalizeError(e);
-                bot.logger.error(LID.Webhook, { error });
-                response.writeHead(500);
-                return error;
-            }).finally(() => {
-                response.end();
-            });
         });
+    } else {
+        response.writeHead(404);
+        response.end();
     }
-
-    response.writeHead(404);
-    response.end();
 };
 
 export function creteWebhookServer(bot: TeleBot, options: WebhookServer & { url: string }): Promise<void> {
