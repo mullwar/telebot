@@ -100,7 +100,7 @@ test('events', t => {
 
 });
 
-test('mods', t => {
+test('mods', async t => {
 
     const defModCount = bot.buildInPlugins.length + bot.usePlugins.length;
 
@@ -109,6 +109,7 @@ test('mods', t => {
     }
 
     var delMe = x => x;
+    var delMeAsync = async x => x;
 
     t.is(all(bot.modList), defModCount);
 
@@ -117,20 +118,23 @@ test('mods', t => {
     bot.mod('custom', x => ++x);
     bot.mod('custom', delMe);
     bot.mod('custom', x => ++x);
+    bot.mod('custom', delMeAsync);
+    bot.mod('custom', async x => ++x);
 
     // Count
-    t.is(len('custom'), 4);
+    t.is(len('custom'), 6);
     t.is(all(bot.modList), 1 + defModCount);
 
     // Run
-    t.is(bot.modRun('custom', 5), 8);
+    t.is(await bot.modRun('custom', 5), 9);
 
     // Remove
     t.true(bot.removeMod('custom', delMe));
+    t.true(bot.removeMod('custom', delMeAsync));
     t.false(bot.removeMod('custom'));
     t.false(bot.removeMod('not_found'));
 
-    t.is(len('custom'), 3);
+    t.is(len('custom'), 4);
     t.is(all(bot.modList), 1 + defModCount);
 
 });
