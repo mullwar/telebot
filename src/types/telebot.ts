@@ -117,6 +117,7 @@ export type TeleBotEventNames = {
     voice_chat_started: TeleBotEventMessageUpdate<"voice_chat_started">;
     voice_chat_ended: TeleBotEventMessageUpdate<"voice_chat_ended">;
     voice_chat_participants_invited: TeleBotEventMessageUpdate<"voice_chat_participants_invited">;
+    voice_chat_scheduled: TeleBotEventMessageUpdate<"voice_chat_scheduled">;
     // TelegramUpdateNames
     update: Update;
     message: Message;

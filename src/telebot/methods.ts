@@ -554,7 +554,6 @@ TeleBot.prototype.sendInvoice = function(chat_id, {
     description,
     payload,
     provider_token,
-    start_parameter,
     currency,
     ...optional
 }) {
@@ -566,7 +565,6 @@ TeleBot.prototype.sendInvoice = function(chat_id, {
             description,
             payload,
             provider_token,
-            start_parameter,
             currency
         },
         optional

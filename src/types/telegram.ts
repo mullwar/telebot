@@ -159,12 +159,36 @@ export type InputVenueMessageContent = {
 
 export type InputContactMessageContent = Omit<Contact, "user_id">;
 
+export type InputInvoiceMessageContent = {
+    title: string;
+    description: string;
+    payload: string;
+    provider_token: string;
+    currency: string;
+    prices: LabeledPrice[];
+    max_tip_amount?: number;
+    suggested_tip_amounts?: number[];
+    provider_data?: string;
+    photo_url?: string;
+    photo_size?: number;
+    photo_width?: number;
+    photo_height?: number;
+    need_name?: boolean;
+    need_phone_number?: boolean;
+    need_email?: boolean;
+    need_shipping_address?: boolean;
+    send_phone_number_to_provider?: boolean;
+    send_email_to_provider?: boolean;
+    is_flexible?: boolean;
+};
+
 export type InlineQuery = {
     id: string;
     from: User;
-    location?: Location;
     query: string;
     offset: string;
+    chat_type?: ChatType;
+    location?: Location;
 };
 
 export type InlineQueryResult =
@@ -535,6 +559,7 @@ export type Message = {
     connected_website?: string;
     passport_data?: PassportData;
     proximity_alert_triggered?: ProximityAlertTriggered;
+    voice_chat_scheduled?: VoiceChatScheduled;
     voice_chat_started?: VoiceChatStarted;
     voice_chat_ended?: VoiceChatEnded;
     voice_chat_participants_invited?: VoiceChatParticipantsInvited;
@@ -729,6 +754,10 @@ export type VoiceChatParticipantsInvited = {
     users?: User[]
 };
 
+export type VoiceChatScheduled = {
+    start_date: number;
+};
+
 export type Game = {
     title: string;
     description: string;
@@ -873,7 +902,7 @@ export type ForceReply = {
     selective?: boolean;
 };
 
-export type ChatAction = "typing" | "upload_photo" | "record_video" | "upload_video" | "record_audio" | "upload_audio" |
+export type ChatAction = "typing" | "upload_photo" | "record_video" | "upload_video" | "record_voice" | "upload_voice" |
     "upload_document" | "find_location" | "record_video_note" | "upload_video_note";
 
 export type ChatType = "private" | "group" | "supergroup" | "channel";

@@ -525,9 +525,11 @@ declare module "../telebot" {
                 description: string;
                 payload: string;
                 provider_token: string;
-                start_parameter: string;
+                start_parameter?: string;
                 currency: string;
                 prices: LabeledPrice[];
+                max_tip_amount?: number;
+                suggested_tip_amounts?: number[];
                 provider_data?: string;
                 photo_url?: string;
                 photo_size?: number;
