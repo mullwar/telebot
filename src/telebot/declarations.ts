@@ -1,5 +1,6 @@
 import {
     BotCommand,
+    BotCommandScope,
     Chat,
     ChatAction,
     ChatId,
@@ -249,7 +250,7 @@ declare module "../telebot" {
             file_id: string,
         ): MethodResponse<string>;
 
-        kickChatMember(
+        banChatMember(
             chat_id: ChatId,
             user_id: number,
             optional?: {
@@ -380,7 +381,7 @@ declare module "../telebot" {
             chat_id: ChatId,
         ): MethodResponse<ChatMember[]>;
 
-        getChatMembersCount(
+        getChatMemberCount(
             chat_id: ChatId,
         ): MethodResponse<number>;
 
@@ -410,9 +411,25 @@ declare module "../telebot" {
 
         setMyCommands(
             commands: BotCommand[],
+            optional?: {
+                scope?: BotCommandScope;
+                language_code?: string;
+            }
         ): MethodResponse<true>;
 
-        getMyCommands(): MethodResponse<BotCommand[]>;
+        getMyCommands(
+            optional?: {
+                scope?: BotCommandScope;
+                language_code?: string;
+            }
+        ): MethodResponse<BotCommand[]>;
+
+        deleteMyCommands(
+            optional?: {
+                scope?: BotCommandScope;
+                language_code?: string;
+            }
+        ): MethodResponse<true>;
 
         editMessageText(
             props: {

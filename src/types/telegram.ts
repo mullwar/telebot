@@ -844,6 +844,7 @@ export type ReplyKeyboardMarkup = {
     keyboard: Array<KeyboardButton[]>;
     resize_keyboard?: boolean;
     one_time_keyboard?: boolean;
+    input_field_placeholder?: string;
     selective?: boolean;
 };
 
@@ -899,6 +900,7 @@ export type CallbackQuery = {
 
 export type ForceReply = {
     force_reply: true;
+    input_field_placeholder?: string;
     selective?: boolean;
 };
 
@@ -934,24 +936,64 @@ export type ChatPhoto = {
     big_file_unique_id: string;
 };
 
-type ChatMemberStatus = "creator" | "administrator" | "member" | "restricted" | "left" | "kicked";
+export type ChatMember = ChatMemberOwner | ChatMemberAdministrator | ChatMemberMember | ChatMemberRestricted |
+    ChatMemberLeft | ChatMemberBanned;
 
-export type ChatMember = {
+export type ChatMemberOwner = {
+    status: "creator";
     user: User;
-    status: ChatMemberStatus;
+    is_anonymous: boolean;
     custom_title?: string;
-    until_date?: number;
-    can_be_edited?: boolean;
-    can_manage_chat?: boolean;
+};
+
+export type ChatMemberAdministrator = {
+    status: "administrator";
+    user: User;
+    can_be_edited: boolean;
+    is_anonymous: boolean;
+    can_manage_chat: boolean;
+    can_delete_messages: boolean;
+    can_manage_voice_chats: boolean;
+    can_restrict_members: boolean;
+    can_promote_members: boolean;
+    can_change_info: boolean;
+    can_invite_users: boolean;
     can_post_messages?: boolean;
     can_edit_messages?: boolean;
-    can_delete_messages?: boolean;
-    can_manage_voice_chats?: boolean;
-    can_restrict_members?: boolean;
-    can_promote_members?: boolean;
-    is_member?: boolean;
-    is_anonymous?: boolean;
-} & ChatPermissions;
+    can_pin_messages?: boolean;
+    custom_title?: string;
+};
+
+export type ChatMemberMember = {
+    status: "member";
+    user: User;
+};
+
+export type ChatMemberRestricted = {
+    status: "restricted";
+    user: User;
+    is_member: boolean;
+    can_change_info: boolean;
+    can_invite_users: boolean;
+    can_pin_messages: boolean;
+    can_send_messages: boolean;
+    can_send_media_messages: boolean;
+    can_send_polls: boolean;
+    can_send_other_messages: boolean;
+    can_add_web_page_previews: boolean;
+    until_date: number;
+};
+
+export type ChatMemberLeft = {
+    status: "left";
+    user: User;
+};
+
+export type ChatMemberBanned = {
+    status: "kicked";
+    user: User;
+    until_date: number;
+};
 
 export type ChatInviteLink = {
     invite_link: string;
@@ -1043,3 +1085,38 @@ export type TelegramMessageOptional = {
     reply_markup?: ReplyMarkup;
     allow_sending_without_reply?: boolean;
 };
+
+export type BotCommandScopeDefault = {
+    type: "default";
+};
+
+export type BotCommandScopeAllPrivateChats = {
+    type: "all_private_chats";
+};
+
+export type BotCommandScopeAllGroupChats = {
+    type: "all_group_chats";
+};
+
+export type BotCommandScopeAllChatAdministrators = {
+    type: "all_chat_administrators";
+};
+
+export type BotCommandScopeChat = {
+    type: "chat";
+    chat_id?: string | number;
+};
+
+export type BotCommandScopeChatAdministrators = {
+    type: "chat_administrators";
+    chat_id?: string | number;
+};
+
+export type BotCommandScopeChatMember = {
+    type: "chat_member";
+    chat_id?: string | number;
+};
+
+export type BotCommandScope = BotCommandScopeDefault | BotCommandScopeAllPrivateChats | BotCommandScopeAllGroupChats |
+    BotCommandScopeAllChatAdministrators | BotCommandScopeChat | BotCommandScopeChatAdministrators |
+    BotCommandScopeChatMember;

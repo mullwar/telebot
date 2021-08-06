@@ -189,7 +189,7 @@ export type TeleBotMethodName =
     "getUserProfilePhotos" |
     "getFile" |
     "getFileUrl" |
-    "kickChatMember" |
+    "banChatMember" |
     "unbanChatMember" |
     "restrictChatMember" |
     "promoteChatMember" |
@@ -208,13 +208,14 @@ export type TeleBotMethodName =
     "leaveChat" |
     "getChat" |
     "getChatAdministrators" |
-    "getChatMembersCount" |
+    "getChatMemberCount" |
     "getChatMember" |
     "setChatStickerSet" |
     "deleteChatStickerSet" |
     "answerCallbackQuery" |
     "setMyCommands" |
     "getMyCommands" |
+    "deleteMyCommands" |
     "editMessageText" |
     "editMessageCaption" |
     "editMessageMedia" |

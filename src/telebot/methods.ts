@@ -225,9 +225,9 @@ TeleBot.prototype.getFileUrl = async function(chat_id) {
     return `https://api.telegram.org/file/bot${this.getToken()}/${file_path}`;
 };
 
-TeleBot.prototype.kickChatMember = function(chat_id, user_id, optional) {
+TeleBot.prototype.banChatMember = function(chat_id, user_id, optional) {
     return this.telegramMethod<true>({
-        method: "kickChatMember",
+        method: "banChatMember",
         required: { chat_id, user_id },
         optional
     });
@@ -381,9 +381,9 @@ TeleBot.prototype.getChatAdministrators = function(chat_id) {
     });
 };
 
-TeleBot.prototype.getChatMembersCount = function(chat_id) {
+TeleBot.prototype.getChatMemberCount = function(chat_id) {
     return this.telegramMethod<number>({
-        method: "getChatMembersCount",
+        method: "getChatMemberCount",
         required: { chat_id },
         optional: {}
     });
@@ -421,19 +421,27 @@ TeleBot.prototype.answerCallbackQuery = function(callback_query_id, optional) {
     });
 };
 
-TeleBot.prototype.setMyCommands = function(commands) {
+TeleBot.prototype.setMyCommands = function(commands, optional) {
     return this.telegramMethod<true>({
         method: "setMyCommands",
         required: { commands },
-        optional: {}
+        optional
     });
 };
 
-TeleBot.prototype.getMyCommands = function() {
+TeleBot.prototype.getMyCommands = function(optional) {
     return this.telegramMethod<BotCommand[]>({
         method: "getMyCommands",
         required: {},
-        optional: {}
+        optional
+    });
+};
+
+TeleBot.prototype.deleteMyCommands = function(optional) {
+    return this.telegramMethod<true>({
+        method: "deleteMyCommands",
+        required: {},
+        optional
     });
 };
 
