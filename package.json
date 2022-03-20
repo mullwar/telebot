@@ -25,7 +25,9 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
-    "lint": "eslint src/**/*.ts"
+    "lint": "eslint src/**/*.ts",
+    "ci": "yarn install --frozen-lockfile",
+    "preci": "rm -rf ./node_modules"
   },
   "repository": {
     "type": "git",
