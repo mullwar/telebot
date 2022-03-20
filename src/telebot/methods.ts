@@ -301,6 +301,13 @@ TeleBot.prototype.revokeChatInviteLink = function(chat_id, invite_link) {
     });
 };
 
+TeleBot.prototype.approveChatJoinRequest = function(chat_id, user_id) {
+    return this.telegramMethod<true>({
+        method: "approveChatJoinRequest",
+        required: { chat_id, user_id }
+    });
+};
+
 TeleBot.prototype.setChatPhoto = function(chat_id, photo) {
     return this.telegramMethod<true>({
         method: "setChatPhoto",

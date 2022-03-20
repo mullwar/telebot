@@ -1,5 +1,6 @@
 import {
     CallbackQuery,
+    ChatJoinRequest,
     ChatMemberUpdated,
     ChosenInlineResult,
     InlineQuery,
@@ -133,6 +134,7 @@ export type TeleBotEventNames = {
     poll_answer: PollAnswer;
     my_chat_member: ChatMemberUpdated;
     chat_member: ChatMemberUpdated;
+    chat_join_request: ChatJoinRequest;
     // TeleBot events
     error: SomeKindOfError;
 };
@@ -198,6 +200,8 @@ export type TeleBotMethodName =
     "createChatInviteLink" |
     "editChatInviteLink" |
     "revokeChatInviteLink" |
+    "approveChatJoinRequest" |
+    "declineChatJoinRequest" |
     "setChatPhoto" |
     "deleteChatPhoto" |
     "setChatTitle" |

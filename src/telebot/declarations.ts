@@ -312,8 +312,10 @@ declare module "../telebot" {
         createChatInviteLink(
             chat_id: ChatId,
             optional?: {
-                expire_date?: number;
-                member_limit?: number;
+              name?: string;
+              expire_date?: number;
+              member_limit?: number;
+              creates_join_request?: boolean;
             }
         ): MethodResponse<ChatInviteLink>;
 
@@ -321,8 +323,10 @@ declare module "../telebot" {
             chat_id: ChatId,
             invite_link: string,
             optional?: {
-                expire_date?: number;
-                member_limit?: number;
+              name?: string;
+              expire_date?: number;
+              member_limit?: number;
+              creates_join_request?: boolean;
             }
         ): MethodResponse<ChatInviteLink>;
 
@@ -330,6 +334,16 @@ declare module "../telebot" {
             chat_id: ChatId,
             invite_link: string
         ): MethodResponse<ChatInviteLink>;
+
+        approveChatJoinRequest(
+            chat_id: ChatId,
+            user_id: string
+        ): MethodResponse<true>;
+
+        declineChatJoinRequest(
+            chat_id: ChatId,
+            user_id: string
+        ): MethodResponse<true>;
 
         setChatPhoto(
             chat_id: ChatId,

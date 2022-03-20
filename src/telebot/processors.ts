@@ -1,6 +1,7 @@
 import { TeleBot } from "../telebot";
 import {
     CallbackQuery,
+    ChatJoinRequest,
     ChatMemberUpdated,
     ChosenInlineResult,
     InlineQuery,
@@ -101,6 +102,9 @@ export const TELEGRAM_UPDATE_PROCESSORS: Record<TelegramUpdateProcessors, Telegr
     },
     chat_member(this: TeleBot, chatMember: ChatMemberUpdated, context: TeleBotEventContext): Promise<unknown> {
         return this.dispatch("chat_member", chatMember, context);
+    },
+    chat_join_request(this: TeleBot, charJoinRequest: ChatJoinRequest, context: TeleBotEventContext): Promise<unknown> {
+        return this.dispatch("chat_join_request", charJoinRequest, context);
     },
     async message(this: TeleBot, messageUpdate: Message, context: TeleBotEventContext): Promise<unknown> {
         const processorPromises: Promise<unknown>[] = [];

@@ -29,6 +29,7 @@ export type Update = {
     poll_answer?: PollAnswer;
     my_chat_member?: ChatMemberUpdated;
     chat_member?: ChatMemberUpdated;
+    chat_join_request?: ChatJoinRequest;
 };
 
 export type WebhookInfo = {
@@ -905,7 +906,7 @@ export type ForceReply = {
 };
 
 export type ChatAction = "typing" | "upload_photo" | "record_video" | "upload_video" | "record_voice" | "upload_voice" |
-    "upload_document" | "find_location" | "record_video_note" | "upload_video_note";
+    "upload_document" | "choose_sticker" | "find_location" | "record_video_note" | "upload_video_note";
 
 export type ChatType = "private" | "group" | "supergroup" | "channel";
 
@@ -1000,8 +1001,18 @@ export type ChatInviteLink = {
     creator: User;
     is_primary: boolean;
     is_revoked: boolean;
+    name?: string;
     expire_date?: number;
     member_limit?: number;
+    pending_join_request_count?: number;
+};
+
+export type ChatJoinRequest = {
+    chat: Chat;
+    from: User;
+    date: number;
+    bio?: string;
+    invite_link?: ChatInviteLink;
 };
 
 export type ChatMemberUpdated = {
