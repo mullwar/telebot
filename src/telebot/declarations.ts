@@ -300,6 +300,16 @@ declare module "../telebot" {
             custom_title: string
         ): MethodResponse<true>;
 
+        banChatSenderChat(
+          chat_id: ChatId,
+          sender_chat_id: number
+        ): MethodResponse<true>;
+
+        unbanChatSenderChat(
+          chat_id: ChatId,
+          sender_chat_id: number
+        ): MethodResponse<true>;
+
         setChatPermissions(
             chat_id: ChatId,
             permissions: ChatPermissions,

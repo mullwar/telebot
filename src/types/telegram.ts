@@ -53,7 +53,8 @@ export type TelegramUpdateNames = keyof Omit<Update, "update_id">;
 export type TelegramMessageNames = keyof Omit<Message,
     "message_id" | "from" | "sender_chat" | "via_bot" | "date" | "chat" | "forward_from" | "forward_from_chat" |
     "forward_from_message_id" | "forward_signature" | "forward_sender_name" | "forward_date" | "reply_to_message" |
-    "edit_date" | "media_group_id" | "author_signature" | "entities" | "caption_entities" | "reply_markup">; // TODO
+    "edit_date" | "media_group_id" | "author_signature" | "entities" | "caption_entities" | "reply_markup" |
+  "has_protected_content" | "is_automatic_forward">; // TODO
 
 export type ChatId = number | string;
 
@@ -565,6 +566,8 @@ export type Message = {
     voice_chat_ended?: VoiceChatEnded;
     voice_chat_participants_invited?: VoiceChatParticipantsInvited;
     reply_markup?: InlineKeyboardMarkup;
+    has_protected_content?: true;
+    is_automatic_forward?: true;
 };
 
 export type PassportData = {
@@ -919,6 +922,8 @@ export type Chat = {
     last_name?: string;
     photo?: ChatPhoto;
     bio?: string;
+    has_private_forwards?: true;
+    has_protected_content?: true;
     description?: string;
     invite_link?: string;
     pinned_message?: Message;

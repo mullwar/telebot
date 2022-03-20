@@ -270,6 +270,22 @@ TeleBot.prototype.setChatAdministratorCustomTitle = function(chat_id, user_id, c
     });
 };
 
+TeleBot.prototype.banChatSenderChat = function(chat_id, sender_chat_id) {
+    return this.telegramMethod<true>({
+        method: "banChatSenderChat",
+        required: { chat_id, sender_chat_id },
+        optional: {}
+    });
+};
+
+TeleBot.prototype.unbanChatSenderChat = function(chat_id, sender_chat_id) {
+    return this.telegramMethod<true>({
+        method: "unbanChatSenderChat",
+        required: { chat_id, sender_chat_id },
+        optional: {}
+    });
+};
+
 TeleBot.prototype.exportChatInviteLink = function(chat_id) {
     return this.telegramMethod<string>({
         method: "exportChatInviteLink",

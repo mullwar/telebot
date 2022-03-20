@@ -196,6 +196,8 @@ export type TeleBotMethodName =
     "restrictChatMember" |
     "promoteChatMember" |
     "setChatAdministratorCustomTitle" |
+    "banChatSenderChat" |
+    "unbanChatSenderChat" |
     "exportChatInviteLink" |
     "createChatInviteLink" |
     "editChatInviteLink" |
