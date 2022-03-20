@@ -12,8 +12,8 @@ bot.on("text", (msg) => bot.sendMessage(msg.chat.id, "Hello, Express!"));
 bot.setWebhook(`https://YOUR_HOST/bot/${TOKEN}`);
 
 app.post(`bot/${TOKEN}`, (request, response) => {
-    bot.processTelegramUpdates([request.body]);
-    response.sendStatus(200);
+  bot.processTelegramUpdates([request.body]);
+  response.sendStatus(200);
 });
 
 app.listen(80);

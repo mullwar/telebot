@@ -3,5 +3,5 @@ import "./telebot/declarations";
 import "./telebot/methods";
 
 export {
-    TeleBot
+  TeleBot
 };

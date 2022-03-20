@@ -1,19 +1,19 @@
 import {
-    CallbackQuery,
-    ChatJoinRequest,
-    ChatMemberUpdated,
-    ChosenInlineResult,
-    InlineQuery,
-    Message,
-    MethodInputFile,
-    Poll,
-    PollAnswer,
-    PreCheckoutQuery,
-    ShippingQuery,
-    TelegramBotToken,
-    TelegramMessageNames,
-    TelegramUpdateNames,
-    Update
+  CallbackQuery,
+  ChatJoinRequest,
+  ChatMemberUpdated,
+  ChosenInlineResult,
+  InlineQuery,
+  Message,
+  MethodInputFile,
+  Poll,
+  PollAnswer,
+  PreCheckoutQuery,
+  ShippingQuery,
+  TelegramBotToken,
+  TelegramMessageNames,
+  TelegramUpdateNames,
+  Update
 } from "./telegram";
 import { TeleBotLogOptions } from "../telebot/logger";
 import { SomeKindOfError } from "../errors";

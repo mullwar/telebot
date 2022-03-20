@@ -17,13 +17,13 @@ bot1.setWebhook(`https://YOUR_HOST/bot1/${BOT1_TOKEN}`);
 bot2.setWebhook(`https://YOUR_HOST/bot2/${BOT2_TOKEN}`);
 
 app.post(`/bot1/${BOT1_TOKEN}`, (request, response) => {
-    bot1.processTelegramUpdates([request.body]);
-    response.sendStatus(200);
+  bot1.processTelegramUpdates([request.body]);
+  response.sendStatus(200);
 });
 
 app.post(`/bot2/${BOT1_TOKEN}`, (request, response) => {
-    bot2.processTelegramUpdates([request.body]);
-    response.sendStatus(200);
+  bot2.processTelegramUpdates([request.body]);
+  response.sendStatus(200);
 });
 
 app.listen(80);

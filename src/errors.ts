@@ -11,8 +11,8 @@ export class TeleBotError<T = unknown> extends Error {
     payload?: T;
 
     constructor(message: string, payload?: T) {
-        super(message);
-        this.payload = payload;
+      super(message);
+      this.payload = payload;
     }
 }
 
@@ -26,29 +26,29 @@ export class TelegramError<T = unknown> extends Error {
     response: TelegramErrorResponse;
 
     constructor(response: AxiosResponse<TelegramErrorResponse>) {
-        super(`${response.status} - ${response.statusText}`);
-        const { url, method, data } = response.config;
-        this.request = { url, method, data };
-        this.response = response.data;
+      super(`${response.status} - ${response.statusText}`);
+      const { url, method, data } = response.config;
+      this.request = { url, method, data };
+      this.response = response.data;
     }
 }
 
 export function handleTelegramResponse(error: any): SomeKindOfError {
-    if (error.isAxiosError) {
-        const { response } = (error as AxiosError<TelegramErrorResponse>);
-        if (response) {
-            return new TelegramError(response);
-        }
+  if (error.isAxiosError) {
+    const { response } = (error as AxiosError<TelegramErrorResponse>);
+    if (response) {
+      return new TelegramError(response);
     }
-    return normalizeError(error);
+  }
+  return normalizeError(error);
 }
 
 export function normalizeError(error: any, payload?: unknown): SomeKindOfError {
-    if (!(error instanceof Error)) {
-        error = new TeleBotError(error);
-    }
-    if (payload) {
-        error.payload = payload;
-    }
-    return error;
+  if (!(error instanceof Error)) {
+    error = new TeleBotError(error);
+  }
+  if (payload) {
+    error.payload = payload;
+  }
+  return error;
 }

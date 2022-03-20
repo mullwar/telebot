@@ -7,5 +7,5 @@ const bot = new TeleBot(TOKEN);
 bot.on("text", (msg) => bot.sendMessage(msg.chat.id, "Hello, World!"));
 
 bot.start().then(() => {
-    console.log("Bot started");
+  console.log("Bot started");
 });
