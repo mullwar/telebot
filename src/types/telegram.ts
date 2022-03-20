@@ -775,6 +775,7 @@ export type Sticker = FileIdentifier & {
     width: string;
     height: string;
     is_animated: boolean;
+    is_video?: boolean;
     thumb?: PhotoSize;
     emoji?: string;
     set_name?: string;
@@ -786,6 +787,7 @@ export type StickerSet = {
     name: string;
     title: string;
     is_animated: boolean;
+    is_video?: boolean;
     contains_masks: boolean;
     stickers: Sticker[];
 };

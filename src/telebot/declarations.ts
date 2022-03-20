@@ -521,6 +521,7 @@ declare module "../telebot" {
                 emojis: string;
                 png_sticker?: MethodInputFile;
                 tgs_sticker?: MethodInputFile;
+                webm_sticker?: MethodInputFile;
                 contains_masks?: boolean;
                 mask_position?: MaskPosition;
             }
@@ -533,6 +534,7 @@ declare module "../telebot" {
                 emojis: string;
                 png_sticker?: MethodInputFile;
                 tgs_sticker?: MethodInputFile;
+                webm_sticker?: MethodInputFile;
                 mask_position?: MaskPosition;
             }
         ): MethodResponse<true>;
