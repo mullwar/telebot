@@ -499,7 +499,7 @@ export type User = {
 
 export type MessageEntity = {
     type: "mention" | "hashtag" | "cashtag" | "bot_command" | "url" | "email" | "phone_number" | "bold" | "italic" |
-        "underline" | "strikethrough" | "code" | "pre" | "text_link" | "text_mention";
+        "underline" | "strikethrough" | "code" | "pre" | "text_link" | "text_mention" | "spoiler";
     offset: number;
     length: number;
     url?: string;
@@ -1100,6 +1100,7 @@ export type TelegramMessageOptional = {
     reply_to_message_id?: number;
     reply_markup?: ReplyMarkup;
     allow_sending_without_reply?: boolean;
+    protect_content?: boolean;
 };
 
 export type BotCommandScopeDefault = {
