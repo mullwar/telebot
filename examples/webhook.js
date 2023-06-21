@@ -8,7 +8,8 @@ const bot = new TeleBot({
         // cert: './cert.pem',
         url: 'https://....',
         host: '0.0.0.0',
-        port: 443
+        port: 443,
+        secretToken: process.env.SECRET_TOKEN
     }
 });
 
