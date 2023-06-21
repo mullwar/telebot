@@ -53,7 +53,8 @@ const bot = new TeleBot({
         url: 'https://....', // HTTPS url to send updates to.
         host: '0.0.0.0', // Webhook server host.
         port: 443, // Server port.
-        maxConnections: 40 // Optional. Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery
+        maxConnections: 40, // Optional. Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery
+        secretToken: process.env.SECRET_TOKEN // Optional. A secret token to be sent in a header “X-Telegram-Bot-Api-Secret-Token” in every webhook request, 1-256 characters. Only characters A-Z, a-z, 0-9, _ and - are allowed. The header is useful to ensure that the request comes from a webhook set by you.
     },
     allowedUpdates: [], // Optional. List the types of updates you want your bot to receive. Specify an empty list to receive all updates.
     usePlugins: ['askUser'], // Optional. Use user plugins from pluginFolder.
