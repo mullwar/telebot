@@ -1,7 +1,7 @@
 const TeleBot = require('../');
 const bot = new TeleBot('TELEGRAM_BOT_TOKEN');
 
-var lastMessage;
+var lastMessage = {};
 var photoUrl = 'https://telegram.org/img/tl_card_destruct.gif';
 
 bot.on('/start', msg => {
@@ -11,7 +11,7 @@ bot.on('/start', msg => {
         msg.from.id, photoUrl, {caption: 'This is a default caption.'}
     ).then(re => {
         // Get message id and chat
-        lastMessage = [msg.from.id, re.result.message_id];
+        lastMessage[msg.from.id] = [msg.from.id, re.result.message_id];
         bot.sendMessage(msg.from.id, 'Now set a new caption using /edit <caption>');
     });
 
