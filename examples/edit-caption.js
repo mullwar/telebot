@@ -19,11 +19,11 @@ bot.on('/start', msg => {
 
 bot.on('/edit', msg => {
 
-    if (!lastMessage) {
+    if (!lastMessage[msg.from.id]) {
         return bot.sendMessage(msg.from.id, 'Type /start and then /edit <caption>');
     }
 
-    let [chatId, messageId] = lastMessage;
+    let [chatId, messageId] = lastMessage[msg.from.id];
     let caption = msg.text.replace('/edit ', '');
 
     if (caption == '/edit') caption = 'No caption.';
