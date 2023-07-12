@@ -22,10 +22,10 @@ bot.on('callbackQuery', msg => {
     // Send confirm
     bot.answerCallbackQuery(msg.id);
 
-    if (!lastMessage) return bot.sendMessage(msg.from.id, 'Type /start');
+    if (!lastMessage[msg.from.id]) return bot.sendMessage(msg.from.id, 'Type /start');
 
     const data = msg.data;
-    const [chatId, messageId] = lastMessage;
+    const [chatId, messageId] = lastMessage[msg.from.id];
     const replyMarkup = updateKeyboard(data);
 
     // Edit message markup
