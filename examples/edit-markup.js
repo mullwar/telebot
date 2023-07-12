@@ -1,7 +1,7 @@
 const TeleBot = require('../');
 const bot = new TeleBot('TELEGRAM_BOT_TOKEN');
 
-var lastMessage;
+var lastMessage = {};
 
 bot.on('/start', msg => {
 
@@ -11,7 +11,7 @@ bot.on('/start', msg => {
         msg.from.id, 'This is a editMessageReplyMarkup example. So, apples or oranges?', {markup}
     ).then(re => {
         // Start updating message
-        lastMessage = [msg.from.id, re.result.message_id];
+        lastMessage[msg.from.id] = [msg.from.id, re.result.message_id];
     });
 
 });
@@ -22,10 +22,10 @@ bot.on('callbackQuery', msg => {
     // Send confirm
     bot.answerCallbackQuery(msg.id);
 
-    if (!lastMessage) return bot.sendMessage(msg.from.id, 'Type /start');
+    if (!lastMessage[msg.from.id]) return bot.sendMessage(msg.from.id, 'Type /start');
 
     const data = msg.data;
-    const [chatId, messageId] = lastMessage;
+    const [chatId, messageId] = lastMessage[msg.from.id];
     const replyMarkup = updateKeyboard(data);
 
     // Edit message markup
