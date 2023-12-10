@@ -11,7 +11,7 @@ bot.on('/start', msg => {
         msg.from.id, 'This is a editMessageReplyMarkup example. So, apples or oranges?', {markup}
     ).then(re => {
         // Start updating message
-        lastMessage = [msg.from.id, re.result.message_id];
+        lastMessage = [msg.from.id, re.message_id];
     });
 
 });
